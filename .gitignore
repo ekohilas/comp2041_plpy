@@ -1,0 +1,6 @@
+core
+vgcore.*
+*~
+*.swp
+*.pyc
+__pycache__
