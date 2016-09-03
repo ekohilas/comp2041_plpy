@@ -1,2 +1,2 @@
 #!/usr/bin/perl -w
-# put your demo script here
+# put your test script here
