@@ -51,7 +51,7 @@ while (my $line = <>) {
             }
             # if we find a new line and its the last argument
             # ignore it
-            elsif ($part =~ /"\"\\n\""/ && $i = scalar @parts - 1){
+            elsif ($part =~ /"\\n"/ && ($i = (scalar @parts - 1))){
                 next;
             }
             #else print the string or other
