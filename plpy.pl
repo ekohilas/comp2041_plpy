@@ -15,12 +15,12 @@ while (my $line = <>) {
         print $line;
 
     # convert print single item print statements 
-    } elsif ($line =~ /^\s*print\s*"(.*)\\n"[\s;]*$/) {
+    } elsif ($line =~ /^\s*print\s*"([^"]*)\\n"[\s;]*$/) {
         my $match = $1;
 
         # Check if we are only printing one variable
         # and convert it if so
-        if ($match =~ /\$([A-Za-z_]\w*)\s*/){
+        if ($match =~ /[\%\&\$\@]([A-Za-z_]\w*)\s*/){
             print "print($1)\n";
         }
         # otherwise print the entire string itself
@@ -31,37 +31,42 @@ while (my $line = <>) {
     # convert print statements with multiple arguments
     } elsif ($line =~ /^\s*print\s*([^;]*)\s*[\s;]*$/) {
         #print the first part of the print statement
-        print "print(";
         my @parts = split(",", $1);
+        #print join(' ', @parts), "\n";
 
+        # if last item ends in newline
+        if ($parts[$#parts] =~ /\\n"?$/){
+            $parts[$#parts] =~ s/\\n("?)$/$1/;
+            if ($parts[$#parts] =~ /^\s*""\s*$/){
+                pop @parts;
+            }
+        }
+
+        print "print(";
         #iterate through all the agruments
         for (my $i=0; $i < scalar @parts; $i++){
             my $part = $parts[$i];
+            #print ">$i$part<\n";
 
             #replace all variable names
-            if ($part =~ s/\$([A-Za-z_]\w*)/$1/g){
-                # if its not the last or second last
-                # then print with a comma
-                if ($i < scalar @parts - 2){
-                    print "$part, ";
-                }
-                else{
+            if ($part =~ s/("?)[\%\&\$\@]([A-Za-z_]\w*)\1/$2/g){
+                #print ">$part<\n";
+                # if its the last 
+                if ($i == (scalar @parts-1)){
                     print $part;
                 }
-            }
-            # if we find a new line and its the last argument
-            # ignore it
-            elsif ($part =~ /"\\n"/ && ($i = (scalar @parts - 1))){
-                next;
+                else{
+                    print "$part, ";
+                }
             }
             #else print the string or other
             else { 
-                # add a comma if not the last or second last
-                if ($i < scalar @parts - 2){
-                    print "$part, ";
+                # if its the last 
+                if ($i == (scalar @parts-1)){
+                    print $part;
                 }
                 else{
-                    print $part;
+                    print "$part, ";
                 }
             }
         }
@@ -72,10 +77,10 @@ while (my $line = <>) {
         print "print(\"$1\", end='')\n";
 
     # convert variable declarations
-    } elsif ($line =~ /^\s*\$([A-Za-z_]\w*)\s*\=\s*([^;]*)[\s;]*$/) {
+    } elsif ($line =~ /^\s*[\%\&\$\@]([A-Za-z_]\w*)\s*\=\s*([^;]*)[\s;]*$/) {
         my $first_var = $1;
         my $rest_of_line = $2;
-        $rest_of_line =~ s/\$([A-Za-z_]\w*)/$1/g;
+        $rest_of_line =~ s/[\%\&\$\@]([A-Za-z_]\w*)/$1/g;
         print "$first_var = $rest_of_line\n";
 
     # anything we can't translate becomes a comment
