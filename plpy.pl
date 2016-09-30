@@ -3,38 +3,45 @@ use strict;
 
 # written by Evangelos Kohilas z5114986 
 
+#loop until end of program
 while (my $line = <>) {
+
+    # translate the #! line 
     if ($line =~ /^#!/ && $. == 1) {
-        # translate #! line 
         print "#!/usr/local/bin/python3.5 -u\n";
 
+    # leave blank lines and comments the same
     } elsif ($line =~ /^\s*#/ || $line =~ /^\s*$/) {
-        # Blank & comment lines can be passed unchanged
         print $line;
 
+    # convert print single item print statements 
     } elsif ($line =~ /^\s*print\s*"(.*)\\n"[\s;]*$/) {
-        # Python's print adds a new-line character by default
-        # so we need to delete it from the Perl print statement
         my $match = $1;
 
-        # check if we're only printing 1 variable
-        # print it if so 
+        # Check if we are only printing one variable
+        # and convert it if so
         if ($match =~ /\$([A-Za-z_]\w*)\s*/){
             print "print($1)\n";
         }
+        # otherwise print the entire string itself
         else{
-            # otherwise print string
             print "print(\"$match\")\n";
         }
 
+    # convert print statements with multiple arguments
     } elsif ($line =~ /^\s*print\s*([^;]*)\s*[\s;]*$/) {
+        #print the first part of the print statement
         print "print(";
         my @parts = split(",", $1);
+
+        #iterate through all the agruments
         for (my $i=0; $i < scalar @parts; $i++){
             my $part = $parts[$i];
+
             #replace all variable names
             if ($part =~ s/\$([A-Za-z_]\w*)/$1/g){
-                #not the last or second last
+                # if its not the last or second last
+                # then print with a comma
                 if ($i < scalar @parts - 2){
                     print "$part, ";
                 }
@@ -42,30 +49,37 @@ while (my $line = <>) {
                     print $part;
                 }
             }
-            elsif ($part =~ /"\"\\n\""/){
-                last;
+            # if we find a new line and its the last argument
+            # ignore it
+            elsif ($part =~ /"\"\\n\""/ && $i = scalar @parts - 1){
+                next;
+            }
+            #else print the string or other
+            else { 
+                # add a comma if not the last or second last
+                if ($i < scalar @parts - 2){
+                    print "$part, ";
+                }
+                else{
+                    print $part;
+                }
             }
         }
         print ")\n";
-        # Convert prints with multiple arguments
 
+    # convert any statments that are strings and don't have a new line
     } elsif ($line =~ /^\s*print\s*"(.*)"[\s;]*$/) {
-        # Convert statements without newline
         print "print(\"$1\", end='')\n";
 
+    # convert variable declarations
     } elsif ($line =~ /^\s*\$([A-Za-z_]\w*)\s*\=\s*([^;]*)[\s;]*$/) {
-        # Search for proper scalar variable names and convert
         my $first_var = $1;
         my $rest_of_line = $2;
         $rest_of_line =~ s/\$([A-Za-z_]\w*)/$1/g;
         print "$first_var = $rest_of_line\n";
 
-    } elsif ($line =~ /^\s*$/){
-        #keep new lines the same
-        print "\n";
-
+    # anything we can't translate becomes a comment
     } else {
-        # Lines we can't translate are turned into comments
         print "#$line\n";
     }
 }
