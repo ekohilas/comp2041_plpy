@@ -81,5 +81,6 @@ while (my $line = <>) {
     # anything we can't translate becomes a comment
     } else {
         print "#$line\n";
+
     }
 }
