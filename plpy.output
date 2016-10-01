@@ -1,0 +1,4380 @@
+Conflicts:
+----------
+Conflict in state 38 between rule 58 and token ADDOP resolved as shift.
+Conflict in state 38 between rule 58 and token ASSIGNOP resolved as shift.
+Conflict in state 38 between rule 58 and token POSTINC resolved as shift.
+Conflict in state 38 between rule 58 and token POWOP resolved as shift.
+Conflict in state 38 between rule 58 and token MATCHOP resolved as shift.
+Conflict in state 38 between rule 58 and token POSTDEC resolved as shift.
+Conflict in state 38 between rule 58 and token DOTDOT resolved as shift.
+Conflict in state 38 between rule 58 and token MULOP resolved as shift.
+Conflict in state 38 between rule 58 and token ANDAND resolved as shift.
+Conflict in state 38 between rule 58 and token OROR resolved as shift.
+Conflict in state 38 between rule 58 and token RELOP resolved as shift.
+Conflict in state 38 between rule 58 and token EQOP resolved as shift.
+Conflict in state 56 between rule 55 and token ',' resolved as shift.
+Conflict in state 57 between rule 74 and token ADDOP resolved as reduce.
+Conflict in state 57 between rule 74 and token ASSIGNOP resolved as reduce.
+Conflict in state 57 between rule 74 and token POSTINC resolved as shift.
+Conflict in state 57 between rule 74 and token POWOP resolved as shift.
+Conflict in state 57 between rule 74 and token MATCHOP resolved as reduce.
+Conflict in state 57 between rule 74 and token POSTDEC resolved as shift.
+Conflict in state 57 between rule 74 and token DOTDOT resolved as reduce.
+Conflict in state 57 between rule 74 and token MULOP resolved as reduce.
+Conflict in state 57 between rule 74 and token ANDAND resolved as reduce.
+Conflict in state 57 between rule 74 and token OROR resolved as reduce.
+Conflict in state 57 between rule 74 and token RELOP resolved as reduce.
+Conflict in state 57 between rule 74 and token EQOP resolved as reduce.
+Conflict in state 75 between rule 119 and token ',' resolved as shift.
+Conflict in state 78 between rule 76 and token ADDOP resolved as reduce.
+Conflict in state 78 between rule 76 and token ASSIGNOP resolved as reduce.
+Conflict in state 78 between rule 76 and token POSTINC resolved as shift.
+Conflict in state 78 between rule 76 and token POWOP resolved as shift.
+Conflict in state 78 between rule 76 and token MATCHOP resolved as reduce.
+Conflict in state 78 between rule 76 and token POSTDEC resolved as shift.
+Conflict in state 78 between rule 76 and token DOTDOT resolved as reduce.
+Conflict in state 78 between rule 76 and token MULOP resolved as reduce.
+Conflict in state 78 between rule 76 and token ANDAND resolved as reduce.
+Conflict in state 78 between rule 76 and token OROR resolved as reduce.
+Conflict in state 78 between rule 76 and token RELOP resolved as reduce.
+Conflict in state 78 between rule 76 and token EQOP resolved as reduce.
+Conflict in state 82 between rule 98 and token ',' resolved as shift.
+Conflict in state 93 between rule 75 and token ADDOP resolved as reduce.
+Conflict in state 93 between rule 75 and token ASSIGNOP resolved as reduce.
+Conflict in state 93 between rule 75 and token POSTINC resolved as shift.
+Conflict in state 93 between rule 75 and token POWOP resolved as shift.
+Conflict in state 93 between rule 75 and token MATCHOP resolved as reduce.
+Conflict in state 93 between rule 75 and token POSTDEC resolved as shift.
+Conflict in state 93 between rule 75 and token DOTDOT resolved as reduce.
+Conflict in state 93 between rule 75 and token MULOP resolved as reduce.
+Conflict in state 93 between rule 75 and token ANDAND resolved as reduce.
+Conflict in state 93 between rule 75 and token OROR resolved as reduce.
+Conflict in state 93 between rule 75 and token RELOP resolved as reduce.
+Conflict in state 93 between rule 75 and token EQOP resolved as reduce.
+Conflict in state 114 between rule 102 and token ADDOP resolved as shift.
+Conflict in state 114 between rule 102 and token ASSIGNOP resolved as reduce.
+Conflict in state 114 between rule 102 and token POSTINC resolved as shift.
+Conflict in state 114 between rule 102 and token POWOP resolved as shift.
+Conflict in state 114 between rule 102 and token MATCHOP resolved as shift.
+Conflict in state 114 between rule 102 and token POSTDEC resolved as shift.
+Conflict in state 114 between rule 102 and token DOTDOT resolved as reduce.
+Conflict in state 114 between rule 102 and token MULOP resolved as shift.
+Conflict in state 114 between rule 102 and token ANDAND resolved as reduce.
+Conflict in state 114 between rule 102 and token OROR resolved as reduce.
+Conflict in state 114 between rule 102 and token RELOP resolved as reduce.
+Conflict in state 114 between rule 102 and token EQOP resolved as reduce.
+Conflict in state 118 between rule 101 and token ADDOP resolved as shift.
+Conflict in state 118 between rule 101 and token ASSIGNOP resolved as reduce.
+Conflict in state 118 between rule 101 and token POSTINC resolved as shift.
+Conflict in state 118 between rule 101 and token POWOP resolved as shift.
+Conflict in state 118 between rule 101 and token MATCHOP resolved as shift.
+Conflict in state 118 between rule 101 and token POSTDEC resolved as shift.
+Conflict in state 118 between rule 101 and token DOTDOT resolved as reduce.
+Conflict in state 118 between rule 101 and token MULOP resolved as shift.
+Conflict in state 118 between rule 101 and token ANDAND resolved as reduce.
+Conflict in state 118 between rule 101 and token OROR resolved as reduce.
+Conflict in state 118 between rule 101 and token RELOP resolved as reduce.
+Conflict in state 118 between rule 101 and token EQOP resolved as reduce.
+Conflict in state 130 between rule 59 and token ',' resolved as shift.
+Conflict in state 149 between rule 64 and token ADDOP resolved as shift.
+Conflict in state 149 between rule 64 and token ASSIGNOP resolved as shift.
+Conflict in state 149 between rule 64 and token POSTINC resolved as shift.
+Conflict in state 149 between rule 64 and token POWOP resolved as shift.
+Conflict in state 149 between rule 64 and token MATCHOP resolved as shift.
+Conflict in state 149 between rule 64 and token POSTDEC resolved as shift.
+Conflict in state 149 between rule 64 and token DOTDOT resolved as shift.
+Conflict in state 149 between rule 64 and token MULOP resolved as shift.
+Conflict in state 149 between rule 64 and token ANDAND resolved as shift.
+Conflict in state 149 between rule 64 and token OROR resolved as shift.
+Conflict in state 149 between rule 64 and token RELOP resolved as shift.
+Conflict in state 149 between rule 64 and token EQOP resolved as shift.
+Conflict in state 150 between rule 65 and token ADDOP resolved as reduce.
+Conflict in state 150 between rule 65 and token ASSIGNOP resolved as reduce.
+Conflict in state 150 between rule 65 and token POSTINC resolved as shift.
+Conflict in state 150 between rule 65 and token POWOP resolved as shift.
+Conflict in state 150 between rule 65 and token MATCHOP resolved as reduce.
+Conflict in state 150 between rule 65 and token POSTDEC resolved as shift.
+Conflict in state 150 between rule 65 and token DOTDOT resolved as reduce.
+Conflict in state 150 between rule 65 and token MULOP resolved as reduce.
+Conflict in state 150 between rule 65 and token ANDAND resolved as reduce.
+Conflict in state 150 between rule 65 and token OROR resolved as reduce.
+Conflict in state 150 between rule 65 and token RELOP resolved as reduce.
+Conflict in state 150 between rule 65 and token EQOP resolved as reduce.
+Conflict in state 151 between rule 73 and token ADDOP resolved as reduce.
+Conflict in state 151 between rule 73 and token ASSIGNOP resolved as reduce.
+Conflict in state 151 between rule 73 and token POSTINC resolved as shift.
+Conflict in state 151 between rule 73 and token POWOP resolved as shift.
+Conflict in state 151 between rule 73 and token MATCHOP resolved as reduce.
+Conflict in state 151 between rule 73 and token POSTDEC resolved as shift.
+Conflict in state 151 between rule 73 and token DOTDOT resolved as reduce.
+Conflict in state 151 between rule 73 and token MULOP resolved as reduce.
+Conflict in state 151 between rule 73 and token ANDAND resolved as reduce.
+Conflict in state 151 between rule 73 and token OROR resolved as reduce.
+Conflict in state 151 between rule 73 and token RELOP resolved as reduce.
+Conflict in state 151 between rule 73 and token EQOP resolved as reduce.
+Conflict in state 152 between rule 71 and token ADDOP resolved as shift.
+Conflict in state 152 between rule 71 and token ASSIGNOP resolved as reduce.
+Conflict in state 152 between rule 71 and token POSTINC resolved as shift.
+Conflict in state 152 between rule 71 and token POWOP resolved as shift.
+Conflict in state 152 between rule 71 and token MATCHOP resolved as shift.
+Conflict in state 152 between rule 71 and token POSTDEC resolved as shift.
+Conflict in state 152 between rule 71 and token DOTDOT resolved as reduce.
+Conflict in state 152 between rule 71 and token MULOP resolved as shift.
+Conflict in state 152 between rule 71 and token ANDAND resolved as reduce.
+Conflict in state 152 between rule 71 and token OROR resolved as reduce.
+Conflict in state 152 between rule 71 and token RELOP resolved as shift.
+Conflict in state 152 between rule 71 and token EQOP resolved as shift.
+Conflict in state 153 between rule 69 and token ADDOP resolved as shift.
+Conflict in state 153 between rule 69 and token ASSIGNOP resolved as reduce.
+Conflict in state 153 between rule 69 and token POSTINC resolved as shift.
+Conflict in state 153 between rule 69 and token POWOP resolved as shift.
+Conflict in state 153 between rule 69 and token MATCHOP resolved as shift.
+Conflict in state 153 between rule 69 and token POSTDEC resolved as shift.
+Conflict in state 153 between rule 69 and token DOTDOT resolved as reduce.
+Conflict in state 153 between rule 69 and token MULOP resolved as shift.
+Conflict in state 153 between rule 69 and token ANDAND resolved as reduce.
+Conflict in state 153 between rule 69 and token OROR resolved as reduce.
+Conflict in state 153 between rule 69 and token RELOP resolved as shift.
+Conflict in state 153 between rule 69 and token EQOP resolved as error.
+Conflict in state 154 between rule 68 and token ADDOP resolved as shift.
+Conflict in state 154 between rule 68 and token ASSIGNOP resolved as reduce.
+Conflict in state 154 between rule 68 and token POSTINC resolved as shift.
+Conflict in state 154 between rule 68 and token POWOP resolved as shift.
+Conflict in state 154 between rule 68 and token MATCHOP resolved as shift.
+Conflict in state 154 between rule 68 and token POSTDEC resolved as shift.
+Conflict in state 154 between rule 68 and token DOTDOT resolved as reduce.
+Conflict in state 154 between rule 68 and token MULOP resolved as shift.
+Conflict in state 154 between rule 68 and token ANDAND resolved as reduce.
+Conflict in state 154 between rule 68 and token OROR resolved as reduce.
+Conflict in state 154 between rule 68 and token RELOP resolved as error.
+Conflict in state 154 between rule 68 and token EQOP resolved as reduce.
+Conflict in state 155 between rule 67 and token ADDOP resolved as reduce.
+Conflict in state 155 between rule 67 and token ASSIGNOP resolved as reduce.
+Conflict in state 155 between rule 67 and token POSTINC resolved as shift.
+Conflict in state 155 between rule 67 and token POWOP resolved as shift.
+Conflict in state 155 between rule 67 and token MATCHOP resolved as shift.
+Conflict in state 155 between rule 67 and token POSTDEC resolved as shift.
+Conflict in state 155 between rule 67 and token DOTDOT resolved as reduce.
+Conflict in state 155 between rule 67 and token MULOP resolved as shift.
+Conflict in state 155 between rule 67 and token ANDAND resolved as reduce.
+Conflict in state 155 between rule 67 and token OROR resolved as reduce.
+Conflict in state 155 between rule 67 and token RELOP resolved as reduce.
+Conflict in state 155 between rule 67 and token EQOP resolved as reduce.
+Conflict in state 156 between rule 70 and token ADDOP resolved as shift.
+Conflict in state 156 between rule 70 and token ASSIGNOP resolved as reduce.
+Conflict in state 156 between rule 70 and token POSTINC resolved as shift.
+Conflict in state 156 between rule 70 and token POWOP resolved as shift.
+Conflict in state 156 between rule 70 and token MATCHOP resolved as shift.
+Conflict in state 156 between rule 70 and token POSTDEC resolved as shift.
+Conflict in state 156 between rule 70 and token DOTDOT resolved as error.
+Conflict in state 156 between rule 70 and token MULOP resolved as shift.
+Conflict in state 156 between rule 70 and token ANDAND resolved as shift.
+Conflict in state 156 between rule 70 and token OROR resolved as shift.
+Conflict in state 156 between rule 70 and token RELOP resolved as shift.
+Conflict in state 156 between rule 70 and token EQOP resolved as shift.
+Conflict in state 157 between rule 66 and token ADDOP resolved as reduce.
+Conflict in state 157 between rule 66 and token ASSIGNOP resolved as reduce.
+Conflict in state 157 between rule 66 and token POSTINC resolved as shift.
+Conflict in state 157 between rule 66 and token POWOP resolved as shift.
+Conflict in state 157 between rule 66 and token MATCHOP resolved as shift.
+Conflict in state 157 between rule 66 and token POSTDEC resolved as shift.
+Conflict in state 157 between rule 66 and token DOTDOT resolved as reduce.
+Conflict in state 157 between rule 66 and token MULOP resolved as reduce.
+Conflict in state 157 between rule 66 and token ANDAND resolved as reduce.
+Conflict in state 157 between rule 66 and token OROR resolved as reduce.
+Conflict in state 157 between rule 66 and token RELOP resolved as reduce.
+Conflict in state 157 between rule 66 and token EQOP resolved as reduce.
+Conflict in state 158 between rule 72 and token ADDOP resolved as shift.
+Conflict in state 158 between rule 72 and token ASSIGNOP resolved as reduce.
+Conflict in state 158 between rule 72 and token POSTINC resolved as shift.
+Conflict in state 158 between rule 72 and token POWOP resolved as shift.
+Conflict in state 158 between rule 72 and token MATCHOP resolved as shift.
+Conflict in state 158 between rule 72 and token POSTDEC resolved as shift.
+Conflict in state 158 between rule 72 and token DOTDOT resolved as reduce.
+Conflict in state 158 between rule 72 and token MULOP resolved as shift.
+Conflict in state 158 between rule 72 and token ANDAND resolved as shift.
+Conflict in state 158 between rule 72 and token OROR resolved as reduce.
+Conflict in state 158 between rule 72 and token RELOP resolved as shift.
+Conflict in state 158 between rule 72 and token EQOP resolved as shift.
+Conflict in state 162 between rule 53 and token OROP resolved as reduce.
+Conflict in state 162 between rule 53 and token ANDOP resolved as reduce.
+Conflict in state 164 between rule 54 and token OROP resolved as reduce.
+Conflict in state 164 between rule 54 and token ANDOP resolved as shift.
+Conflict in state 172 between rule 57 and token ADDOP resolved as shift.
+Conflict in state 172 between rule 57 and token ASSIGNOP resolved as shift.
+Conflict in state 172 between rule 57 and token POSTINC resolved as shift.
+Conflict in state 172 between rule 57 and token POWOP resolved as shift.
+Conflict in state 172 between rule 57 and token MATCHOP resolved as shift.
+Conflict in state 172 between rule 57 and token POSTDEC resolved as shift.
+Conflict in state 172 between rule 57 and token DOTDOT resolved as shift.
+Conflict in state 172 between rule 57 and token MULOP resolved as shift.
+Conflict in state 172 between rule 57 and token ANDAND resolved as shift.
+Conflict in state 172 between rule 57 and token OROR resolved as shift.
+Conflict in state 172 between rule 57 and token RELOP resolved as shift.
+Conflict in state 172 between rule 57 and token EQOP resolved as shift.
+
+Rules:
+------
+0:	$start -> prog $end
+1:	prog -> lineseq
+2:	block -> '{' remember lineseq '}'
+3:	remember -> /* empty */
+4:	mblock -> '{' mremember lineseq '}'
+5:	mremember -> /* empty */
+6:	lineseq -> /* empty */
+7:	lineseq -> lineseq decl
+8:	lineseq -> lineseq line
+9:	line -> cond
+10:	line -> loop
+11:	line -> sideff ';'
+12:	sideff -> error
+13:	sideff -> expr
+14:	sideff -> expr IF expr
+15:	sideff -> expr WHILE expr
+16:	sideff -> expr FOR expr
+17:	else -> /* empty */
+18:	else -> ELSE mblock
+19:	else -> ELSIF '(' mexpr ')' mblock else
+20:	cond -> IF '(' remember mexpr ')' mblock else
+21:	cont -> /* empty */
+22:	cont -> CONTINUE block
+23:	loop -> WHILE '(' remember mtexpr ')' mblock cont
+24:	loop -> FOR MY remember my_scalar '(' mexpr ')' mblock cont
+25:	loop -> FOR scalar '(' remember mexpr ')' mblock cont
+26:	loop -> FOR '(' remember mexpr ')' mblock cont
+27:	loop -> FOR '(' remember mnexpr ';' mtexpr ';' mnexpr ')' mblock
+28:	loop -> block cont
+29:	nexpr -> /* empty */
+30:	nexpr -> sideff
+31:	texpr -> /* empty */
+32:	texpr -> expr
+33:	mexpr -> expr
+34:	mnexpr -> nexpr
+35:	mtexpr -> texpr
+36:	decl -> format
+37:	decl -> subrout
+38:	decl -> package
+39:	decl -> use
+40:	format -> FORMAT startformsub formname block
+41:	formname -> WORD
+42:	formname -> /* empty */
+43:	subrout -> SUB startsub subname subbody
+44:	startsub -> /* empty */
+45:	startformsub -> /* empty */
+46:	subname -> WORD
+47:	subbody -> block
+48:	subbody -> ';'
+49:	package -> PACKAGE WORD ';'
+50:	package -> PACKAGE ';'
+51:	@1-2 -> /* empty */
+52:	use -> USE startsub @1-2 WORD WORD listexpr ';'
+53:	expr -> expr ANDOP expr
+54:	expr -> expr OROP expr
+55:	expr -> argexpr
+56:	argexpr -> argexpr ','
+57:	argexpr -> argexpr ',' term
+58:	argexpr -> term
+59:	listop -> LSTOP indirob argexpr
+60:	listop -> FUNC '(' indirob expr ')'
+61:	listop -> LSTOP listexpr
+62:	listop -> FUNC '(' listexprcom ')'
+63:	subscripted -> scalar '[' expr ']'
+64:	termbinop -> term ASSIGNOP term
+65:	termbinop -> term POWOP term
+66:	termbinop -> term MULOP term
+67:	termbinop -> term ADDOP term
+68:	termbinop -> term RELOP term
+69:	termbinop -> term EQOP term
+70:	termbinop -> term DOTDOT term
+71:	termbinop -> term ANDAND term
+72:	termbinop -> term OROR term
+73:	termbinop -> term MATCHOP term
+74:	termunop -> '-' term
+75:	termunop -> '+' term
+76:	termunop -> '!' term
+77:	termunop -> term POSTINC
+78:	termunop -> term POSTDEC
+79:	term -> termbinop
+80:	term -> termunop
+81:	term -> myattrterm
+82:	term -> '(' expr ')'
+83:	term -> '(' ')'
+84:	term -> scalar
+85:	term -> hsh
+86:	term -> ary
+87:	term -> arylen
+88:	term -> subscripted
+89:	term -> '(' expr ')' '[' expr ']'
+90:	term -> '(' ')' '[' expr ']'
+91:	term -> ary '[' expr ']'
+92:	term -> ary '{' expr ';' '}'
+93:	term -> amper
+94:	term -> amper '(' ')'
+95:	term -> amper '(' expr ')'
+96:	term -> NOAMP WORD listexpr
+97:	term -> LOOPEX
+98:	term -> NOTOP argexpr
+99:	term -> UNIOP
+100:	term -> UNIOP block
+101:	term -> UNIOP term
+102:	term -> UNIOPSUB term
+103:	term -> FUNC0
+104:	term -> FUNC0 '(' ')'
+105:	term -> FUNC1 '(' ')'
+106:	term -> FUNC1 '(' expr ')'
+107:	term -> PMFUNC '(' term ')'
+108:	term -> PMFUNC '(' term ',' term ')'
+109:	term -> WORD
+110:	term -> listop
+111:	myattrterm -> MY myterm myattrlist
+112:	myattrterm -> MY myterm
+113:	myterm -> '(' expr ')'
+114:	myterm -> '(' ')'
+115:	myterm -> scalar
+116:	myterm -> hsh
+117:	myterm -> ary
+118:	listexpr -> /* empty */
+119:	listexpr -> argexpr
+120:	listexprcom -> /* empty */
+121:	listexprcom -> expr
+122:	listexprcom -> expr ','
+123:	my_scalar -> scalar
+124:	amper -> '&' indirob
+125:	scalar -> '$' indirob
+126:	ary -> '@' indirob
+127:	hsh -> '%' indirob
+128:	arylen -> DOLSHARP indirob
+129:	indirob -> WORD
+130:	indirob -> scalar
+131:	indirob -> block
+
+States:
+-------
+State 0:
+
+	$start -> . prog $end	(Rule 0)
+
+	$default	reduce using rule 6 (lineseq)
+
+	prog	go to state 1
+	lineseq	go to state 2
+
+State 1:
+
+	$start -> prog . $end	(Rule 0)
+
+	$end	shift, and go to state 3
+
+State 2:
+
+	prog -> lineseq .	(Rule 1)
+	lineseq -> lineseq . decl	(Rule 7)
+	lineseq -> lineseq . line	(Rule 8)
+
+	'!'	shift, and go to state 14
+	'$'	shift, and go to state 16
+	'%'	shift, and go to state 9
+	'&'	shift, and go to state 49
+	'('	shift, and go to state 30
+	'+'	shift, and go to state 35
+	'-'	shift, and go to state 5
+	'@'	shift, and go to state 7
+	'{'	shift, and go to state 51
+	DOLSHARP	shift, and go to state 37
+	FOR	shift, and go to state 34
+	FORMAT	shift, and go to state 24
+	FUNC	shift, and go to state 39
+	FUNC0	shift, and go to state 47
+	FUNC1	shift, and go to state 31
+	IF	shift, and go to state 17
+	LOOPEX	shift, and go to state 42
+	LSTOP	shift, and go to state 11
+	MY	shift, and go to state 10
+	NOAMP	shift, and go to state 36
+	NOTOP	shift, and go to state 23
+	PACKAGE	shift, and go to state 8
+	PMFUNC	shift, and go to state 22
+	SUB	shift, and go to state 26
+	UNIOP	shift, and go to state 50
+	UNIOPSUB	shift, and go to state 45
+	USE	shift, and go to state 53
+	WHILE	shift, and go to state 46
+	WORD	shift, and go to state 4
+	error	shift, and go to state 43
+
+	$end	reduce using rule 1 (prog)
+
+	scalar	go to state 6
+	subrout	go to state 32
+	sideff	go to state 33
+	term	go to state 38
+	loop	go to state 13
+	ary	go to state 12
+	use	go to state 41
+	expr	go to state 40
+	decl	go to state 15
+	termbinop	go to state 18
+	listop	go to state 44
+	hsh	go to state 19
+	termunop	go to state 20
+	line	go to state 21
+	cond	go to state 25
+	arylen	go to state 48
+	amper	go to state 27
+	myattrterm	go to state 28
+	subscripted	go to state 29
+	package	go to state 52
+	format	go to state 54
+	block	go to state 55
+	argexpr	go to state 56
+
+State 3:
+
+	$start -> prog $end .	(Rule 0)
+
+	$default	accept
+
+State 4:
+
+	term -> WORD .	(Rule 109)
+
+	$default	reduce using rule 109 (term)
+
+State 5:
+
+	termunop -> '-' . term	(Rule 74)
+
+	'!'	shift, and go to state 14
+	'$'	shift, and go to state 16
+	'%'	shift, and go to state 9
+	'&'	shift, and go to state 49
+	'('	shift, and go to state 30
+	'+'	shift, and go to state 35
+	'-'	shift, and go to state 5
+	'@'	shift, and go to state 7
+	DOLSHARP	shift, and go to state 37
+	FUNC	shift, and go to state 39
+	FUNC0	shift, and go to state 47
+	FUNC1	shift, and go to state 31
+	LOOPEX	shift, and go to state 42
+	LSTOP	shift, and go to state 11
+	MY	shift, and go to state 10
+	NOAMP	shift, and go to state 36
+	NOTOP	shift, and go to state 23
+	PMFUNC	shift, and go to state 22
+	UNIOP	shift, and go to state 50
+	UNIOPSUB	shift, and go to state 45
+	WORD	shift, and go to state 4
+
+	scalar	go to state 6
+	arylen	go to state 48
+	myattrterm	go to state 28
+	amper	go to state 27
+	subscripted	go to state 29
+	term	go to state 57
+	ary	go to state 12
+	termbinop	go to state 18
+	listop	go to state 44
+	hsh	go to state 19
+	termunop	go to state 20
+
+State 6:
+
+	subscripted -> scalar . '[' expr ']'	(Rule 63)
+	term -> scalar .	(Rule 84)
+
+	'['	shift, and go to state 58
+
+	$default	reduce using rule 84 (term)
+
+State 7:
+
+	ary -> '@' . indirob	(Rule 126)
+
+	'$'	shift, and go to state 16
+	'{'	shift, and go to state 51
+	WORD	shift, and go to state 60
+
+	scalar	go to state 59
+	indirob	go to state 61
+	block	go to state 62
+
+State 8:
+
+	package -> PACKAGE . WORD ';'	(Rule 49)
+	package -> PACKAGE . ';'	(Rule 50)
+
+	';'	shift, and go to state 64
+	WORD	shift, and go to state 63
+
+State 9:
+
+	hsh -> '%' . indirob	(Rule 127)
+
+	'$'	shift, and go to state 16
+	'{'	shift, and go to state 51
+	WORD	shift, and go to state 60
+
+	scalar	go to state 59
+	indirob	go to state 65
+	block	go to state 62
+
+State 10:
+
+	myattrterm -> MY . myterm myattrlist	(Rule 111)
+	myattrterm -> MY . myterm	(Rule 112)
+
+	'$'	shift, and go to state 16
+	'%'	shift, and go to state 9
+	'('	shift, and go to state 69
+	'@'	shift, and go to state 7
+
+	scalar	go to state 66
+	myterm	go to state 70
+	hsh	go to state 68
+	ary	go to state 67
+
+State 11:
+
+	listop -> LSTOP . indirob argexpr	(Rule 59)
+	listop -> LSTOP . listexpr	(Rule 61)
+
+	'!'	shift, and go to state 14
+	'$'	shift, and go to state 16
+	'%'	shift, and go to state 9
+	'&'	shift, and go to state 49
+	'('	shift, and go to state 30
+	'+'	shift, and go to state 35
+	'-'	shift, and go to state 5
+	'@'	shift, and go to state 7
+	'{'	shift, and go to state 51
+	DOLSHARP	shift, and go to state 37
+	FUNC	shift, and go to state 39
+	FUNC0	shift, and go to state 47
+	FUNC1	shift, and go to state 31
+	LOOPEX	shift, and go to state 42
+	LSTOP	shift, and go to state 11
+	MY	shift, and go to state 10
+	NOAMP	shift, and go to state 36
+	NOTOP	shift, and go to state 23
+	PMFUNC	shift, and go to state 22
+	UNIOP	shift, and go to state 50
+	UNIOPSUB	shift, and go to state 45
+	WORD	shift, and go to state 71
+
+	$default	reduce using rule 118 (listexpr)
+
+	scalar	go to state 72
+	arylen	go to state 48
+	indirob	go to state 73
+	myattrterm	go to state 28
+	amper	go to state 27
+	subscripted	go to state 29
+	term	go to state 38
+	ary	go to state 12
+	termbinop	go to state 18
+	block	go to state 62
+	argexpr	go to state 75
+	listop	go to state 44
+	listexpr	go to state 74
+	hsh	go to state 19
+	termunop	go to state 20
+
+State 12:
+
+	term -> ary .	(Rule 86)
+	term -> ary . '[' expr ']'	(Rule 91)
+	term -> ary . '{' expr ';' '}'	(Rule 92)
+
+	'['	shift, and go to state 76
+	'{'	shift, and go to state 77
+
+	$default	reduce using rule 86 (term)
+
+State 13:
+
+	line -> loop .	(Rule 10)
+
+	$default	reduce using rule 10 (line)
+
+State 14:
+
+	termunop -> '!' . term	(Rule 76)
+
+	'!'	shift, and go to state 14
+	'$'	shift, and go to state 16
+	'%'	shift, and go to state 9
+	'&'	shift, and go to state 49
+	'('	shift, and go to state 30
+	'+'	shift, and go to state 35
+	'-'	shift, and go to state 5
+	'@'	shift, and go to state 7
+	DOLSHARP	shift, and go to state 37
+	FUNC	shift, and go to state 39
+	FUNC0	shift, and go to state 47
+	FUNC1	shift, and go to state 31
+	LOOPEX	shift, and go to state 42
+	LSTOP	shift, and go to state 11
+	MY	shift, and go to state 10
+	NOAMP	shift, and go to state 36
+	NOTOP	shift, and go to state 23
+	PMFUNC	shift, and go to state 22
+	UNIOP	shift, and go to state 50
+	UNIOPSUB	shift, and go to state 45
+	WORD	shift, and go to state 4
+
+	scalar	go to state 6
+	arylen	go to state 48
+	myattrterm	go to state 28
+	amper	go to state 27
+	subscripted	go to state 29
+	term	go to state 78
+	ary	go to state 12
+	termbinop	go to state 18
+	listop	go to state 44
+	hsh	go to state 19
+	termunop	go to state 20
+
+State 15:
+
+	lineseq -> lineseq decl .	(Rule 7)
+
+	$default	reduce using rule 7 (lineseq)
+
+State 16:
+
+	scalar -> '$' . indirob	(Rule 125)
+
+	'$'	shift, and go to state 16
+	'{'	shift, and go to state 51
+	WORD	shift, and go to state 60
+
+	scalar	go to state 59
+	indirob	go to state 79
+	block	go to state 62
+
+State 17:
+
+	cond -> IF . '(' remember mexpr ')' mblock else	(Rule 20)
+
+	'('	shift, and go to state 80
+
+State 18:
+
+	term -> termbinop .	(Rule 79)
+
+	$default	reduce using rule 79 (term)
+
+State 19:
+
+	term -> hsh .	(Rule 85)
+
+	$default	reduce using rule 85 (term)
+
+State 20:
+
+	term -> termunop .	(Rule 80)
+
+	$default	reduce using rule 80 (term)
+
+State 21:
+
+	lineseq -> lineseq line .	(Rule 8)
+
+	$default	reduce using rule 8 (lineseq)
+
+State 22:
+
+	term -> PMFUNC . '(' term ')'	(Rule 107)
+	term -> PMFUNC . '(' term ',' term ')'	(Rule 108)
+
+	'('	shift, and go to state 81
+
+State 23:
+
+	term -> NOTOP . argexpr	(Rule 98)
+
+	'!'	shift, and go to state 14
+	'$'	shift, and go to state 16
+	'%'	shift, and go to state 9
+	'&'	shift, and go to state 49
+	'('	shift, and go to state 30
+	'+'	shift, and go to state 35
+	'-'	shift, and go to state 5
+	'@'	shift, and go to state 7
+	DOLSHARP	shift, and go to state 37
+	FUNC	shift, and go to state 39
+	FUNC0	shift, and go to state 47
+	FUNC1	shift, and go to state 31
+	LOOPEX	shift, and go to state 42
+	LSTOP	shift, and go to state 11
+	MY	shift, and go to state 10
+	NOAMP	shift, and go to state 36
+	NOTOP	shift, and go to state 23
+	PMFUNC	shift, and go to state 22
+	UNIOP	shift, and go to state 50
+	UNIOPSUB	shift, and go to state 45
+	WORD	shift, and go to state 4
+
+	scalar	go to state 6
+	arylen	go to state 48
+	myattrterm	go to state 28
+	amper	go to state 27
+	subscripted	go to state 29
+	term	go to state 38
+	ary	go to state 12
+	termbinop	go to state 18
+	argexpr	go to state 82
+	listop	go to state 44
+	hsh	go to state 19
+	termunop	go to state 20
+
+State 24:
+
+	format -> FORMAT . startformsub formname block	(Rule 40)
+
+	$default	reduce using rule 45 (startformsub)
+
+	startformsub	go to state 83
+
+State 25:
+
+	line -> cond .	(Rule 9)
+
+	$default	reduce using rule 9 (line)
+
+State 26:
+
+	subrout -> SUB . startsub subname subbody	(Rule 43)
+
+	$default	reduce using rule 44 (startsub)
+
+	startsub	go to state 84
+
+State 27:
+
+	term -> amper .	(Rule 93)
+	term -> amper . '(' ')'	(Rule 94)
+	term -> amper . '(' expr ')'	(Rule 95)
+
+	'('	shift, and go to state 85
+
+	$default	reduce using rule 93 (term)
+
+State 28:
+
+	term -> myattrterm .	(Rule 81)
+
+	$default	reduce using rule 81 (term)
+
+State 29:
+
+	term -> subscripted .	(Rule 88)
+
+	$default	reduce using rule 88 (term)
+
+State 30:
+
+	term -> '(' . expr ')'	(Rule 82)
+	term -> '(' . ')'	(Rule 83)
+	term -> '(' . expr ')' '[' expr ']'	(Rule 89)
+	term -> '(' . ')' '[' expr ']'	(Rule 90)
+
+	'!'	shift, and go to state 14
+	'$'	shift, and go to state 16
+	'%'	shift, and go to state 9
+	'&'	shift, and go to state 49
+	'('	shift, and go to state 30
+	')'	shift, and go to state 87
+	'+'	shift, and go to state 35
+	'-'	shift, and go to state 5
+	'@'	shift, and go to state 7
+	DOLSHARP	shift, and go to state 37
+	FUNC	shift, and go to state 39
+	FUNC0	shift, and go to state 47
+	FUNC1	shift, and go to state 31
+	LOOPEX	shift, and go to state 42
+	LSTOP	shift, and go to state 11
+	MY	shift, and go to state 10
+	NOAMP	shift, and go to state 36
+	NOTOP	shift, and go to state 23
+	PMFUNC	shift, and go to state 22
+	UNIOP	shift, and go to state 50
+	UNIOPSUB	shift, and go to state 45
+	WORD	shift, and go to state 4
+
+	scalar	go to state 6
+	arylen	go to state 48
+	myattrterm	go to state 28
+	amper	go to state 27
+	subscripted	go to state 29
+	term	go to state 38
+	ary	go to state 12
+	expr	go to state 86
+	termbinop	go to state 18
+	argexpr	go to state 56
+	listop	go to state 44
+	hsh	go to state 19
+	termunop	go to state 20
+
+State 31:
+
+	term -> FUNC1 . '(' ')'	(Rule 105)
+	term -> FUNC1 . '(' expr ')'	(Rule 106)
+
+	'('	shift, and go to state 88
+
+State 32:
+
+	decl -> subrout .	(Rule 37)
+
+	$default	reduce using rule 37 (decl)
+
+State 33:
+
+	line -> sideff . ';'	(Rule 11)
+
+	';'	shift, and go to state 89
+
+State 34:
+
+	loop -> FOR . MY remember my_scalar '(' mexpr ')' mblock cont	(Rule 24)
+	loop -> FOR . scalar '(' remember mexpr ')' mblock cont	(Rule 25)
+	loop -> FOR . '(' remember mexpr ')' mblock cont	(Rule 26)
+	loop -> FOR . '(' remember mnexpr ';' mtexpr ';' mnexpr ')' mblock	(Rule 27)
+
+	'$'	shift, and go to state 16
+	'('	shift, and go to state 92
+	MY	shift, and go to state 91
+
+	scalar	go to state 90
+
+State 35:
+
+	termunop -> '+' . term	(Rule 75)
+
+	'!'	shift, and go to state 14
+	'$'	shift, and go to state 16
+	'%'	shift, and go to state 9
+	'&'	shift, and go to state 49
+	'('	shift, and go to state 30
+	'+'	shift, and go to state 35
+	'-'	shift, and go to state 5
+	'@'	shift, and go to state 7
+	DOLSHARP	shift, and go to state 37
+	FUNC	shift, and go to state 39
+	FUNC0	shift, and go to state 47
+	FUNC1	shift, and go to state 31
+	LOOPEX	shift, and go to state 42
+	LSTOP	shift, and go to state 11
+	MY	shift, and go to state 10
+	NOAMP	shift, and go to state 36
+	NOTOP	shift, and go to state 23
+	PMFUNC	shift, and go to state 22
+	UNIOP	shift, and go to state 50
+	UNIOPSUB	shift, and go to state 45
+	WORD	shift, and go to state 4
+
+	scalar	go to state 6
+	arylen	go to state 48
+	myattrterm	go to state 28
+	amper	go to state 27
+	subscripted	go to state 29
+	term	go to state 93
+	ary	go to state 12
+	termbinop	go to state 18
+	listop	go to state 44
+	hsh	go to state 19
+	termunop	go to state 20
+
+State 36:
+
+	term -> NOAMP . WORD listexpr	(Rule 96)
+
+	WORD	shift, and go to state 94
+
+State 37:
+
+	arylen -> DOLSHARP . indirob	(Rule 128)
+
+	'$'	shift, and go to state 16
+	'{'	shift, and go to state 51
+	WORD	shift, and go to state 60
+
+	scalar	go to state 59
+	indirob	go to state 95
+	block	go to state 62
+
+State 38:
+
+	argexpr -> term .	(Rule 58)
+	termbinop -> term . ASSIGNOP term	(Rule 64)
+	termbinop -> term . POWOP term	(Rule 65)
+	termbinop -> term . MULOP term	(Rule 66)
+	termbinop -> term . ADDOP term	(Rule 67)
+	termbinop -> term . RELOP term	(Rule 68)
+	termbinop -> term . EQOP term	(Rule 69)
+	termbinop -> term . DOTDOT term	(Rule 70)
+	termbinop -> term . ANDAND term	(Rule 71)
+	termbinop -> term . OROR term	(Rule 72)
+	termbinop -> term . MATCHOP term	(Rule 73)
+	termunop -> term . POSTINC	(Rule 77)
+	termunop -> term . POSTDEC	(Rule 78)
+
+	ADDOP	shift, and go to state 102
+	ANDAND	shift, and go to state 99
+	ASSIGNOP	shift, and go to state 96
+	DOTDOT	shift, and go to state 105
+	EQOP	shift, and go to state 100
+	MATCHOP	shift, and go to state 98
+	MULOP	shift, and go to state 106
+	OROR	shift, and go to state 107
+	POSTDEC	shift, and go to state 104
+	POSTINC	shift, and go to state 103
+	POWOP	shift, and go to state 97
+	RELOP	shift, and go to state 101
+
+	$default	reduce using rule 58 (argexpr)
+
+State 39:
+
+	listop -> FUNC . '(' indirob expr ')'	(Rule 60)
+	listop -> FUNC . '(' listexprcom ')'	(Rule 62)
+
+	'('	shift, and go to state 108
+
+State 40:
+
+	sideff -> expr .	(Rule 13)
+	sideff -> expr . IF expr	(Rule 14)
+	sideff -> expr . WHILE expr	(Rule 15)
+	sideff -> expr . FOR expr	(Rule 16)
+	expr -> expr . ANDOP expr	(Rule 53)
+	expr -> expr . OROP expr	(Rule 54)
+
+	ANDOP	shift, and go to state 109
+	FOR	shift, and go to state 112
+	IF	shift, and go to state 110
+	OROP	shift, and go to state 111
+	WHILE	shift, and go to state 113
+
+	$default	reduce using rule 13 (sideff)
+
+State 41:
+
+	decl -> use .	(Rule 39)
+
+	$default	reduce using rule 39 (decl)
+
+State 42:
+
+	term -> LOOPEX .	(Rule 97)
+
+	$default	reduce using rule 97 (term)
+
+State 43:
+
+	sideff -> error .	(Rule 12)
+
+	$default	reduce using rule 12 (sideff)
+
+State 44:
+
+	term -> listop .	(Rule 110)
+
+	$default	reduce using rule 110 (term)
+
+State 45:
+
+	term -> UNIOPSUB . term	(Rule 102)
+
+	'!'	shift, and go to state 14
+	'$'	shift, and go to state 16
+	'%'	shift, and go to state 9
+	'&'	shift, and go to state 49
+	'('	shift, and go to state 30
+	'+'	shift, and go to state 35
+	'-'	shift, and go to state 5
+	'@'	shift, and go to state 7
+	DOLSHARP	shift, and go to state 37
+	FUNC	shift, and go to state 39
+	FUNC0	shift, and go to state 47
+	FUNC1	shift, and go to state 31
+	LOOPEX	shift, and go to state 42
+	LSTOP	shift, and go to state 11
+	MY	shift, and go to state 10
+	NOAMP	shift, and go to state 36
+	NOTOP	shift, and go to state 23
+	PMFUNC	shift, and go to state 22
+	UNIOP	shift, and go to state 50
+	UNIOPSUB	shift, and go to state 45
+	WORD	shift, and go to state 4
+
+	scalar	go to state 6
+	arylen	go to state 48
+	myattrterm	go to state 28
+	amper	go to state 27
+	subscripted	go to state 29
+	term	go to state 114
+	ary	go to state 12
+	termbinop	go to state 18
+	listop	go to state 44
+	hsh	go to state 19
+	termunop	go to state 20
+
+State 46:
+
+	loop -> WHILE . '(' remember mtexpr ')' mblock cont	(Rule 23)
+
+	'('	shift, and go to state 115
+
+State 47:
+
+	term -> FUNC0 .	(Rule 103)
+	term -> FUNC0 . '(' ')'	(Rule 104)
+
+	'('	shift, and go to state 116
+
+	$default	reduce using rule 103 (term)
+
+State 48:
+
+	term -> arylen .	(Rule 87)
+
+	$default	reduce using rule 87 (term)
+
+State 49:
+
+	amper -> '&' . indirob	(Rule 124)
+
+	'$'	shift, and go to state 16
+	'{'	shift, and go to state 51
+	WORD	shift, and go to state 60
+
+	scalar	go to state 59
+	indirob	go to state 117
+	block	go to state 62
+
+State 50:
+
+	term -> UNIOP .	(Rule 99)
+	term -> UNIOP . block	(Rule 100)
+	term -> UNIOP . term	(Rule 101)
+
+	'!'	shift, and go to state 14
+	'$'	shift, and go to state 16
+	'%'	shift, and go to state 9
+	'&'	shift, and go to state 49
+	'('	shift, and go to state 30
+	'+'	shift, and go to state 35
+	'-'	shift, and go to state 5
+	'@'	shift, and go to state 7
+	'{'	shift, and go to state 51
+	DOLSHARP	shift, and go to state 37
+	FUNC	shift, and go to state 39
+	FUNC0	shift, and go to state 47
+	FUNC1	shift, and go to state 31
+	LOOPEX	shift, and go to state 42
+	LSTOP	shift, and go to state 11
+	MY	shift, and go to state 10
+	NOAMP	shift, and go to state 36
+	NOTOP	shift, and go to state 23
+	PMFUNC	shift, and go to state 22
+	UNIOP	shift, and go to state 50
+	UNIOPSUB	shift, and go to state 45
+	WORD	shift, and go to state 4
+
+	$default	reduce using rule 99 (term)
+
+	scalar	go to state 6
+	arylen	go to state 48
+	myattrterm	go to state 28
+	amper	go to state 27
+	subscripted	go to state 29
+	term	go to state 118
+	ary	go to state 12
+	termbinop	go to state 18
+	block	go to state 119
+	listop	go to state 44
+	hsh	go to state 19
+	termunop	go to state 20
+
+State 51:
+
+	block -> '{' . remember lineseq '}'	(Rule 2)
+
+	$default	reduce using rule 3 (remember)
+
+	remember	go to state 120
+
+State 52:
+
+	decl -> package .	(Rule 38)
+
+	$default	reduce using rule 38 (decl)
+
+State 53:
+
+	use -> USE . startsub @1-2 WORD WORD listexpr ';'	(Rule 52)
+
+	$default	reduce using rule 44 (startsub)
+
+	startsub	go to state 121
+
+State 54:
+
+	decl -> format .	(Rule 36)
+
+	$default	reduce using rule 36 (decl)
+
+State 55:
+
+	loop -> block . cont	(Rule 28)
+
+	CONTINUE	shift, and go to state 122
+
+	$default	reduce using rule 21 (cont)
+
+	cont	go to state 123
+
+State 56:
+
+	expr -> argexpr .	(Rule 55)
+	argexpr -> argexpr . ','	(Rule 56)
+	argexpr -> argexpr . ',' term	(Rule 57)
+
+	','	shift, and go to state 124
+
+	$default	reduce using rule 55 (expr)
+
+State 57:
+
+	termbinop -> term . ASSIGNOP term	(Rule 64)
+	termbinop -> term . POWOP term	(Rule 65)
+	termbinop -> term . MULOP term	(Rule 66)
+	termbinop -> term . ADDOP term	(Rule 67)
+	termbinop -> term . RELOP term	(Rule 68)
+	termbinop -> term . EQOP term	(Rule 69)
+	termbinop -> term . DOTDOT term	(Rule 70)
+	termbinop -> term . ANDAND term	(Rule 71)
+	termbinop -> term . OROR term	(Rule 72)
+	termbinop -> term . MATCHOP term	(Rule 73)
+	termunop -> '-' term .	(Rule 74)
+	termunop -> term . POSTINC	(Rule 77)
+	termunop -> term . POSTDEC	(Rule 78)
+
+	POSTDEC	shift, and go to state 104
+	POSTINC	shift, and go to state 103
+	POWOP	shift, and go to state 97
+
+	$default	reduce using rule 74 (termunop)
+
+State 58:
+
+	subscripted -> scalar '[' . expr ']'	(Rule 63)
+
+	'!'	shift, and go to state 14
+	'$'	shift, and go to state 16
+	'%'	shift, and go to state 9
+	'&'	shift, and go to state 49
+	'('	shift, and go to state 30
+	'+'	shift, and go to state 35
+	'-'	shift, and go to state 5
+	'@'	shift, and go to state 7
+	DOLSHARP	shift, and go to state 37
+	FUNC	shift, and go to state 39
+	FUNC0	shift, and go to state 47
+	FUNC1	shift, and go to state 31
+	LOOPEX	shift, and go to state 42
+	LSTOP	shift, and go to state 11
+	MY	shift, and go to state 10
+	NOAMP	shift, and go to state 36
+	NOTOP	shift, and go to state 23
+	PMFUNC	shift, and go to state 22
+	UNIOP	shift, and go to state 50
+	UNIOPSUB	shift, and go to state 45
+	WORD	shift, and go to state 4
+
+	scalar	go to state 6
+	arylen	go to state 48
+	myattrterm	go to state 28
+	amper	go to state 27
+	subscripted	go to state 29
+	term	go to state 38
+	ary	go to state 12
+	expr	go to state 125
+	termbinop	go to state 18
+	argexpr	go to state 56
+	listop	go to state 44
+	hsh	go to state 19
+	termunop	go to state 20
+
+State 59:
+
+	indirob -> scalar .	(Rule 130)
+
+	$default	reduce using rule 130 (indirob)
+
+State 60:
+
+	indirob -> WORD .	(Rule 129)
+
+	$default	reduce using rule 129 (indirob)
+
+State 61:
+
+	ary -> '@' indirob .	(Rule 126)
+
+	$default	reduce using rule 126 (ary)
+
+State 62:
+
+	indirob -> block .	(Rule 131)
+
+	$default	reduce using rule 131 (indirob)
+
+State 63:
+
+	package -> PACKAGE WORD . ';'	(Rule 49)
+
+	';'	shift, and go to state 126
+
+State 64:
+
+	package -> PACKAGE ';' .	(Rule 50)
+
+	$default	reduce using rule 50 (package)
+
+State 65:
+
+	hsh -> '%' indirob .	(Rule 127)
+
+	$default	reduce using rule 127 (hsh)
+
+State 66:
+
+	myterm -> scalar .	(Rule 115)
+
+	$default	reduce using rule 115 (myterm)
+
+State 67:
+
+	myterm -> ary .	(Rule 117)
+
+	$default	reduce using rule 117 (myterm)
+
+State 68:
+
+	myterm -> hsh .	(Rule 116)
+
+	$default	reduce using rule 116 (myterm)
+
+State 69:
+
+	myterm -> '(' . expr ')'	(Rule 113)
+	myterm -> '(' . ')'	(Rule 114)
+
+	'!'	shift, and go to state 14
+	'$'	shift, and go to state 16
+	'%'	shift, and go to state 9
+	'&'	shift, and go to state 49
+	'('	shift, and go to state 30
+	')'	shift, and go to state 128
+	'+'	shift, and go to state 35
+	'-'	shift, and go to state 5
+	'@'	shift, and go to state 7
+	DOLSHARP	shift, and go to state 37
+	FUNC	shift, and go to state 39
+	FUNC0	shift, and go to state 47
+	FUNC1	shift, and go to state 31
+	LOOPEX	shift, and go to state 42
+	LSTOP	shift, and go to state 11
+	MY	shift, and go to state 10
+	NOAMP	shift, and go to state 36
+	NOTOP	shift, and go to state 23
+	PMFUNC	shift, and go to state 22
+	UNIOP	shift, and go to state 50
+	UNIOPSUB	shift, and go to state 45
+	WORD	shift, and go to state 4
+
+	scalar	go to state 6
+	arylen	go to state 48
+	myattrterm	go to state 28
+	amper	go to state 27
+	subscripted	go to state 29
+	term	go to state 38
+	ary	go to state 12
+	expr	go to state 127
+	termbinop	go to state 18
+	argexpr	go to state 56
+	listop	go to state 44
+	hsh	go to state 19
+	termunop	go to state 20
+
+State 70:
+
+	myattrterm -> MY myterm . myattrlist	(Rule 111)
+	myattrterm -> MY myterm .	(Rule 112)
+
+	myattrlist	shift, and go to state 129
+
+	$default	reduce using rule 112 (myattrterm)
+
+State 71:
+
+	term -> WORD .	(Rule 109)
+	indirob -> WORD .	(Rule 129)
+
+	'!'	reduce using rule 129 (indirob)
+	'$'	reduce using rule 129 (indirob)
+	'%'	reduce using rule 129 (indirob)
+	'&'	reduce using rule 129 (indirob)
+	'('	reduce using rule 129 (indirob)
+	'+'	reduce using rule 129 (indirob)
+	'-'	reduce using rule 129 (indirob)
+	'@'	reduce using rule 129 (indirob)
+	DOLSHARP	reduce using rule 129 (indirob)
+	FUNC	reduce using rule 129 (indirob)
+	FUNC0	reduce using rule 129 (indirob)
+	FUNC1	reduce using rule 129 (indirob)
+	LOOPEX	reduce using rule 129 (indirob)
+	LSTOP	reduce using rule 129 (indirob)
+	MY	reduce using rule 129 (indirob)
+	NOAMP	reduce using rule 129 (indirob)
+	NOTOP	reduce using rule 129 (indirob)
+	PMFUNC	reduce using rule 129 (indirob)
+	UNIOP	reduce using rule 129 (indirob)
+	UNIOPSUB	reduce using rule 129 (indirob)
+	WORD	reduce using rule 129 (indirob)
+	$default	reduce using rule 109 (term)
+
+State 72:
+
+	subscripted -> scalar . '[' expr ']'	(Rule 63)
+	term -> scalar .	(Rule 84)
+	indirob -> scalar .	(Rule 130)
+
+	'['	shift, and go to state 58
+
+	'!'	reduce using rule 130 (indirob)
+	'$'	reduce using rule 130 (indirob)
+	'%'	reduce using rule 130 (indirob)
+	'&'	reduce using rule 130 (indirob)
+	'('	reduce using rule 130 (indirob)
+	'+'	reduce using rule 130 (indirob)
+	'-'	reduce using rule 130 (indirob)
+	'@'	reduce using rule 130 (indirob)
+	DOLSHARP	reduce using rule 130 (indirob)
+	FUNC	reduce using rule 130 (indirob)
+	FUNC0	reduce using rule 130 (indirob)
+	FUNC1	reduce using rule 130 (indirob)
+	LOOPEX	reduce using rule 130 (indirob)
+	LSTOP	reduce using rule 130 (indirob)
+	MY	reduce using rule 130 (indirob)
+	NOAMP	reduce using rule 130 (indirob)
+	NOTOP	reduce using rule 130 (indirob)
+	PMFUNC	reduce using rule 130 (indirob)
+	UNIOP	reduce using rule 130 (indirob)
+	UNIOPSUB	reduce using rule 130 (indirob)
+	WORD	reduce using rule 130 (indirob)
+	$default	reduce using rule 84 (term)
+
+State 73:
+
+	listop -> LSTOP indirob . argexpr	(Rule 59)
+
+	'!'	shift, and go to state 14
+	'$'	shift, and go to state 16
+	'%'	shift, and go to state 9
+	'&'	shift, and go to state 49
+	'('	shift, and go to state 30
+	'+'	shift, and go to state 35
+	'-'	shift, and go to state 5
+	'@'	shift, and go to state 7
+	DOLSHARP	shift, and go to state 37
+	FUNC	shift, and go to state 39
+	FUNC0	shift, and go to state 47
+	FUNC1	shift, and go to state 31
+	LOOPEX	shift, and go to state 42
+	LSTOP	shift, and go to state 11
+	MY	shift, and go to state 10
+	NOAMP	shift, and go to state 36
+	NOTOP	shift, and go to state 23
+	PMFUNC	shift, and go to state 22
+	UNIOP	shift, and go to state 50
+	UNIOPSUB	shift, and go to state 45
+	WORD	shift, and go to state 4
+
+	scalar	go to state 6
+	arylen	go to state 48
+	myattrterm	go to state 28
+	amper	go to state 27
+	subscripted	go to state 29
+	term	go to state 38
+	ary	go to state 12
+	termbinop	go to state 18
+	argexpr	go to state 130
+	listop	go to state 44
+	hsh	go to state 19
+	termunop	go to state 20
+
+State 74:
+
+	listop -> LSTOP listexpr .	(Rule 61)
+
+	$default	reduce using rule 61 (listop)
+
+State 75:
+
+	argexpr -> argexpr . ','	(Rule 56)
+	argexpr -> argexpr . ',' term	(Rule 57)
+	listexpr -> argexpr .	(Rule 119)
+
+	','	shift, and go to state 124
+
+	$default	reduce using rule 119 (listexpr)
+
+State 76:
+
+	term -> ary '[' . expr ']'	(Rule 91)
+
+	'!'	shift, and go to state 14
+	'$'	shift, and go to state 16
+	'%'	shift, and go to state 9
+	'&'	shift, and go to state 49
+	'('	shift, and go to state 30
+	'+'	shift, and go to state 35
+	'-'	shift, and go to state 5
+	'@'	shift, and go to state 7
+	DOLSHARP	shift, and go to state 37
+	FUNC	shift, and go to state 39
+	FUNC0	shift, and go to state 47
+	FUNC1	shift, and go to state 31
+	LOOPEX	shift, and go to state 42
+	LSTOP	shift, and go to state 11
+	MY	shift, and go to state 10
+	NOAMP	shift, and go to state 36
+	NOTOP	shift, and go to state 23
+	PMFUNC	shift, and go to state 22
+	UNIOP	shift, and go to state 50
+	UNIOPSUB	shift, and go to state 45
+	WORD	shift, and go to state 4
+
+	scalar	go to state 6
+	arylen	go to state 48
+	myattrterm	go to state 28
+	amper	go to state 27
+	subscripted	go to state 29
+	term	go to state 38
+	ary	go to state 12
+	expr	go to state 131
+	termbinop	go to state 18
+	argexpr	go to state 56
+	listop	go to state 44
+	hsh	go to state 19
+	termunop	go to state 20
+
+State 77:
+
+	term -> ary '{' . expr ';' '}'	(Rule 92)
+
+	'!'	shift, and go to state 14
+	'$'	shift, and go to state 16
+	'%'	shift, and go to state 9
+	'&'	shift, and go to state 49
+	'('	shift, and go to state 30
+	'+'	shift, and go to state 35
+	'-'	shift, and go to state 5
+	'@'	shift, and go to state 7
+	DOLSHARP	shift, and go to state 37
+	FUNC	shift, and go to state 39
+	FUNC0	shift, and go to state 47
+	FUNC1	shift, and go to state 31
+	LOOPEX	shift, and go to state 42
+	LSTOP	shift, and go to state 11
+	MY	shift, and go to state 10
+	NOAMP	shift, and go to state 36
+	NOTOP	shift, and go to state 23
+	PMFUNC	shift, and go to state 22
+	UNIOP	shift, and go to state 50
+	UNIOPSUB	shift, and go to state 45
+	WORD	shift, and go to state 4
+
+	scalar	go to state 6
+	arylen	go to state 48
+	myattrterm	go to state 28
+	amper	go to state 27
+	subscripted	go to state 29
+	term	go to state 38
+	ary	go to state 12
+	expr	go to state 132
+	termbinop	go to state 18
+	argexpr	go to state 56
+	listop	go to state 44
+	hsh	go to state 19
+	termunop	go to state 20
+
+State 78:
+
+	termbinop -> term . ASSIGNOP term	(Rule 64)
+	termbinop -> term . POWOP term	(Rule 65)
+	termbinop -> term . MULOP term	(Rule 66)
+	termbinop -> term . ADDOP term	(Rule 67)
+	termbinop -> term . RELOP term	(Rule 68)
+	termbinop -> term . EQOP term	(Rule 69)
+	termbinop -> term . DOTDOT term	(Rule 70)
+	termbinop -> term . ANDAND term	(Rule 71)
+	termbinop -> term . OROR term	(Rule 72)
+	termbinop -> term . MATCHOP term	(Rule 73)
+	termunop -> '!' term .	(Rule 76)
+	termunop -> term . POSTINC	(Rule 77)
+	termunop -> term . POSTDEC	(Rule 78)
+
+	POSTDEC	shift, and go to state 104
+	POSTINC	shift, and go to state 103
+	POWOP	shift, and go to state 97
+
+	$default	reduce using rule 76 (termunop)
+
+State 79:
+
+	scalar -> '$' indirob .	(Rule 125)
+
+	$default	reduce using rule 125 (scalar)
+
+State 80:
+
+	cond -> IF '(' . remember mexpr ')' mblock else	(Rule 20)
+
+	$default	reduce using rule 3 (remember)
+
+	remember	go to state 133
+
+State 81:
+
+	term -> PMFUNC '(' . term ')'	(Rule 107)
+	term -> PMFUNC '(' . term ',' term ')'	(Rule 108)
+
+	'!'	shift, and go to state 14
+	'$'	shift, and go to state 16
+	'%'	shift, and go to state 9
+	'&'	shift, and go to state 49
+	'('	shift, and go to state 30
+	'+'	shift, and go to state 35
+	'-'	shift, and go to state 5
+	'@'	shift, and go to state 7
+	DOLSHARP	shift, and go to state 37
+	FUNC	shift, and go to state 39
+	FUNC0	shift, and go to state 47
+	FUNC1	shift, and go to state 31
+	LOOPEX	shift, and go to state 42
+	LSTOP	shift, and go to state 11
+	MY	shift, and go to state 10
+	NOAMP	shift, and go to state 36
+	NOTOP	shift, and go to state 23
+	PMFUNC	shift, and go to state 22
+	UNIOP	shift, and go to state 50
+	UNIOPSUB	shift, and go to state 45
+	WORD	shift, and go to state 4
+
+	scalar	go to state 6
+	arylen	go to state 48
+	myattrterm	go to state 28
+	amper	go to state 27
+	subscripted	go to state 29
+	term	go to state 134
+	ary	go to state 12
+	termbinop	go to state 18
+	listop	go to state 44
+	hsh	go to state 19
+	termunop	go to state 20
+
+State 82:
+
+	argexpr -> argexpr . ','	(Rule 56)
+	argexpr -> argexpr . ',' term	(Rule 57)
+	term -> NOTOP argexpr .	(Rule 98)
+
+	','	shift, and go to state 124
+
+	$default	reduce using rule 98 (term)
+
+State 83:
+
+	format -> FORMAT startformsub . formname block	(Rule 40)
+
+	WORD	shift, and go to state 135
+
+	$default	reduce using rule 42 (formname)
+
+	formname	go to state 136
+
+State 84:
+
+	subrout -> SUB startsub . subname subbody	(Rule 43)
+
+	WORD	shift, and go to state 137
+
+	subname	go to state 138
+
+State 85:
+
+	term -> amper '(' . ')'	(Rule 94)
+	term -> amper '(' . expr ')'	(Rule 95)
+
+	'!'	shift, and go to state 14
+	'$'	shift, and go to state 16
+	'%'	shift, and go to state 9
+	'&'	shift, and go to state 49
+	'('	shift, and go to state 30
+	')'	shift, and go to state 140
+	'+'	shift, and go to state 35
+	'-'	shift, and go to state 5
+	'@'	shift, and go to state 7
+	DOLSHARP	shift, and go to state 37
+	FUNC	shift, and go to state 39
+	FUNC0	shift, and go to state 47
+	FUNC1	shift, and go to state 31
+	LOOPEX	shift, and go to state 42
+	LSTOP	shift, and go to state 11
+	MY	shift, and go to state 10
+	NOAMP	shift, and go to state 36
+	NOTOP	shift, and go to state 23
+	PMFUNC	shift, and go to state 22
+	UNIOP	shift, and go to state 50
+	UNIOPSUB	shift, and go to state 45
+	WORD	shift, and go to state 4
+
+	scalar	go to state 6
+	arylen	go to state 48
+	myattrterm	go to state 28
+	amper	go to state 27
+	subscripted	go to state 29
+	term	go to state 38
+	ary	go to state 12
+	expr	go to state 139
+	termbinop	go to state 18
+	argexpr	go to state 56
+	listop	go to state 44
+	hsh	go to state 19
+	termunop	go to state 20
+
+State 86:
+
+	expr -> expr . ANDOP expr	(Rule 53)
+	expr -> expr . OROP expr	(Rule 54)
+	term -> '(' expr . ')'	(Rule 82)
+	term -> '(' expr . ')' '[' expr ']'	(Rule 89)
+
+	')'	shift, and go to state 141
+	ANDOP	shift, and go to state 109
+	OROP	shift, and go to state 111
+
+State 87:
+
+	term -> '(' ')' .	(Rule 83)
+	term -> '(' ')' . '[' expr ']'	(Rule 90)
+
+	'['	shift, and go to state 142
+
+	$default	reduce using rule 83 (term)
+
+State 88:
+
+	term -> FUNC1 '(' . ')'	(Rule 105)
+	term -> FUNC1 '(' . expr ')'	(Rule 106)
+
+	'!'	shift, and go to state 14
+	'$'	shift, and go to state 16
+	'%'	shift, and go to state 9
+	'&'	shift, and go to state 49
+	'('	shift, and go to state 30
+	')'	shift, and go to state 144
+	'+'	shift, and go to state 35
+	'-'	shift, and go to state 5
+	'@'	shift, and go to state 7
+	DOLSHARP	shift, and go to state 37
+	FUNC	shift, and go to state 39
+	FUNC0	shift, and go to state 47
+	FUNC1	shift, and go to state 31
+	LOOPEX	shift, and go to state 42
+	LSTOP	shift, and go to state 11
+	MY	shift, and go to state 10
+	NOAMP	shift, and go to state 36
+	NOTOP	shift, and go to state 23
+	PMFUNC	shift, and go to state 22
+	UNIOP	shift, and go to state 50
+	UNIOPSUB	shift, and go to state 45
+	WORD	shift, and go to state 4
+
+	scalar	go to state 6
+	arylen	go to state 48
+	myattrterm	go to state 28
+	amper	go to state 27
+	subscripted	go to state 29
+	term	go to state 38
+	ary	go to state 12
+	expr	go to state 143
+	termbinop	go to state 18
+	argexpr	go to state 56
+	listop	go to state 44
+	hsh	go to state 19
+	termunop	go to state 20
+
+State 89:
+
+	line -> sideff ';' .	(Rule 11)
+
+	$default	reduce using rule 11 (line)
+
+State 90:
+
+	loop -> FOR scalar . '(' remember mexpr ')' mblock cont	(Rule 25)
+
+	'('	shift, and go to state 145
+
+State 91:
+
+	loop -> FOR MY . remember my_scalar '(' mexpr ')' mblock cont	(Rule 24)
+
+	$default	reduce using rule 3 (remember)
+
+	remember	go to state 146
+
+State 92:
+
+	loop -> FOR '(' . remember mexpr ')' mblock cont	(Rule 26)
+	loop -> FOR '(' . remember mnexpr ';' mtexpr ';' mnexpr ')' mblock	(Rule 27)
+
+	$default	reduce using rule 3 (remember)
+
+	remember	go to state 147
+
+State 93:
+
+	termbinop -> term . ASSIGNOP term	(Rule 64)
+	termbinop -> term . POWOP term	(Rule 65)
+	termbinop -> term . MULOP term	(Rule 66)
+	termbinop -> term . ADDOP term	(Rule 67)
+	termbinop -> term . RELOP term	(Rule 68)
+	termbinop -> term . EQOP term	(Rule 69)
+	termbinop -> term . DOTDOT term	(Rule 70)
+	termbinop -> term . ANDAND term	(Rule 71)
+	termbinop -> term . OROR term	(Rule 72)
+	termbinop -> term . MATCHOP term	(Rule 73)
+	termunop -> '+' term .	(Rule 75)
+	termunop -> term . POSTINC	(Rule 77)
+	termunop -> term . POSTDEC	(Rule 78)
+
+	POSTDEC	shift, and go to state 104
+	POSTINC	shift, and go to state 103
+	POWOP	shift, and go to state 97
+
+	$default	reduce using rule 75 (termunop)
+
+State 94:
+
+	term -> NOAMP WORD . listexpr	(Rule 96)
+
+	'!'	shift, and go to state 14
+	'$'	shift, and go to state 16
+	'%'	shift, and go to state 9
+	'&'	shift, and go to state 49
+	'('	shift, and go to state 30
+	'+'	shift, and go to state 35
+	'-'	shift, and go to state 5
+	'@'	shift, and go to state 7
+	DOLSHARP	shift, and go to state 37
+	FUNC	shift, and go to state 39
+	FUNC0	shift, and go to state 47
+	FUNC1	shift, and go to state 31
+	LOOPEX	shift, and go to state 42
+	LSTOP	shift, and go to state 11
+	MY	shift, and go to state 10
+	NOAMP	shift, and go to state 36
+	NOTOP	shift, and go to state 23
+	PMFUNC	shift, and go to state 22
+	UNIOP	shift, and go to state 50
+	UNIOPSUB	shift, and go to state 45
+	WORD	shift, and go to state 4
+
+	$default	reduce using rule 118 (listexpr)
+
+	scalar	go to state 6
+	arylen	go to state 48
+	myattrterm	go to state 28
+	amper	go to state 27
+	subscripted	go to state 29
+	term	go to state 38
+	ary	go to state 12
+	termbinop	go to state 18
+	argexpr	go to state 75
+	listop	go to state 44
+	listexpr	go to state 148
+	hsh	go to state 19
+	termunop	go to state 20
+
+State 95:
+
+	arylen -> DOLSHARP indirob .	(Rule 128)
+
+	$default	reduce using rule 128 (arylen)
+
+State 96:
+
+	termbinop -> term ASSIGNOP . term	(Rule 64)
+
+	'!'	shift, and go to state 14
+	'$'	shift, and go to state 16
+	'%'	shift, and go to state 9
+	'&'	shift, and go to state 49
+	'('	shift, and go to state 30
+	'+'	shift, and go to state 35
+	'-'	shift, and go to state 5
+	'@'	shift, and go to state 7
+	DOLSHARP	shift, and go to state 37
+	FUNC	shift, and go to state 39
+	FUNC0	shift, and go to state 47
+	FUNC1	shift, and go to state 31
+	LOOPEX	shift, and go to state 42
+	LSTOP	shift, and go to state 11
+	MY	shift, and go to state 10
+	NOAMP	shift, and go to state 36
+	NOTOP	shift, and go to state 23
+	PMFUNC	shift, and go to state 22
+	UNIOP	shift, and go to state 50
+	UNIOPSUB	shift, and go to state 45
+	WORD	shift, and go to state 4
+
+	scalar	go to state 6
+	arylen	go to state 48
+	myattrterm	go to state 28
+	amper	go to state 27
+	subscripted	go to state 29
+	term	go to state 149
+	ary	go to state 12
+	termbinop	go to state 18
+	listop	go to state 44
+	hsh	go to state 19
+	termunop	go to state 20
+
+State 97:
+
+	termbinop -> term POWOP . term	(Rule 65)
+
+	'!'	shift, and go to state 14
+	'$'	shift, and go to state 16
+	'%'	shift, and go to state 9
+	'&'	shift, and go to state 49
+	'('	shift, and go to state 30
+	'+'	shift, and go to state 35
+	'-'	shift, and go to state 5
+	'@'	shift, and go to state 7
+	DOLSHARP	shift, and go to state 37
+	FUNC	shift, and go to state 39
+	FUNC0	shift, and go to state 47
+	FUNC1	shift, and go to state 31
+	LOOPEX	shift, and go to state 42
+	LSTOP	shift, and go to state 11
+	MY	shift, and go to state 10
+	NOAMP	shift, and go to state 36
+	NOTOP	shift, and go to state 23
+	PMFUNC	shift, and go to state 22
+	UNIOP	shift, and go to state 50
+	UNIOPSUB	shift, and go to state 45
+	WORD	shift, and go to state 4
+
+	scalar	go to state 6
+	arylen	go to state 48
+	myattrterm	go to state 28
+	amper	go to state 27
+	subscripted	go to state 29
+	term	go to state 150
+	ary	go to state 12
+	termbinop	go to state 18
+	listop	go to state 44
+	hsh	go to state 19
+	termunop	go to state 20
+
+State 98:
+
+	termbinop -> term MATCHOP . term	(Rule 73)
+
+	'!'	shift, and go to state 14
+	'$'	shift, and go to state 16
+	'%'	shift, and go to state 9
+	'&'	shift, and go to state 49
+	'('	shift, and go to state 30
+	'+'	shift, and go to state 35
+	'-'	shift, and go to state 5
+	'@'	shift, and go to state 7
+	DOLSHARP	shift, and go to state 37
+	FUNC	shift, and go to state 39
+	FUNC0	shift, and go to state 47
+	FUNC1	shift, and go to state 31
+	LOOPEX	shift, and go to state 42
+	LSTOP	shift, and go to state 11
+	MY	shift, and go to state 10
+	NOAMP	shift, and go to state 36
+	NOTOP	shift, and go to state 23
+	PMFUNC	shift, and go to state 22
+	UNIOP	shift, and go to state 50
+	UNIOPSUB	shift, and go to state 45
+	WORD	shift, and go to state 4
+
+	scalar	go to state 6
+	arylen	go to state 48
+	myattrterm	go to state 28
+	amper	go to state 27
+	subscripted	go to state 29
+	term	go to state 151
+	ary	go to state 12
+	termbinop	go to state 18
+	listop	go to state 44
+	hsh	go to state 19
+	termunop	go to state 20
+
+State 99:
+
+	termbinop -> term ANDAND . term	(Rule 71)
+
+	'!'	shift, and go to state 14
+	'$'	shift, and go to state 16
+	'%'	shift, and go to state 9
+	'&'	shift, and go to state 49
+	'('	shift, and go to state 30
+	'+'	shift, and go to state 35
+	'-'	shift, and go to state 5
+	'@'	shift, and go to state 7
+	DOLSHARP	shift, and go to state 37
+	FUNC	shift, and go to state 39
+	FUNC0	shift, and go to state 47
+	FUNC1	shift, and go to state 31
+	LOOPEX	shift, and go to state 42
+	LSTOP	shift, and go to state 11
+	MY	shift, and go to state 10
+	NOAMP	shift, and go to state 36
+	NOTOP	shift, and go to state 23
+	PMFUNC	shift, and go to state 22
+	UNIOP	shift, and go to state 50
+	UNIOPSUB	shift, and go to state 45
+	WORD	shift, and go to state 4
+
+	scalar	go to state 6
+	arylen	go to state 48
+	myattrterm	go to state 28
+	amper	go to state 27
+	subscripted	go to state 29
+	term	go to state 152
+	ary	go to state 12
+	termbinop	go to state 18
+	listop	go to state 44
+	hsh	go to state 19
+	termunop	go to state 20
+
+State 100:
+
+	termbinop -> term EQOP . term	(Rule 69)
+
+	'!'	shift, and go to state 14
+	'$'	shift, and go to state 16
+	'%'	shift, and go to state 9
+	'&'	shift, and go to state 49
+	'('	shift, and go to state 30
+	'+'	shift, and go to state 35
+	'-'	shift, and go to state 5
+	'@'	shift, and go to state 7
+	DOLSHARP	shift, and go to state 37
+	FUNC	shift, and go to state 39
+	FUNC0	shift, and go to state 47
+	FUNC1	shift, and go to state 31
+	LOOPEX	shift, and go to state 42
+	LSTOP	shift, and go to state 11
+	MY	shift, and go to state 10
+	NOAMP	shift, and go to state 36
+	NOTOP	shift, and go to state 23
+	PMFUNC	shift, and go to state 22
+	UNIOP	shift, and go to state 50
+	UNIOPSUB	shift, and go to state 45
+	WORD	shift, and go to state 4
+
+	scalar	go to state 6
+	arylen	go to state 48
+	myattrterm	go to state 28
+	amper	go to state 27
+	subscripted	go to state 29
+	term	go to state 153
+	ary	go to state 12
+	termbinop	go to state 18
+	listop	go to state 44
+	hsh	go to state 19
+	termunop	go to state 20
+
+State 101:
+
+	termbinop -> term RELOP . term	(Rule 68)
+
+	'!'	shift, and go to state 14
+	'$'	shift, and go to state 16
+	'%'	shift, and go to state 9
+	'&'	shift, and go to state 49
+	'('	shift, and go to state 30
+	'+'	shift, and go to state 35
+	'-'	shift, and go to state 5
+	'@'	shift, and go to state 7
+	DOLSHARP	shift, and go to state 37
+	FUNC	shift, and go to state 39
+	FUNC0	shift, and go to state 47
+	FUNC1	shift, and go to state 31
+	LOOPEX	shift, and go to state 42
+	LSTOP	shift, and go to state 11
+	MY	shift, and go to state 10
+	NOAMP	shift, and go to state 36
+	NOTOP	shift, and go to state 23
+	PMFUNC	shift, and go to state 22
+	UNIOP	shift, and go to state 50
+	UNIOPSUB	shift, and go to state 45
+	WORD	shift, and go to state 4
+
+	scalar	go to state 6
+	arylen	go to state 48
+	myattrterm	go to state 28
+	amper	go to state 27
+	subscripted	go to state 29
+	term	go to state 154
+	ary	go to state 12
+	termbinop	go to state 18
+	listop	go to state 44
+	hsh	go to state 19
+	termunop	go to state 20
+
+State 102:
+
+	termbinop -> term ADDOP . term	(Rule 67)
+
+	'!'	shift, and go to state 14
+	'$'	shift, and go to state 16
+	'%'	shift, and go to state 9
+	'&'	shift, and go to state 49
+	'('	shift, and go to state 30
+	'+'	shift, and go to state 35
+	'-'	shift, and go to state 5
+	'@'	shift, and go to state 7
+	DOLSHARP	shift, and go to state 37
+	FUNC	shift, and go to state 39
+	FUNC0	shift, and go to state 47
+	FUNC1	shift, and go to state 31
+	LOOPEX	shift, and go to state 42
+	LSTOP	shift, and go to state 11
+	MY	shift, and go to state 10
+	NOAMP	shift, and go to state 36
+	NOTOP	shift, and go to state 23
+	PMFUNC	shift, and go to state 22
+	UNIOP	shift, and go to state 50
+	UNIOPSUB	shift, and go to state 45
+	WORD	shift, and go to state 4
+
+	scalar	go to state 6
+	arylen	go to state 48
+	myattrterm	go to state 28
+	amper	go to state 27
+	subscripted	go to state 29
+	term	go to state 155
+	ary	go to state 12
+	termbinop	go to state 18
+	listop	go to state 44
+	hsh	go to state 19
+	termunop	go to state 20
+
+State 103:
+
+	termunop -> term POSTINC .	(Rule 77)
+
+	$default	reduce using rule 77 (termunop)
+
+State 104:
+
+	termunop -> term POSTDEC .	(Rule 78)
+
+	$default	reduce using rule 78 (termunop)
+
+State 105:
+
+	termbinop -> term DOTDOT . term	(Rule 70)
+
+	'!'	shift, and go to state 14
+	'$'	shift, and go to state 16
+	'%'	shift, and go to state 9
+	'&'	shift, and go to state 49
+	'('	shift, and go to state 30
+	'+'	shift, and go to state 35
+	'-'	shift, and go to state 5
+	'@'	shift, and go to state 7
+	DOLSHARP	shift, and go to state 37
+	FUNC	shift, and go to state 39
+	FUNC0	shift, and go to state 47
+	FUNC1	shift, and go to state 31
+	LOOPEX	shift, and go to state 42
+	LSTOP	shift, and go to state 11
+	MY	shift, and go to state 10
+	NOAMP	shift, and go to state 36
+	NOTOP	shift, and go to state 23
+	PMFUNC	shift, and go to state 22
+	UNIOP	shift, and go to state 50
+	UNIOPSUB	shift, and go to state 45
+	WORD	shift, and go to state 4
+
+	scalar	go to state 6
+	arylen	go to state 48
+	myattrterm	go to state 28
+	amper	go to state 27
+	subscripted	go to state 29
+	term	go to state 156
+	ary	go to state 12
+	termbinop	go to state 18
+	listop	go to state 44
+	hsh	go to state 19
+	termunop	go to state 20
+
+State 106:
+
+	termbinop -> term MULOP . term	(Rule 66)
+
+	'!'	shift, and go to state 14
+	'$'	shift, and go to state 16
+	'%'	shift, and go to state 9
+	'&'	shift, and go to state 49
+	'('	shift, and go to state 30
+	'+'	shift, and go to state 35
+	'-'	shift, and go to state 5
+	'@'	shift, and go to state 7
+	DOLSHARP	shift, and go to state 37
+	FUNC	shift, and go to state 39
+	FUNC0	shift, and go to state 47
+	FUNC1	shift, and go to state 31
+	LOOPEX	shift, and go to state 42
+	LSTOP	shift, and go to state 11
+	MY	shift, and go to state 10
+	NOAMP	shift, and go to state 36
+	NOTOP	shift, and go to state 23
+	PMFUNC	shift, and go to state 22
+	UNIOP	shift, and go to state 50
+	UNIOPSUB	shift, and go to state 45
+	WORD	shift, and go to state 4
+
+	scalar	go to state 6
+	arylen	go to state 48
+	myattrterm	go to state 28
+	amper	go to state 27
+	subscripted	go to state 29
+	term	go to state 157
+	ary	go to state 12
+	termbinop	go to state 18
+	listop	go to state 44
+	hsh	go to state 19
+	termunop	go to state 20
+
+State 107:
+
+	termbinop -> term OROR . term	(Rule 72)
+
+	'!'	shift, and go to state 14
+	'$'	shift, and go to state 16
+	'%'	shift, and go to state 9
+	'&'	shift, and go to state 49
+	'('	shift, and go to state 30
+	'+'	shift, and go to state 35
+	'-'	shift, and go to state 5
+	'@'	shift, and go to state 7
+	DOLSHARP	shift, and go to state 37
+	FUNC	shift, and go to state 39
+	FUNC0	shift, and go to state 47
+	FUNC1	shift, and go to state 31
+	LOOPEX	shift, and go to state 42
+	LSTOP	shift, and go to state 11
+	MY	shift, and go to state 10
+	NOAMP	shift, and go to state 36
+	NOTOP	shift, and go to state 23
+	PMFUNC	shift, and go to state 22
+	UNIOP	shift, and go to state 50
+	UNIOPSUB	shift, and go to state 45
+	WORD	shift, and go to state 4
+
+	scalar	go to state 6
+	arylen	go to state 48
+	myattrterm	go to state 28
+	amper	go to state 27
+	subscripted	go to state 29
+	term	go to state 158
+	ary	go to state 12
+	termbinop	go to state 18
+	listop	go to state 44
+	hsh	go to state 19
+	termunop	go to state 20
+
+State 108:
+
+	listop -> FUNC '(' . indirob expr ')'	(Rule 60)
+	listop -> FUNC '(' . listexprcom ')'	(Rule 62)
+
+	'!'	shift, and go to state 14
+	'$'	shift, and go to state 16
+	'%'	shift, and go to state 9
+	'&'	shift, and go to state 49
+	'('	shift, and go to state 30
+	'+'	shift, and go to state 35
+	'-'	shift, and go to state 5
+	'@'	shift, and go to state 7
+	'{'	shift, and go to state 51
+	DOLSHARP	shift, and go to state 37
+	FUNC	shift, and go to state 39
+	FUNC0	shift, and go to state 47
+	FUNC1	shift, and go to state 31
+	LOOPEX	shift, and go to state 42
+	LSTOP	shift, and go to state 11
+	MY	shift, and go to state 10
+	NOAMP	shift, and go to state 36
+	NOTOP	shift, and go to state 23
+	PMFUNC	shift, and go to state 22
+	UNIOP	shift, and go to state 50
+	UNIOPSUB	shift, and go to state 45
+	WORD	shift, and go to state 71
+
+	$default	reduce using rule 120 (listexprcom)
+
+	scalar	go to state 72
+	indirob	go to state 159
+	term	go to state 38
+	ary	go to state 12
+	expr	go to state 161
+	termbinop	go to state 18
+	listexprcom	go to state 160
+	listop	go to state 44
+	hsh	go to state 19
+	termunop	go to state 20
+	arylen	go to state 48
+	amper	go to state 27
+	myattrterm	go to state 28
+	subscripted	go to state 29
+	block	go to state 62
+	argexpr	go to state 56
+
+State 109:
+
+	expr -> expr ANDOP . expr	(Rule 53)
+
+	'!'	shift, and go to state 14
+	'$'	shift, and go to state 16
+	'%'	shift, and go to state 9
+	'&'	shift, and go to state 49
+	'('	shift, and go to state 30
+	'+'	shift, and go to state 35
+	'-'	shift, and go to state 5
+	'@'	shift, and go to state 7
+	DOLSHARP	shift, and go to state 37
+	FUNC	shift, and go to state 39
+	FUNC0	shift, and go to state 47
+	FUNC1	shift, and go to state 31
+	LOOPEX	shift, and go to state 42
+	LSTOP	shift, and go to state 11
+	MY	shift, and go to state 10
+	NOAMP	shift, and go to state 36
+	NOTOP	shift, and go to state 23
+	PMFUNC	shift, and go to state 22
+	UNIOP	shift, and go to state 50
+	UNIOPSUB	shift, and go to state 45
+	WORD	shift, and go to state 4
+
+	scalar	go to state 6
+	arylen	go to state 48
+	myattrterm	go to state 28
+	amper	go to state 27
+	subscripted	go to state 29
+	term	go to state 38
+	ary	go to state 12
+	expr	go to state 162
+	termbinop	go to state 18
+	argexpr	go to state 56
+	listop	go to state 44
+	hsh	go to state 19
+	termunop	go to state 20
+
+State 110:
+
+	sideff -> expr IF . expr	(Rule 14)
+
+	'!'	shift, and go to state 14
+	'$'	shift, and go to state 16
+	'%'	shift, and go to state 9
+	'&'	shift, and go to state 49
+	'('	shift, and go to state 30
+	'+'	shift, and go to state 35
+	'-'	shift, and go to state 5
+	'@'	shift, and go to state 7
+	DOLSHARP	shift, and go to state 37
+	FUNC	shift, and go to state 39
+	FUNC0	shift, and go to state 47
+	FUNC1	shift, and go to state 31
+	LOOPEX	shift, and go to state 42
+	LSTOP	shift, and go to state 11
+	MY	shift, and go to state 10
+	NOAMP	shift, and go to state 36
+	NOTOP	shift, and go to state 23
+	PMFUNC	shift, and go to state 22
+	UNIOP	shift, and go to state 50
+	UNIOPSUB	shift, and go to state 45
+	WORD	shift, and go to state 4
+
+	scalar	go to state 6
+	arylen	go to state 48
+	myattrterm	go to state 28
+	amper	go to state 27
+	subscripted	go to state 29
+	term	go to state 38
+	ary	go to state 12
+	expr	go to state 163
+	termbinop	go to state 18
+	argexpr	go to state 56
+	listop	go to state 44
+	hsh	go to state 19
+	termunop	go to state 20
+
+State 111:
+
+	expr -> expr OROP . expr	(Rule 54)
+
+	'!'	shift, and go to state 14
+	'$'	shift, and go to state 16
+	'%'	shift, and go to state 9
+	'&'	shift, and go to state 49
+	'('	shift, and go to state 30
+	'+'	shift, and go to state 35
+	'-'	shift, and go to state 5
+	'@'	shift, and go to state 7
+	DOLSHARP	shift, and go to state 37
+	FUNC	shift, and go to state 39
+	FUNC0	shift, and go to state 47
+	FUNC1	shift, and go to state 31
+	LOOPEX	shift, and go to state 42
+	LSTOP	shift, and go to state 11
+	MY	shift, and go to state 10
+	NOAMP	shift, and go to state 36
+	NOTOP	shift, and go to state 23
+	PMFUNC	shift, and go to state 22
+	UNIOP	shift, and go to state 50
+	UNIOPSUB	shift, and go to state 45
+	WORD	shift, and go to state 4
+
+	scalar	go to state 6
+	arylen	go to state 48
+	myattrterm	go to state 28
+	amper	go to state 27
+	subscripted	go to state 29
+	term	go to state 38
+	ary	go to state 12
+	expr	go to state 164
+	termbinop	go to state 18
+	argexpr	go to state 56
+	listop	go to state 44
+	hsh	go to state 19
+	termunop	go to state 20
+
+State 112:
+
+	sideff -> expr FOR . expr	(Rule 16)
+
+	'!'	shift, and go to state 14
+	'$'	shift, and go to state 16
+	'%'	shift, and go to state 9
+	'&'	shift, and go to state 49
+	'('	shift, and go to state 30
+	'+'	shift, and go to state 35
+	'-'	shift, and go to state 5
+	'@'	shift, and go to state 7
+	DOLSHARP	shift, and go to state 37
+	FUNC	shift, and go to state 39
+	FUNC0	shift, and go to state 47
+	FUNC1	shift, and go to state 31
+	LOOPEX	shift, and go to state 42
+	LSTOP	shift, and go to state 11
+	MY	shift, and go to state 10
+	NOAMP	shift, and go to state 36
+	NOTOP	shift, and go to state 23
+	PMFUNC	shift, and go to state 22
+	UNIOP	shift, and go to state 50
+	UNIOPSUB	shift, and go to state 45
+	WORD	shift, and go to state 4
+
+	scalar	go to state 6
+	arylen	go to state 48
+	myattrterm	go to state 28
+	amper	go to state 27
+	subscripted	go to state 29
+	term	go to state 38
+	ary	go to state 12
+	expr	go to state 165
+	termbinop	go to state 18
+	argexpr	go to state 56
+	listop	go to state 44
+	hsh	go to state 19
+	termunop	go to state 20
+
+State 113:
+
+	sideff -> expr WHILE . expr	(Rule 15)
+
+	'!'	shift, and go to state 14
+	'$'	shift, and go to state 16
+	'%'	shift, and go to state 9
+	'&'	shift, and go to state 49
+	'('	shift, and go to state 30
+	'+'	shift, and go to state 35
+	'-'	shift, and go to state 5
+	'@'	shift, and go to state 7
+	DOLSHARP	shift, and go to state 37
+	FUNC	shift, and go to state 39
+	FUNC0	shift, and go to state 47
+	FUNC1	shift, and go to state 31
+	LOOPEX	shift, and go to state 42
+	LSTOP	shift, and go to state 11
+	MY	shift, and go to state 10
+	NOAMP	shift, and go to state 36
+	NOTOP	shift, and go to state 23
+	PMFUNC	shift, and go to state 22
+	UNIOP	shift, and go to state 50
+	UNIOPSUB	shift, and go to state 45
+	WORD	shift, and go to state 4
+
+	scalar	go to state 6
+	arylen	go to state 48
+	myattrterm	go to state 28
+	amper	go to state 27
+	subscripted	go to state 29
+	term	go to state 38
+	ary	go to state 12
+	expr	go to state 166
+	termbinop	go to state 18
+	argexpr	go to state 56
+	listop	go to state 44
+	hsh	go to state 19
+	termunop	go to state 20
+
+State 114:
+
+	termbinop -> term . ASSIGNOP term	(Rule 64)
+	termbinop -> term . POWOP term	(Rule 65)
+	termbinop -> term . MULOP term	(Rule 66)
+	termbinop -> term . ADDOP term	(Rule 67)
+	termbinop -> term . RELOP term	(Rule 68)
+	termbinop -> term . EQOP term	(Rule 69)
+	termbinop -> term . DOTDOT term	(Rule 70)
+	termbinop -> term . ANDAND term	(Rule 71)
+	termbinop -> term . OROR term	(Rule 72)
+	termbinop -> term . MATCHOP term	(Rule 73)
+	termunop -> term . POSTINC	(Rule 77)
+	termunop -> term . POSTDEC	(Rule 78)
+	term -> UNIOPSUB term .	(Rule 102)
+
+	ADDOP	shift, and go to state 102
+	MATCHOP	shift, and go to state 98
+	MULOP	shift, and go to state 106
+	POSTDEC	shift, and go to state 104
+	POSTINC	shift, and go to state 103
+	POWOP	shift, and go to state 97
+
+	$default	reduce using rule 102 (term)
+
+State 115:
+
+	loop -> WHILE '(' . remember mtexpr ')' mblock cont	(Rule 23)
+
+	$default	reduce using rule 3 (remember)
+
+	remember	go to state 167
+
+State 116:
+
+	term -> FUNC0 '(' . ')'	(Rule 104)
+
+	')'	shift, and go to state 168
+
+State 117:
+
+	amper -> '&' indirob .	(Rule 124)
+
+	$default	reduce using rule 124 (amper)
+
+State 118:
+
+	termbinop -> term . ASSIGNOP term	(Rule 64)
+	termbinop -> term . POWOP term	(Rule 65)
+	termbinop -> term . MULOP term	(Rule 66)
+	termbinop -> term . ADDOP term	(Rule 67)
+	termbinop -> term . RELOP term	(Rule 68)
+	termbinop -> term . EQOP term	(Rule 69)
+	termbinop -> term . DOTDOT term	(Rule 70)
+	termbinop -> term . ANDAND term	(Rule 71)
+	termbinop -> term . OROR term	(Rule 72)
+	termbinop -> term . MATCHOP term	(Rule 73)
+	termunop -> term . POSTINC	(Rule 77)
+	termunop -> term . POSTDEC	(Rule 78)
+	term -> UNIOP term .	(Rule 101)
+
+	ADDOP	shift, and go to state 102
+	MATCHOP	shift, and go to state 98
+	MULOP	shift, and go to state 106
+	POSTDEC	shift, and go to state 104
+	POSTINC	shift, and go to state 103
+	POWOP	shift, and go to state 97
+
+	$default	reduce using rule 101 (term)
+
+State 119:
+
+	term -> UNIOP block .	(Rule 100)
+
+	$default	reduce using rule 100 (term)
+
+State 120:
+
+	block -> '{' remember . lineseq '}'	(Rule 2)
+
+	$default	reduce using rule 6 (lineseq)
+
+	lineseq	go to state 169
+
+State 121:
+
+	use -> USE startsub . @1-2 WORD WORD listexpr ';'	(Rule 52)
+
+	$default	reduce using rule 51 (@1-2)
+
+	@1-2	go to state 170
+
+State 122:
+
+	cont -> CONTINUE . block	(Rule 22)
+
+	'{'	shift, and go to state 51
+
+	block	go to state 171
+
+State 123:
+
+	loop -> block cont .	(Rule 28)
+
+	$default	reduce using rule 28 (loop)
+
+State 124:
+
+	argexpr -> argexpr ',' .	(Rule 56)
+	argexpr -> argexpr ',' . term	(Rule 57)
+
+	'!'	shift, and go to state 14
+	'$'	shift, and go to state 16
+	'%'	shift, and go to state 9
+	'&'	shift, and go to state 49
+	'('	shift, and go to state 30
+	'+'	shift, and go to state 35
+	'-'	shift, and go to state 5
+	'@'	shift, and go to state 7
+	DOLSHARP	shift, and go to state 37
+	FUNC	shift, and go to state 39
+	FUNC0	shift, and go to state 47
+	FUNC1	shift, and go to state 31
+	LOOPEX	shift, and go to state 42
+	LSTOP	shift, and go to state 11
+	MY	shift, and go to state 10
+	NOAMP	shift, and go to state 36
+	NOTOP	shift, and go to state 23
+	PMFUNC	shift, and go to state 22
+	UNIOP	shift, and go to state 50
+	UNIOPSUB	shift, and go to state 45
+	WORD	shift, and go to state 4
+
+	$default	reduce using rule 56 (argexpr)
+
+	scalar	go to state 6
+	arylen	go to state 48
+	myattrterm	go to state 28
+	amper	go to state 27
+	subscripted	go to state 29
+	term	go to state 172
+	ary	go to state 12
+	termbinop	go to state 18
+	listop	go to state 44
+	hsh	go to state 19
+	termunop	go to state 20
+
+State 125:
+
+	expr -> expr . ANDOP expr	(Rule 53)
+	expr -> expr . OROP expr	(Rule 54)
+	subscripted -> scalar '[' expr . ']'	(Rule 63)
+
+	']'	shift, and go to state 173
+	ANDOP	shift, and go to state 109
+	OROP	shift, and go to state 111
+
+State 126:
+
+	package -> PACKAGE WORD ';' .	(Rule 49)
+
+	$default	reduce using rule 49 (package)
+
+State 127:
+
+	expr -> expr . ANDOP expr	(Rule 53)
+	expr -> expr . OROP expr	(Rule 54)
+	myterm -> '(' expr . ')'	(Rule 113)
+
+	')'	shift, and go to state 174
+	ANDOP	shift, and go to state 109
+	OROP	shift, and go to state 111
+
+State 128:
+
+	myterm -> '(' ')' .	(Rule 114)
+
+	$default	reduce using rule 114 (myterm)
+
+State 129:
+
+	myattrterm -> MY myterm myattrlist .	(Rule 111)
+
+	$default	reduce using rule 111 (myattrterm)
+
+State 130:
+
+	argexpr -> argexpr . ','	(Rule 56)
+	argexpr -> argexpr . ',' term	(Rule 57)
+	listop -> LSTOP indirob argexpr .	(Rule 59)
+
+	','	shift, and go to state 124
+
+	$default	reduce using rule 59 (listop)
+
+State 131:
+
+	expr -> expr . ANDOP expr	(Rule 53)
+	expr -> expr . OROP expr	(Rule 54)
+	term -> ary '[' expr . ']'	(Rule 91)
+
+	']'	shift, and go to state 175
+	ANDOP	shift, and go to state 109
+	OROP	shift, and go to state 111
+
+State 132:
+
+	expr -> expr . ANDOP expr	(Rule 53)
+	expr -> expr . OROP expr	(Rule 54)
+	term -> ary '{' expr . ';' '}'	(Rule 92)
+
+	';'	shift, and go to state 176
+	ANDOP	shift, and go to state 109
+	OROP	shift, and go to state 111
+
+State 133:
+
+	cond -> IF '(' remember . mexpr ')' mblock else	(Rule 20)
+
+	'!'	shift, and go to state 14
+	'$'	shift, and go to state 16
+	'%'	shift, and go to state 9
+	'&'	shift, and go to state 49
+	'('	shift, and go to state 30
+	'+'	shift, and go to state 35
+	'-'	shift, and go to state 5
+	'@'	shift, and go to state 7
+	DOLSHARP	shift, and go to state 37
+	FUNC	shift, and go to state 39
+	FUNC0	shift, and go to state 47
+	FUNC1	shift, and go to state 31
+	LOOPEX	shift, and go to state 42
+	LSTOP	shift, and go to state 11
+	MY	shift, and go to state 10
+	NOAMP	shift, and go to state 36
+	NOTOP	shift, and go to state 23
+	PMFUNC	shift, and go to state 22
+	UNIOP	shift, and go to state 50
+	UNIOPSUB	shift, and go to state 45
+	WORD	shift, and go to state 4
+
+	mexpr	go to state 177
+	scalar	go to state 6
+	arylen	go to state 48
+	myattrterm	go to state 28
+	amper	go to state 27
+	subscripted	go to state 29
+	term	go to state 38
+	ary	go to state 12
+	expr	go to state 178
+	termbinop	go to state 18
+	argexpr	go to state 56
+	listop	go to state 44
+	hsh	go to state 19
+	termunop	go to state 20
+
+State 134:
+
+	termbinop -> term . ASSIGNOP term	(Rule 64)
+	termbinop -> term . POWOP term	(Rule 65)
+	termbinop -> term . MULOP term	(Rule 66)
+	termbinop -> term . ADDOP term	(Rule 67)
+	termbinop -> term . RELOP term	(Rule 68)
+	termbinop -> term . EQOP term	(Rule 69)
+	termbinop -> term . DOTDOT term	(Rule 70)
+	termbinop -> term . ANDAND term	(Rule 71)
+	termbinop -> term . OROR term	(Rule 72)
+	termbinop -> term . MATCHOP term	(Rule 73)
+	termunop -> term . POSTINC	(Rule 77)
+	termunop -> term . POSTDEC	(Rule 78)
+	term -> PMFUNC '(' term . ')'	(Rule 107)
+	term -> PMFUNC '(' term . ',' term ')'	(Rule 108)
+
+	')'	shift, and go to state 180
+	','	shift, and go to state 179
+	ADDOP	shift, and go to state 102
+	ANDAND	shift, and go to state 99
+	ASSIGNOP	shift, and go to state 96
+	DOTDOT	shift, and go to state 105
+	EQOP	shift, and go to state 100
+	MATCHOP	shift, and go to state 98
+	MULOP	shift, and go to state 106
+	OROR	shift, and go to state 107
+	POSTDEC	shift, and go to state 104
+	POSTINC	shift, and go to state 103
+	POWOP	shift, and go to state 97
+	RELOP	shift, and go to state 101
+
+State 135:
+
+	formname -> WORD .	(Rule 41)
+
+	$default	reduce using rule 41 (formname)
+
+State 136:
+
+	format -> FORMAT startformsub formname . block	(Rule 40)
+
+	'{'	shift, and go to state 51
+
+	block	go to state 181
+
+State 137:
+
+	subname -> WORD .	(Rule 46)
+
+	$default	reduce using rule 46 (subname)
+
+State 138:
+
+	subrout -> SUB startsub subname . subbody	(Rule 43)
+
+	';'	shift, and go to state 183
+	'{'	shift, and go to state 51
+
+	block	go to state 184
+	subbody	go to state 182
+
+State 139:
+
+	expr -> expr . ANDOP expr	(Rule 53)
+	expr -> expr . OROP expr	(Rule 54)
+	term -> amper '(' expr . ')'	(Rule 95)
+
+	')'	shift, and go to state 185
+	ANDOP	shift, and go to state 109
+	OROP	shift, and go to state 111
+
+State 140:
+
+	term -> amper '(' ')' .	(Rule 94)
+
+	$default	reduce using rule 94 (term)
+
+State 141:
+
+	term -> '(' expr ')' .	(Rule 82)
+	term -> '(' expr ')' . '[' expr ']'	(Rule 89)
+
+	'['	shift, and go to state 186
+
+	$default	reduce using rule 82 (term)
+
+State 142:
+
+	term -> '(' ')' '[' . expr ']'	(Rule 90)
+
+	'!'	shift, and go to state 14
+	'$'	shift, and go to state 16
+	'%'	shift, and go to state 9
+	'&'	shift, and go to state 49
+	'('	shift, and go to state 30
+	'+'	shift, and go to state 35
+	'-'	shift, and go to state 5
+	'@'	shift, and go to state 7
+	DOLSHARP	shift, and go to state 37
+	FUNC	shift, and go to state 39
+	FUNC0	shift, and go to state 47
+	FUNC1	shift, and go to state 31
+	LOOPEX	shift, and go to state 42
+	LSTOP	shift, and go to state 11
+	MY	shift, and go to state 10
+	NOAMP	shift, and go to state 36
+	NOTOP	shift, and go to state 23
+	PMFUNC	shift, and go to state 22
+	UNIOP	shift, and go to state 50
+	UNIOPSUB	shift, and go to state 45
+	WORD	shift, and go to state 4
+
+	scalar	go to state 6
+	arylen	go to state 48
+	myattrterm	go to state 28
+	amper	go to state 27
+	subscripted	go to state 29
+	term	go to state 38
+	ary	go to state 12
+	expr	go to state 187
+	termbinop	go to state 18
+	argexpr	go to state 56
+	listop	go to state 44
+	hsh	go to state 19
+	termunop	go to state 20
+
+State 143:
+
+	expr -> expr . ANDOP expr	(Rule 53)
+	expr -> expr . OROP expr	(Rule 54)
+	term -> FUNC1 '(' expr . ')'	(Rule 106)
+
+	')'	shift, and go to state 188
+	ANDOP	shift, and go to state 109
+	OROP	shift, and go to state 111
+
+State 144:
+
+	term -> FUNC1 '(' ')' .	(Rule 105)
+
+	$default	reduce using rule 105 (term)
+
+State 145:
+
+	loop -> FOR scalar '(' . remember mexpr ')' mblock cont	(Rule 25)
+
+	$default	reduce using rule 3 (remember)
+
+	remember	go to state 189
+
+State 146:
+
+	loop -> FOR MY remember . my_scalar '(' mexpr ')' mblock cont	(Rule 24)
+
+	'$'	shift, and go to state 16
+
+	scalar	go to state 190
+	my_scalar	go to state 191
+
+State 147:
+
+	loop -> FOR '(' remember . mexpr ')' mblock cont	(Rule 26)
+	loop -> FOR '(' remember . mnexpr ';' mtexpr ';' mnexpr ')' mblock	(Rule 27)
+
+	'!'	shift, and go to state 14
+	'$'	shift, and go to state 16
+	'%'	shift, and go to state 9
+	'&'	shift, and go to state 49
+	'('	shift, and go to state 30
+	'+'	shift, and go to state 35
+	'-'	shift, and go to state 5
+	'@'	shift, and go to state 7
+	DOLSHARP	shift, and go to state 37
+	FUNC	shift, and go to state 39
+	FUNC0	shift, and go to state 47
+	FUNC1	shift, and go to state 31
+	LOOPEX	shift, and go to state 42
+	LSTOP	shift, and go to state 11
+	MY	shift, and go to state 10
+	NOAMP	shift, and go to state 36
+	NOTOP	shift, and go to state 23
+	PMFUNC	shift, and go to state 22
+	UNIOP	shift, and go to state 50
+	UNIOPSUB	shift, and go to state 45
+	WORD	shift, and go to state 4
+	error	shift, and go to state 43
+
+	';'	reduce using rule 29 (nexpr)
+
+	mexpr	go to state 192
+	scalar	go to state 6
+	sideff	go to state 194
+	term	go to state 38
+	ary	go to state 12
+	expr	go to state 195
+	nexpr	go to state 196
+	termbinop	go to state 18
+	listop	go to state 44
+	hsh	go to state 19
+	termunop	go to state 20
+	arylen	go to state 48
+	mnexpr	go to state 193
+	amper	go to state 27
+	myattrterm	go to state 28
+	subscripted	go to state 29
+	argexpr	go to state 56
+
+State 148:
+
+	term -> NOAMP WORD listexpr .	(Rule 96)
+
+	$default	reduce using rule 96 (term)
+
+State 149:
+
+	termbinop -> term . ASSIGNOP term	(Rule 64)
+	termbinop -> term ASSIGNOP term .	(Rule 64)
+	termbinop -> term . POWOP term	(Rule 65)
+	termbinop -> term . MULOP term	(Rule 66)
+	termbinop -> term . ADDOP term	(Rule 67)
+	termbinop -> term . RELOP term	(Rule 68)
+	termbinop -> term . EQOP term	(Rule 69)
+	termbinop -> term . DOTDOT term	(Rule 70)
+	termbinop -> term . ANDAND term	(Rule 71)
+	termbinop -> term . OROR term	(Rule 72)
+	termbinop -> term . MATCHOP term	(Rule 73)
+	termunop -> term . POSTINC	(Rule 77)
+	termunop -> term . POSTDEC	(Rule 78)
+
+	ADDOP	shift, and go to state 102
+	ANDAND	shift, and go to state 99
+	ASSIGNOP	shift, and go to state 96
+	DOTDOT	shift, and go to state 105
+	EQOP	shift, and go to state 100
+	MATCHOP	shift, and go to state 98
+	MULOP	shift, and go to state 106
+	OROR	shift, and go to state 107
+	POSTDEC	shift, and go to state 104
+	POSTINC	shift, and go to state 103
+	POWOP	shift, and go to state 97
+	RELOP	shift, and go to state 101
+
+	$default	reduce using rule 64 (termbinop)
+
+State 150:
+
+	termbinop -> term . ASSIGNOP term	(Rule 64)
+	termbinop -> term . POWOP term	(Rule 65)
+	termbinop -> term POWOP term .	(Rule 65)
+	termbinop -> term . MULOP term	(Rule 66)
+	termbinop -> term . ADDOP term	(Rule 67)
+	termbinop -> term . RELOP term	(Rule 68)
+	termbinop -> term . EQOP term	(Rule 69)
+	termbinop -> term . DOTDOT term	(Rule 70)
+	termbinop -> term . ANDAND term	(Rule 71)
+	termbinop -> term . OROR term	(Rule 72)
+	termbinop -> term . MATCHOP term	(Rule 73)
+	termunop -> term . POSTINC	(Rule 77)
+	termunop -> term . POSTDEC	(Rule 78)
+
+	POSTDEC	shift, and go to state 104
+	POSTINC	shift, and go to state 103
+	POWOP	shift, and go to state 97
+
+	$default	reduce using rule 65 (termbinop)
+
+State 151:
+
+	termbinop -> term . ASSIGNOP term	(Rule 64)
+	termbinop -> term . POWOP term	(Rule 65)
+	termbinop -> term . MULOP term	(Rule 66)
+	termbinop -> term . ADDOP term	(Rule 67)
+	termbinop -> term . RELOP term	(Rule 68)
+	termbinop -> term . EQOP term	(Rule 69)
+	termbinop -> term . DOTDOT term	(Rule 70)
+	termbinop -> term . ANDAND term	(Rule 71)
+	termbinop -> term . OROR term	(Rule 72)
+	termbinop -> term . MATCHOP term	(Rule 73)
+	termbinop -> term MATCHOP term .	(Rule 73)
+	termunop -> term . POSTINC	(Rule 77)
+	termunop -> term . POSTDEC	(Rule 78)
+
+	POSTDEC	shift, and go to state 104
+	POSTINC	shift, and go to state 103
+	POWOP	shift, and go to state 97
+
+	$default	reduce using rule 73 (termbinop)
+
+State 152:
+
+	termbinop -> term . ASSIGNOP term	(Rule 64)
+	termbinop -> term . POWOP term	(Rule 65)
+	termbinop -> term . MULOP term	(Rule 66)
+	termbinop -> term . ADDOP term	(Rule 67)
+	termbinop -> term . RELOP term	(Rule 68)
+	termbinop -> term . EQOP term	(Rule 69)
+	termbinop -> term . DOTDOT term	(Rule 70)
+	termbinop -> term . ANDAND term	(Rule 71)
+	termbinop -> term ANDAND term .	(Rule 71)
+	termbinop -> term . OROR term	(Rule 72)
+	termbinop -> term . MATCHOP term	(Rule 73)
+	termunop -> term . POSTINC	(Rule 77)
+	termunop -> term . POSTDEC	(Rule 78)
+
+	ADDOP	shift, and go to state 102
+	EQOP	shift, and go to state 100
+	MATCHOP	shift, and go to state 98
+	MULOP	shift, and go to state 106
+	POSTDEC	shift, and go to state 104
+	POSTINC	shift, and go to state 103
+	POWOP	shift, and go to state 97
+	RELOP	shift, and go to state 101
+
+	$default	reduce using rule 71 (termbinop)
+
+State 153:
+
+	termbinop -> term . ASSIGNOP term	(Rule 64)
+	termbinop -> term . POWOP term	(Rule 65)
+	termbinop -> term . MULOP term	(Rule 66)
+	termbinop -> term . ADDOP term	(Rule 67)
+	termbinop -> term . RELOP term	(Rule 68)
+	termbinop -> term . EQOP term	(Rule 69)
+	termbinop -> term EQOP term .	(Rule 69)
+	termbinop -> term . DOTDOT term	(Rule 70)
+	termbinop -> term . ANDAND term	(Rule 71)
+	termbinop -> term . OROR term	(Rule 72)
+	termbinop -> term . MATCHOP term	(Rule 73)
+	termunop -> term . POSTINC	(Rule 77)
+	termunop -> term . POSTDEC	(Rule 78)
+
+	ADDOP	shift, and go to state 102
+	MATCHOP	shift, and go to state 98
+	MULOP	shift, and go to state 106
+	POSTDEC	shift, and go to state 104
+	POSTINC	shift, and go to state 103
+	POWOP	shift, and go to state 97
+	RELOP	shift, and go to state 101
+
+	EQOP	error (nonassociative)
+
+	$default	reduce using rule 69 (termbinop)
+
+State 154:
+
+	termbinop -> term . ASSIGNOP term	(Rule 64)
+	termbinop -> term . POWOP term	(Rule 65)
+	termbinop -> term . MULOP term	(Rule 66)
+	termbinop -> term . ADDOP term	(Rule 67)
+	termbinop -> term . RELOP term	(Rule 68)
+	termbinop -> term RELOP term .	(Rule 68)
+	termbinop -> term . EQOP term	(Rule 69)
+	termbinop -> term . DOTDOT term	(Rule 70)
+	termbinop -> term . ANDAND term	(Rule 71)
+	termbinop -> term . OROR term	(Rule 72)
+	termbinop -> term . MATCHOP term	(Rule 73)
+	termunop -> term . POSTINC	(Rule 77)
+	termunop -> term . POSTDEC	(Rule 78)
+
+	ADDOP	shift, and go to state 102
+	MATCHOP	shift, and go to state 98
+	MULOP	shift, and go to state 106
+	POSTDEC	shift, and go to state 104
+	POSTINC	shift, and go to state 103
+	POWOP	shift, and go to state 97
+
+	RELOP	error (nonassociative)
+
+	$default	reduce using rule 68 (termbinop)
+
+State 155:
+
+	termbinop -> term . ASSIGNOP term	(Rule 64)
+	termbinop -> term . POWOP term	(Rule 65)
+	termbinop -> term . MULOP term	(Rule 66)
+	termbinop -> term . ADDOP term	(Rule 67)
+	termbinop -> term ADDOP term .	(Rule 67)
+	termbinop -> term . RELOP term	(Rule 68)
+	termbinop -> term . EQOP term	(Rule 69)
+	termbinop -> term . DOTDOT term	(Rule 70)
+	termbinop -> term . ANDAND term	(Rule 71)
+	termbinop -> term . OROR term	(Rule 72)
+	termbinop -> term . MATCHOP term	(Rule 73)
+	termunop -> term . POSTINC	(Rule 77)
+	termunop -> term . POSTDEC	(Rule 78)
+
+	MATCHOP	shift, and go to state 98
+	MULOP	shift, and go to state 106
+	POSTDEC	shift, and go to state 104
+	POSTINC	shift, and go to state 103
+	POWOP	shift, and go to state 97
+
+	$default	reduce using rule 67 (termbinop)
+
+State 156:
+
+	termbinop -> term . ASSIGNOP term	(Rule 64)
+	termbinop -> term . POWOP term	(Rule 65)
+	termbinop -> term . MULOP term	(Rule 66)
+	termbinop -> term . ADDOP term	(Rule 67)
+	termbinop -> term . RELOP term	(Rule 68)
+	termbinop -> term . EQOP term	(Rule 69)
+	termbinop -> term . DOTDOT term	(Rule 70)
+	termbinop -> term DOTDOT term .	(Rule 70)
+	termbinop -> term . ANDAND term	(Rule 71)
+	termbinop -> term . OROR term	(Rule 72)
+	termbinop -> term . MATCHOP term	(Rule 73)
+	termunop -> term . POSTINC	(Rule 77)
+	termunop -> term . POSTDEC	(Rule 78)
+
+	ADDOP	shift, and go to state 102
+	ANDAND	shift, and go to state 99
+	EQOP	shift, and go to state 100
+	MATCHOP	shift, and go to state 98
+	MULOP	shift, and go to state 106
+	OROR	shift, and go to state 107
+	POSTDEC	shift, and go to state 104
+	POSTINC	shift, and go to state 103
+	POWOP	shift, and go to state 97
+	RELOP	shift, and go to state 101
+
+	DOTDOT	error (nonassociative)
+
+	$default	reduce using rule 70 (termbinop)
+
+State 157:
+
+	termbinop -> term . ASSIGNOP term	(Rule 64)
+	termbinop -> term . POWOP term	(Rule 65)
+	termbinop -> term . MULOP term	(Rule 66)
+	termbinop -> term MULOP term .	(Rule 66)
+	termbinop -> term . ADDOP term	(Rule 67)
+	termbinop -> term . RELOP term	(Rule 68)
+	termbinop -> term . EQOP term	(Rule 69)
+	termbinop -> term . DOTDOT term	(Rule 70)
+	termbinop -> term . ANDAND term	(Rule 71)
+	termbinop -> term . OROR term	(Rule 72)
+	termbinop -> term . MATCHOP term	(Rule 73)
+	termunop -> term . POSTINC	(Rule 77)
+	termunop -> term . POSTDEC	(Rule 78)
+
+	MATCHOP	shift, and go to state 98
+	POSTDEC	shift, and go to state 104
+	POSTINC	shift, and go to state 103
+	POWOP	shift, and go to state 97
+
+	$default	reduce using rule 66 (termbinop)
+
+State 158:
+
+	termbinop -> term . ASSIGNOP term	(Rule 64)
+	termbinop -> term . POWOP term	(Rule 65)
+	termbinop -> term . MULOP term	(Rule 66)
+	termbinop -> term . ADDOP term	(Rule 67)
+	termbinop -> term . RELOP term	(Rule 68)
+	termbinop -> term . EQOP term	(Rule 69)
+	termbinop -> term . DOTDOT term	(Rule 70)
+	termbinop -> term . ANDAND term	(Rule 71)
+	termbinop -> term . OROR term	(Rule 72)
+	termbinop -> term OROR term .	(Rule 72)
+	termbinop -> term . MATCHOP term	(Rule 73)
+	termunop -> term . POSTINC	(Rule 77)
+	termunop -> term . POSTDEC	(Rule 78)
+
+	ADDOP	shift, and go to state 102
+	ANDAND	shift, and go to state 99
+	EQOP	shift, and go to state 100
+	MATCHOP	shift, and go to state 98
+	MULOP	shift, and go to state 106
+	POSTDEC	shift, and go to state 104
+	POSTINC	shift, and go to state 103
+	POWOP	shift, and go to state 97
+	RELOP	shift, and go to state 101
+
+	$default	reduce using rule 72 (termbinop)
+
+State 159:
+
+	listop -> FUNC '(' indirob . expr ')'	(Rule 60)
+
+	'!'	shift, and go to state 14
+	'$'	shift, and go to state 16
+	'%'	shift, and go to state 9
+	'&'	shift, and go to state 49
+	'('	shift, and go to state 30
+	'+'	shift, and go to state 35
+	'-'	shift, and go to state 5
+	'@'	shift, and go to state 7
+	DOLSHARP	shift, and go to state 37
+	FUNC	shift, and go to state 39
+	FUNC0	shift, and go to state 47
+	FUNC1	shift, and go to state 31
+	LOOPEX	shift, and go to state 42
+	LSTOP	shift, and go to state 11
+	MY	shift, and go to state 10
+	NOAMP	shift, and go to state 36
+	NOTOP	shift, and go to state 23
+	PMFUNC	shift, and go to state 22
+	UNIOP	shift, and go to state 50
+	UNIOPSUB	shift, and go to state 45
+	WORD	shift, and go to state 4
+
+	scalar	go to state 6
+	arylen	go to state 48
+	myattrterm	go to state 28
+	amper	go to state 27
+	subscripted	go to state 29
+	term	go to state 38
+	ary	go to state 12
+	expr	go to state 197
+	termbinop	go to state 18
+	argexpr	go to state 56
+	listop	go to state 44
+	hsh	go to state 19
+	termunop	go to state 20
+
+State 160:
+
+	listop -> FUNC '(' listexprcom . ')'	(Rule 62)
+
+	')'	shift, and go to state 198
+
+State 161:
+
+	expr -> expr . ANDOP expr	(Rule 53)
+	expr -> expr . OROP expr	(Rule 54)
+	listexprcom -> expr .	(Rule 121)
+	listexprcom -> expr . ','	(Rule 122)
+
+	','	shift, and go to state 199
+	ANDOP	shift, and go to state 109
+	OROP	shift, and go to state 111
+
+	$default	reduce using rule 121 (listexprcom)
+
+State 162:
+
+	expr -> expr . ANDOP expr	(Rule 53)
+	expr -> expr ANDOP expr .	(Rule 53)
+	expr -> expr . OROP expr	(Rule 54)
+
+	$default	reduce using rule 53 (expr)
+
+State 163:
+
+	sideff -> expr IF expr .	(Rule 14)
+	expr -> expr . ANDOP expr	(Rule 53)
+	expr -> expr . OROP expr	(Rule 54)
+
+	ANDOP	shift, and go to state 109
+	OROP	shift, and go to state 111
+
+	$default	reduce using rule 14 (sideff)
+
+State 164:
+
+	expr -> expr . ANDOP expr	(Rule 53)
+	expr -> expr . OROP expr	(Rule 54)
+	expr -> expr OROP expr .	(Rule 54)
+
+	ANDOP	shift, and go to state 109
+
+	$default	reduce using rule 54 (expr)
+
+State 165:
+
+	sideff -> expr FOR expr .	(Rule 16)
+	expr -> expr . ANDOP expr	(Rule 53)
+	expr -> expr . OROP expr	(Rule 54)
+
+	ANDOP	shift, and go to state 109
+	OROP	shift, and go to state 111
+
+	$default	reduce using rule 16 (sideff)
+
+State 166:
+
+	sideff -> expr WHILE expr .	(Rule 15)
+	expr -> expr . ANDOP expr	(Rule 53)
+	expr -> expr . OROP expr	(Rule 54)
+
+	ANDOP	shift, and go to state 109
+	OROP	shift, and go to state 111
+
+	$default	reduce using rule 15 (sideff)
+
+State 167:
+
+	loop -> WHILE '(' remember . mtexpr ')' mblock cont	(Rule 23)
+
+	'!'	shift, and go to state 14
+	'$'	shift, and go to state 16
+	'%'	shift, and go to state 9
+	'&'	shift, and go to state 49
+	'('	shift, and go to state 30
+	'+'	shift, and go to state 35
+	'-'	shift, and go to state 5
+	'@'	shift, and go to state 7
+	DOLSHARP	shift, and go to state 37
+	FUNC	shift, and go to state 39
+	FUNC0	shift, and go to state 47
+	FUNC1	shift, and go to state 31
+	LOOPEX	shift, and go to state 42
+	LSTOP	shift, and go to state 11
+	MY	shift, and go to state 10
+	NOAMP	shift, and go to state 36
+	NOTOP	shift, and go to state 23
+	PMFUNC	shift, and go to state 22
+	UNIOP	shift, and go to state 50
+	UNIOPSUB	shift, and go to state 45
+	WORD	shift, and go to state 4
+
+	$default	reduce using rule 31 (texpr)
+
+	scalar	go to state 6
+	arylen	go to state 48
+	myattrterm	go to state 28
+	amper	go to state 27
+	subscripted	go to state 29
+	term	go to state 38
+	ary	go to state 12
+	expr	go to state 202
+	texpr	go to state 200
+	termbinop	go to state 18
+	mtexpr	go to state 201
+	argexpr	go to state 56
+	listop	go to state 44
+	hsh	go to state 19
+	termunop	go to state 20
+
+State 168:
+
+	term -> FUNC0 '(' ')' .	(Rule 104)
+
+	$default	reduce using rule 104 (term)
+
+State 169:
+
+	block -> '{' remember lineseq . '}'	(Rule 2)
+	lineseq -> lineseq . decl	(Rule 7)
+	lineseq -> lineseq . line	(Rule 8)
+
+	'!'	shift, and go to state 14
+	'$'	shift, and go to state 16
+	'%'	shift, and go to state 9
+	'&'	shift, and go to state 49
+	'('	shift, and go to state 30
+	'+'	shift, and go to state 35
+	'-'	shift, and go to state 5
+	'@'	shift, and go to state 7
+	'{'	shift, and go to state 51
+	'}'	shift, and go to state 203
+	DOLSHARP	shift, and go to state 37
+	FOR	shift, and go to state 34
+	FORMAT	shift, and go to state 24
+	FUNC	shift, and go to state 39
+	FUNC0	shift, and go to state 47
+	FUNC1	shift, and go to state 31
+	IF	shift, and go to state 17
+	LOOPEX	shift, and go to state 42
+	LSTOP	shift, and go to state 11
+	MY	shift, and go to state 10
+	NOAMP	shift, and go to state 36
+	NOTOP	shift, and go to state 23
+	PACKAGE	shift, and go to state 8
+	PMFUNC	shift, and go to state 22
+	SUB	shift, and go to state 26
+	UNIOP	shift, and go to state 50
+	UNIOPSUB	shift, and go to state 45
+	USE	shift, and go to state 53
+	WHILE	shift, and go to state 46
+	WORD	shift, and go to state 4
+	error	shift, and go to state 43
+
+	scalar	go to state 6
+	subrout	go to state 32
+	sideff	go to state 33
+	term	go to state 38
+	loop	go to state 13
+	ary	go to state 12
+	expr	go to state 40
+	use	go to state 41
+	decl	go to state 15
+	termbinop	go to state 18
+	listop	go to state 44
+	hsh	go to state 19
+	termunop	go to state 20
+	line	go to state 21
+	cond	go to state 25
+	arylen	go to state 48
+	amper	go to state 27
+	myattrterm	go to state 28
+	subscripted	go to state 29
+	package	go to state 52
+	format	go to state 54
+	block	go to state 55
+	argexpr	go to state 56
+
+State 170:
+
+	use -> USE startsub @1-2 . WORD WORD listexpr ';'	(Rule 52)
+
+	WORD	shift, and go to state 204
+
+State 171:
+
+	cont -> CONTINUE block .	(Rule 22)
+
+	$default	reduce using rule 22 (cont)
+
+State 172:
+
+	argexpr -> argexpr ',' term .	(Rule 57)
+	termbinop -> term . ASSIGNOP term	(Rule 64)
+	termbinop -> term . POWOP term	(Rule 65)
+	termbinop -> term . MULOP term	(Rule 66)
+	termbinop -> term . ADDOP term	(Rule 67)
+	termbinop -> term . RELOP term	(Rule 68)
+	termbinop -> term . EQOP term	(Rule 69)
+	termbinop -> term . DOTDOT term	(Rule 70)
+	termbinop -> term . ANDAND term	(Rule 71)
+	termbinop -> term . OROR term	(Rule 72)
+	termbinop -> term . MATCHOP term	(Rule 73)
+	termunop -> term . POSTINC	(Rule 77)
+	termunop -> term . POSTDEC	(Rule 78)
+
+	ADDOP	shift, and go to state 102
+	ANDAND	shift, and go to state 99
+	ASSIGNOP	shift, and go to state 96
+	DOTDOT	shift, and go to state 105
+	EQOP	shift, and go to state 100
+	MATCHOP	shift, and go to state 98
+	MULOP	shift, and go to state 106
+	OROR	shift, and go to state 107
+	POSTDEC	shift, and go to state 104
+	POSTINC	shift, and go to state 103
+	POWOP	shift, and go to state 97
+	RELOP	shift, and go to state 101
+
+	$default	reduce using rule 57 (argexpr)
+
+State 173:
+
+	subscripted -> scalar '[' expr ']' .	(Rule 63)
+
+	$default	reduce using rule 63 (subscripted)
+
+State 174:
+
+	myterm -> '(' expr ')' .	(Rule 113)
+
+	$default	reduce using rule 113 (myterm)
+
+State 175:
+
+	term -> ary '[' expr ']' .	(Rule 91)
+
+	$default	reduce using rule 91 (term)
+
+State 176:
+
+	term -> ary '{' expr ';' . '}'	(Rule 92)
+
+	'}'	shift, and go to state 205
+
+State 177:
+
+	cond -> IF '(' remember mexpr . ')' mblock else	(Rule 20)
+
+	')'	shift, and go to state 206
+
+State 178:
+
+	mexpr -> expr .	(Rule 33)
+	expr -> expr . ANDOP expr	(Rule 53)
+	expr -> expr . OROP expr	(Rule 54)
+
+	ANDOP	shift, and go to state 109
+	OROP	shift, and go to state 111
+
+	$default	reduce using rule 33 (mexpr)
+
+State 179:
+
+	term -> PMFUNC '(' term ',' . term ')'	(Rule 108)
+
+	'!'	shift, and go to state 14
+	'$'	shift, and go to state 16
+	'%'	shift, and go to state 9
+	'&'	shift, and go to state 49
+	'('	shift, and go to state 30
+	'+'	shift, and go to state 35
+	'-'	shift, and go to state 5
+	'@'	shift, and go to state 7
+	DOLSHARP	shift, and go to state 37
+	FUNC	shift, and go to state 39
+	FUNC0	shift, and go to state 47
+	FUNC1	shift, and go to state 31
+	LOOPEX	shift, and go to state 42
+	LSTOP	shift, and go to state 11
+	MY	shift, and go to state 10
+	NOAMP	shift, and go to state 36
+	NOTOP	shift, and go to state 23
+	PMFUNC	shift, and go to state 22
+	UNIOP	shift, and go to state 50
+	UNIOPSUB	shift, and go to state 45
+	WORD	shift, and go to state 4
+
+	scalar	go to state 6
+	arylen	go to state 48
+	myattrterm	go to state 28
+	amper	go to state 27
+	subscripted	go to state 29
+	term	go to state 207
+	ary	go to state 12
+	termbinop	go to state 18
+	listop	go to state 44
+	hsh	go to state 19
+	termunop	go to state 20
+
+State 180:
+
+	term -> PMFUNC '(' term ')' .	(Rule 107)
+
+	$default	reduce using rule 107 (term)
+
+State 181:
+
+	format -> FORMAT startformsub formname block .	(Rule 40)
+
+	$default	reduce using rule 40 (format)
+
+State 182:
+
+	subrout -> SUB startsub subname subbody .	(Rule 43)
+
+	$default	reduce using rule 43 (subrout)
+
+State 183:
+
+	subbody -> ';' .	(Rule 48)
+
+	$default	reduce using rule 48 (subbody)
+
+State 184:
+
+	subbody -> block .	(Rule 47)
+
+	$default	reduce using rule 47 (subbody)
+
+State 185:
+
+	term -> amper '(' expr ')' .	(Rule 95)
+
+	$default	reduce using rule 95 (term)
+
+State 186:
+
+	term -> '(' expr ')' '[' . expr ']'	(Rule 89)
+
+	'!'	shift, and go to state 14
+	'$'	shift, and go to state 16
+	'%'	shift, and go to state 9
+	'&'	shift, and go to state 49
+	'('	shift, and go to state 30
+	'+'	shift, and go to state 35
+	'-'	shift, and go to state 5
+	'@'	shift, and go to state 7
+	DOLSHARP	shift, and go to state 37
+	FUNC	shift, and go to state 39
+	FUNC0	shift, and go to state 47
+	FUNC1	shift, and go to state 31
+	LOOPEX	shift, and go to state 42
+	LSTOP	shift, and go to state 11
+	MY	shift, and go to state 10
+	NOAMP	shift, and go to state 36
+	NOTOP	shift, and go to state 23
+	PMFUNC	shift, and go to state 22
+	UNIOP	shift, and go to state 50
+	UNIOPSUB	shift, and go to state 45
+	WORD	shift, and go to state 4
+
+	scalar	go to state 6
+	arylen	go to state 48
+	myattrterm	go to state 28
+	amper	go to state 27
+	subscripted	go to state 29
+	term	go to state 38
+	ary	go to state 12
+	expr	go to state 208
+	termbinop	go to state 18
+	argexpr	go to state 56
+	listop	go to state 44
+	hsh	go to state 19
+	termunop	go to state 20
+
+State 187:
+
+	expr -> expr . ANDOP expr	(Rule 53)
+	expr -> expr . OROP expr	(Rule 54)
+	term -> '(' ')' '[' expr . ']'	(Rule 90)
+
+	']'	shift, and go to state 209
+	ANDOP	shift, and go to state 109
+	OROP	shift, and go to state 111
+
+State 188:
+
+	term -> FUNC1 '(' expr ')' .	(Rule 106)
+
+	$default	reduce using rule 106 (term)
+
+State 189:
+
+	loop -> FOR scalar '(' remember . mexpr ')' mblock cont	(Rule 25)
+
+	'!'	shift, and go to state 14
+	'$'	shift, and go to state 16
+	'%'	shift, and go to state 9
+	'&'	shift, and go to state 49
+	'('	shift, and go to state 30
+	'+'	shift, and go to state 35
+	'-'	shift, and go to state 5
+	'@'	shift, and go to state 7
+	DOLSHARP	shift, and go to state 37
+	FUNC	shift, and go to state 39
+	FUNC0	shift, and go to state 47
+	FUNC1	shift, and go to state 31
+	LOOPEX	shift, and go to state 42
+	LSTOP	shift, and go to state 11
+	MY	shift, and go to state 10
+	NOAMP	shift, and go to state 36
+	NOTOP	shift, and go to state 23
+	PMFUNC	shift, and go to state 22
+	UNIOP	shift, and go to state 50
+	UNIOPSUB	shift, and go to state 45
+	WORD	shift, and go to state 4
+
+	mexpr	go to state 210
+	scalar	go to state 6
+	arylen	go to state 48
+	myattrterm	go to state 28
+	amper	go to state 27
+	subscripted	go to state 29
+	term	go to state 38
+	ary	go to state 12
+	expr	go to state 178
+	termbinop	go to state 18
+	argexpr	go to state 56
+	listop	go to state 44
+	hsh	go to state 19
+	termunop	go to state 20
+
+State 190:
+
+	my_scalar -> scalar .	(Rule 123)
+
+	$default	reduce using rule 123 (my_scalar)
+
+State 191:
+
+	loop -> FOR MY remember my_scalar . '(' mexpr ')' mblock cont	(Rule 24)
+
+	'('	shift, and go to state 211
+
+State 192:
+
+	loop -> FOR '(' remember mexpr . ')' mblock cont	(Rule 26)
+
+	')'	shift, and go to state 212
+
+State 193:
+
+	loop -> FOR '(' remember mnexpr . ';' mtexpr ';' mnexpr ')' mblock	(Rule 27)
+
+	';'	shift, and go to state 213
+
+State 194:
+
+	nexpr -> sideff .	(Rule 30)
+
+	$default	reduce using rule 30 (nexpr)
+
+State 195:
+
+	sideff -> expr .	(Rule 13)
+	sideff -> expr . IF expr	(Rule 14)
+	sideff -> expr . WHILE expr	(Rule 15)
+	sideff -> expr . FOR expr	(Rule 16)
+	mexpr -> expr .	(Rule 33)
+	expr -> expr . ANDOP expr	(Rule 53)
+	expr -> expr . OROP expr	(Rule 54)
+
+	ANDOP	shift, and go to state 109
+	FOR	shift, and go to state 112
+	IF	shift, and go to state 110
+	OROP	shift, and go to state 111
+	WHILE	shift, and go to state 113
+
+	')'	reduce using rule 33 (mexpr)
+	$default	reduce using rule 13 (sideff)
+
+State 196:
+
+	mnexpr -> nexpr .	(Rule 34)
+
+	$default	reduce using rule 34 (mnexpr)
+
+State 197:
+
+	expr -> expr . ANDOP expr	(Rule 53)
+	expr -> expr . OROP expr	(Rule 54)
+	listop -> FUNC '(' indirob expr . ')'	(Rule 60)
+
+	')'	shift, and go to state 214
+	ANDOP	shift, and go to state 109
+	OROP	shift, and go to state 111
+
+State 198:
+
+	listop -> FUNC '(' listexprcom ')' .	(Rule 62)
+
+	$default	reduce using rule 62 (listop)
+
+State 199:
+
+	listexprcom -> expr ',' .	(Rule 122)
+
+	$default	reduce using rule 122 (listexprcom)
+
+State 200:
+
+	mtexpr -> texpr .	(Rule 35)
+
+	$default	reduce using rule 35 (mtexpr)
+
+State 201:
+
+	loop -> WHILE '(' remember mtexpr . ')' mblock cont	(Rule 23)
+
+	')'	shift, and go to state 215
+
+State 202:
+
+	texpr -> expr .	(Rule 32)
+	expr -> expr . ANDOP expr	(Rule 53)
+	expr -> expr . OROP expr	(Rule 54)
+
+	ANDOP	shift, and go to state 109
+	OROP	shift, and go to state 111
+
+	$default	reduce using rule 32 (texpr)
+
+State 203:
+
+	block -> '{' remember lineseq '}' .	(Rule 2)
+
+	$default	reduce using rule 2 (block)
+
+State 204:
+
+	use -> USE startsub @1-2 WORD . WORD listexpr ';'	(Rule 52)
+
+	WORD	shift, and go to state 216
+
+State 205:
+
+	term -> ary '{' expr ';' '}' .	(Rule 92)
+
+	$default	reduce using rule 92 (term)
+
+State 206:
+
+	cond -> IF '(' remember mexpr ')' . mblock else	(Rule 20)
+
+	'{'	shift, and go to state 217
+
+	mblock	go to state 218
+
+State 207:
+
+	termbinop -> term . ASSIGNOP term	(Rule 64)
+	termbinop -> term . POWOP term	(Rule 65)
+	termbinop -> term . MULOP term	(Rule 66)
+	termbinop -> term . ADDOP term	(Rule 67)
+	termbinop -> term . RELOP term	(Rule 68)
+	termbinop -> term . EQOP term	(Rule 69)
+	termbinop -> term . DOTDOT term	(Rule 70)
+	termbinop -> term . ANDAND term	(Rule 71)
+	termbinop -> term . OROR term	(Rule 72)
+	termbinop -> term . MATCHOP term	(Rule 73)
+	termunop -> term . POSTINC	(Rule 77)
+	termunop -> term . POSTDEC	(Rule 78)
+	term -> PMFUNC '(' term ',' term . ')'	(Rule 108)
+
+	')'	shift, and go to state 219
+	ADDOP	shift, and go to state 102
+	ANDAND	shift, and go to state 99
+	ASSIGNOP	shift, and go to state 96
+	DOTDOT	shift, and go to state 105
+	EQOP	shift, and go to state 100
+	MATCHOP	shift, and go to state 98
+	MULOP	shift, and go to state 106
+	OROR	shift, and go to state 107
+	POSTDEC	shift, and go to state 104
+	POSTINC	shift, and go to state 103
+	POWOP	shift, and go to state 97
+	RELOP	shift, and go to state 101
+
+State 208:
+
+	expr -> expr . ANDOP expr	(Rule 53)
+	expr -> expr . OROP expr	(Rule 54)
+	term -> '(' expr ')' '[' expr . ']'	(Rule 89)
+
+	']'	shift, and go to state 220
+	ANDOP	shift, and go to state 109
+	OROP	shift, and go to state 111
+
+State 209:
+
+	term -> '(' ')' '[' expr ']' .	(Rule 90)
+
+	$default	reduce using rule 90 (term)
+
+State 210:
+
+	loop -> FOR scalar '(' remember mexpr . ')' mblock cont	(Rule 25)
+
+	')'	shift, and go to state 221
+
+State 211:
+
+	loop -> FOR MY remember my_scalar '(' . mexpr ')' mblock cont	(Rule 24)
+
+	'!'	shift, and go to state 14
+	'$'	shift, and go to state 16
+	'%'	shift, and go to state 9
+	'&'	shift, and go to state 49
+	'('	shift, and go to state 30
+	'+'	shift, and go to state 35
+	'-'	shift, and go to state 5
+	'@'	shift, and go to state 7
+	DOLSHARP	shift, and go to state 37
+	FUNC	shift, and go to state 39
+	FUNC0	shift, and go to state 47
+	FUNC1	shift, and go to state 31
+	LOOPEX	shift, and go to state 42
+	LSTOP	shift, and go to state 11
+	MY	shift, and go to state 10
+	NOAMP	shift, and go to state 36
+	NOTOP	shift, and go to state 23
+	PMFUNC	shift, and go to state 22
+	UNIOP	shift, and go to state 50
+	UNIOPSUB	shift, and go to state 45
+	WORD	shift, and go to state 4
+
+	mexpr	go to state 222
+	scalar	go to state 6
+	arylen	go to state 48
+	myattrterm	go to state 28
+	amper	go to state 27
+	subscripted	go to state 29
+	term	go to state 38
+	ary	go to state 12
+	expr	go to state 178
+	termbinop	go to state 18
+	argexpr	go to state 56
+	listop	go to state 44
+	hsh	go to state 19
+	termunop	go to state 20
+
+State 212:
+
+	loop -> FOR '(' remember mexpr ')' . mblock cont	(Rule 26)
+
+	'{'	shift, and go to state 217
+
+	mblock	go to state 223
+
+State 213:
+
+	loop -> FOR '(' remember mnexpr ';' . mtexpr ';' mnexpr ')' mblock	(Rule 27)
+
+	'!'	shift, and go to state 14
+	'$'	shift, and go to state 16
+	'%'	shift, and go to state 9
+	'&'	shift, and go to state 49
+	'('	shift, and go to state 30
+	'+'	shift, and go to state 35
+	'-'	shift, and go to state 5
+	'@'	shift, and go to state 7
+	DOLSHARP	shift, and go to state 37
+	FUNC	shift, and go to state 39
+	FUNC0	shift, and go to state 47
+	FUNC1	shift, and go to state 31
+	LOOPEX	shift, and go to state 42
+	LSTOP	shift, and go to state 11
+	MY	shift, and go to state 10
+	NOAMP	shift, and go to state 36
+	NOTOP	shift, and go to state 23
+	PMFUNC	shift, and go to state 22
+	UNIOP	shift, and go to state 50
+	UNIOPSUB	shift, and go to state 45
+	WORD	shift, and go to state 4
+
+	$default	reduce using rule 31 (texpr)
+
+	scalar	go to state 6
+	arylen	go to state 48
+	myattrterm	go to state 28
+	amper	go to state 27
+	subscripted	go to state 29
+	term	go to state 38
+	ary	go to state 12
+	expr	go to state 202
+	texpr	go to state 200
+	termbinop	go to state 18
+	mtexpr	go to state 224
+	argexpr	go to state 56
+	listop	go to state 44
+	hsh	go to state 19
+	termunop	go to state 20
+
+State 214:
+
+	listop -> FUNC '(' indirob expr ')' .	(Rule 60)
+
+	$default	reduce using rule 60 (listop)
+
+State 215:
+
+	loop -> WHILE '(' remember mtexpr ')' . mblock cont	(Rule 23)
+
+	'{'	shift, and go to state 217
+
+	mblock	go to state 225
+
+State 216:
+
+	use -> USE startsub @1-2 WORD WORD . listexpr ';'	(Rule 52)
+
+	'!'	shift, and go to state 14
+	'$'	shift, and go to state 16
+	'%'	shift, and go to state 9
+	'&'	shift, and go to state 49
+	'('	shift, and go to state 30
+	'+'	shift, and go to state 35
+	'-'	shift, and go to state 5
+	'@'	shift, and go to state 7
+	DOLSHARP	shift, and go to state 37
+	FUNC	shift, and go to state 39
+	FUNC0	shift, and go to state 47
+	FUNC1	shift, and go to state 31
+	LOOPEX	shift, and go to state 42
+	LSTOP	shift, and go to state 11
+	MY	shift, and go to state 10
+	NOAMP	shift, and go to state 36
+	NOTOP	shift, and go to state 23
+	PMFUNC	shift, and go to state 22
+	UNIOP	shift, and go to state 50
+	UNIOPSUB	shift, and go to state 45
+	WORD	shift, and go to state 4
+
+	$default	reduce using rule 118 (listexpr)
+
+	scalar	go to state 6
+	arylen	go to state 48
+	myattrterm	go to state 28
+	amper	go to state 27
+	subscripted	go to state 29
+	term	go to state 38
+	ary	go to state 12
+	termbinop	go to state 18
+	argexpr	go to state 75
+	listop	go to state 44
+	listexpr	go to state 226
+	hsh	go to state 19
+	termunop	go to state 20
+
+State 217:
+
+	mblock -> '{' . mremember lineseq '}'	(Rule 4)
+
+	$default	reduce using rule 5 (mremember)
+
+	mremember	go to state 227
+
+State 218:
+
+	cond -> IF '(' remember mexpr ')' mblock . else	(Rule 20)
+
+	ELSE	shift, and go to state 228
+	ELSIF	shift, and go to state 230
+
+	$default	reduce using rule 17 (else)
+
+	else	go to state 229
+
+State 219:
+
+	term -> PMFUNC '(' term ',' term ')' .	(Rule 108)
+
+	$default	reduce using rule 108 (term)
+
+State 220:
+
+	term -> '(' expr ')' '[' expr ']' .	(Rule 89)
+
+	$default	reduce using rule 89 (term)
+
+State 221:
+
+	loop -> FOR scalar '(' remember mexpr ')' . mblock cont	(Rule 25)
+
+	'{'	shift, and go to state 217
+
+	mblock	go to state 231
+
+State 222:
+
+	loop -> FOR MY remember my_scalar '(' mexpr . ')' mblock cont	(Rule 24)
+
+	')'	shift, and go to state 232
+
+State 223:
+
+	loop -> FOR '(' remember mexpr ')' mblock . cont	(Rule 26)
+
+	CONTINUE	shift, and go to state 122
+
+	$default	reduce using rule 21 (cont)
+
+	cont	go to state 233
+
+State 224:
+
+	loop -> FOR '(' remember mnexpr ';' mtexpr . ';' mnexpr ')' mblock	(Rule 27)
+
+	';'	shift, and go to state 234
+
+State 225:
+
+	loop -> WHILE '(' remember mtexpr ')' mblock . cont	(Rule 23)
+
+	CONTINUE	shift, and go to state 122
+
+	$default	reduce using rule 21 (cont)
+
+	cont	go to state 235
+
+State 226:
+
+	use -> USE startsub @1-2 WORD WORD listexpr . ';'	(Rule 52)
+
+	';'	shift, and go to state 236
+
+State 227:
+
+	mblock -> '{' mremember . lineseq '}'	(Rule 4)
+
+	$default	reduce using rule 6 (lineseq)
+
+	lineseq	go to state 237
+
+State 228:
+
+	else -> ELSE . mblock	(Rule 18)
+
+	'{'	shift, and go to state 217
+
+	mblock	go to state 238
+
+State 229:
+
+	cond -> IF '(' remember mexpr ')' mblock else .	(Rule 20)
+
+	$default	reduce using rule 20 (cond)
+
+State 230:
+
+	else -> ELSIF . '(' mexpr ')' mblock else	(Rule 19)
+
+	'('	shift, and go to state 239
+
+State 231:
+
+	loop -> FOR scalar '(' remember mexpr ')' mblock . cont	(Rule 25)
+
+	CONTINUE	shift, and go to state 122
+
+	$default	reduce using rule 21 (cont)
+
+	cont	go to state 240
+
+State 232:
+
+	loop -> FOR MY remember my_scalar '(' mexpr ')' . mblock cont	(Rule 24)
+
+	'{'	shift, and go to state 217
+
+	mblock	go to state 241
+
+State 233:
+
+	loop -> FOR '(' remember mexpr ')' mblock cont .	(Rule 26)
+
+	$default	reduce using rule 26 (loop)
+
+State 234:
+
+	loop -> FOR '(' remember mnexpr ';' mtexpr ';' . mnexpr ')' mblock	(Rule 27)
+
+	'!'	shift, and go to state 14
+	'$'	shift, and go to state 16
+	'%'	shift, and go to state 9
+	'&'	shift, and go to state 49
+	'('	shift, and go to state 30
+	'+'	shift, and go to state 35
+	'-'	shift, and go to state 5
+	'@'	shift, and go to state 7
+	DOLSHARP	shift, and go to state 37
+	FUNC	shift, and go to state 39
+	FUNC0	shift, and go to state 47
+	FUNC1	shift, and go to state 31
+	LOOPEX	shift, and go to state 42
+	LSTOP	shift, and go to state 11
+	MY	shift, and go to state 10
+	NOAMP	shift, and go to state 36
+	NOTOP	shift, and go to state 23
+	PMFUNC	shift, and go to state 22
+	UNIOP	shift, and go to state 50
+	UNIOPSUB	shift, and go to state 45
+	WORD	shift, and go to state 4
+	error	shift, and go to state 43
+
+	')'	reduce using rule 29 (nexpr)
+
+	scalar	go to state 6
+	sideff	go to state 194
+	term	go to state 38
+	ary	go to state 12
+	expr	go to state 40
+	nexpr	go to state 196
+	termbinop	go to state 18
+	listop	go to state 44
+	hsh	go to state 19
+	termunop	go to state 20
+	arylen	go to state 48
+	mnexpr	go to state 242
+	amper	go to state 27
+	myattrterm	go to state 28
+	subscripted	go to state 29
+	argexpr	go to state 56
+
+State 235:
+
+	loop -> WHILE '(' remember mtexpr ')' mblock cont .	(Rule 23)
+
+	$default	reduce using rule 23 (loop)
+
+State 236:
+
+	use -> USE startsub @1-2 WORD WORD listexpr ';' .	(Rule 52)
+
+	$default	reduce using rule 52 (use)
+
+State 237:
+
+	mblock -> '{' mremember lineseq . '}'	(Rule 4)
+	lineseq -> lineseq . decl	(Rule 7)
+	lineseq -> lineseq . line	(Rule 8)
+
+	'!'	shift, and go to state 14
+	'$'	shift, and go to state 16
+	'%'	shift, and go to state 9
+	'&'	shift, and go to state 49
+	'('	shift, and go to state 30
+	'+'	shift, and go to state 35
+	'-'	shift, and go to state 5
+	'@'	shift, and go to state 7
+	'{'	shift, and go to state 51
+	'}'	shift, and go to state 243
+	DOLSHARP	shift, and go to state 37
+	FOR	shift, and go to state 34
+	FORMAT	shift, and go to state 24
+	FUNC	shift, and go to state 39
+	FUNC0	shift, and go to state 47
+	FUNC1	shift, and go to state 31
+	IF	shift, and go to state 17
+	LOOPEX	shift, and go to state 42
+	LSTOP	shift, and go to state 11
+	MY	shift, and go to state 10
+	NOAMP	shift, and go to state 36
+	NOTOP	shift, and go to state 23
+	PACKAGE	shift, and go to state 8
+	PMFUNC	shift, and go to state 22
+	SUB	shift, and go to state 26
+	UNIOP	shift, and go to state 50
+	UNIOPSUB	shift, and go to state 45
+	USE	shift, and go to state 53
+	WHILE	shift, and go to state 46
+	WORD	shift, and go to state 4
+	error	shift, and go to state 43
+
+	scalar	go to state 6
+	subrout	go to state 32
+	sideff	go to state 33
+	term	go to state 38
+	loop	go to state 13
+	ary	go to state 12
+	expr	go to state 40
+	use	go to state 41
+	decl	go to state 15
+	termbinop	go to state 18
+	listop	go to state 44
+	hsh	go to state 19
+	termunop	go to state 20
+	line	go to state 21
+	cond	go to state 25
+	arylen	go to state 48
+	amper	go to state 27
+	myattrterm	go to state 28
+	subscripted	go to state 29
+	package	go to state 52
+	format	go to state 54
+	block	go to state 55
+	argexpr	go to state 56
+
+State 238:
+
+	else -> ELSE mblock .	(Rule 18)
+
+	$default	reduce using rule 18 (else)
+
+State 239:
+
+	else -> ELSIF '(' . mexpr ')' mblock else	(Rule 19)
+
+	'!'	shift, and go to state 14
+	'$'	shift, and go to state 16
+	'%'	shift, and go to state 9
+	'&'	shift, and go to state 49
+	'('	shift, and go to state 30
+	'+'	shift, and go to state 35
+	'-'	shift, and go to state 5
+	'@'	shift, and go to state 7
+	DOLSHARP	shift, and go to state 37
+	FUNC	shift, and go to state 39
+	FUNC0	shift, and go to state 47
+	FUNC1	shift, and go to state 31
+	LOOPEX	shift, and go to state 42
+	LSTOP	shift, and go to state 11
+	MY	shift, and go to state 10
+	NOAMP	shift, and go to state 36
+	NOTOP	shift, and go to state 23
+	PMFUNC	shift, and go to state 22
+	UNIOP	shift, and go to state 50
+	UNIOPSUB	shift, and go to state 45
+	WORD	shift, and go to state 4
+
+	mexpr	go to state 244
+	scalar	go to state 6
+	arylen	go to state 48
+	myattrterm	go to state 28
+	amper	go to state 27
+	subscripted	go to state 29
+	term	go to state 38
+	ary	go to state 12
+	expr	go to state 178
+	termbinop	go to state 18
+	argexpr	go to state 56
+	listop	go to state 44
+	hsh	go to state 19
+	termunop	go to state 20
+
+State 240:
+
+	loop -> FOR scalar '(' remember mexpr ')' mblock cont .	(Rule 25)
+
+	$default	reduce using rule 25 (loop)
+
+State 241:
+
+	loop -> FOR MY remember my_scalar '(' mexpr ')' mblock . cont	(Rule 24)
+
+	CONTINUE	shift, and go to state 122
+
+	$default	reduce using rule 21 (cont)
+
+	cont	go to state 245
+
+State 242:
+
+	loop -> FOR '(' remember mnexpr ';' mtexpr ';' mnexpr . ')' mblock	(Rule 27)
+
+	')'	shift, and go to state 246
+
+State 243:
+
+	mblock -> '{' mremember lineseq '}' .	(Rule 4)
+
+	$default	reduce using rule 4 (mblock)
+
+State 244:
+
+	else -> ELSIF '(' mexpr . ')' mblock else	(Rule 19)
+
+	')'	shift, and go to state 247
+
+State 245:
+
+	loop -> FOR MY remember my_scalar '(' mexpr ')' mblock cont .	(Rule 24)
+
+	$default	reduce using rule 24 (loop)
+
+State 246:
+
+	loop -> FOR '(' remember mnexpr ';' mtexpr ';' mnexpr ')' . mblock	(Rule 27)
+
+	'{'	shift, and go to state 217
+
+	mblock	go to state 248
+
+State 247:
+
+	else -> ELSIF '(' mexpr ')' . mblock else	(Rule 19)
+
+	'{'	shift, and go to state 217
+
+	mblock	go to state 249
+
+State 248:
+
+	loop -> FOR '(' remember mnexpr ';' mtexpr ';' mnexpr ')' mblock .	(Rule 27)
+
+	$default	reduce using rule 27 (loop)
+
+State 249:
+
+	else -> ELSIF '(' mexpr ')' mblock . else	(Rule 19)
+
+	ELSE	shift, and go to state 228
+	ELSIF	shift, and go to state 230
+
+	$default	reduce using rule 17 (else)
+
+	else	go to state 250
+
+State 250:
+
+	else -> ELSIF '(' mexpr ')' mblock else .	(Rule 19)
+
+	$default	reduce using rule 19 (else)
+
+
+Summary:
+--------
+Number of rules         : 132
+Number of terminals     : 57
+Number of non-terminals : 47
+Number of states        : 251
