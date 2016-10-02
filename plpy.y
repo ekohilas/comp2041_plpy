@@ -5,63 +5,68 @@
  * It relies on the lexer in toke.c to do the tokenizing.
  */
 
+/*  list of all required functions 
+    print, printf, chomp, split, join, exit, push, pop, shift, scalar
+    unshift, reverse, open, close, sort BLOCK LIST, keys, return, 
+    ^(\/[^/]*\/)|(s\/[^/]*\/[^/]*\/)
+*/
 %{
-//list of functions
-//print, chomp, split, join, exit?, push, pop, shift, 
-//unshift, reverse, open, printf, sort BLOCK LIST, keys, 
-    sub Lexer {
-        my @tokens = (
-            ("WORD", /w+/),
-            ("PMFUNC", /\/[^/]*\/|s\/[^/]*\/[^/]*\/|split/),
-            ("SUB", /sub/),
-            ("WHILE", /while/),
-            ("IF", /if/),
-            ("ELSE", /else/),
-            ("ELSIF", /elsif/),
-            ("CONTINUE", /next/),
-            ("FOR", /for|foreach/),
-            ("LOOPEX", /last/),
-            ("DOTDOT", /\.\.\.?/),
-            ("FUNC0", /print|printf|chomp|split|exit|pop|shift/),
-            ("FUNC1", /print|printf|chomp|split|exit|pop|shift|reverse|open|sort|keys/),
-            ("FUNC", /print|printf|chomp|split|join|push|unshift|open/),
-            ("UNIOP", /??/),
-            ("LSTOP", /??/),
-            ("RELOP", />|<|<=|>=/),
-            ("EQOP", /==/),
-            ("MULOP", /[*x]/),
-            ("ADDOP", /\+/),
-            ("DOLSHARP", /\$#/), 
-            ("MY", /my/),
-            ("OROP", /or/),
-            ("ANDOP", /and/), 
-            ("NOTOP", /not/),
-            (",", /,/),
-            ("ASSIGNOP", /=/),
-            ("OROR", /\|\|/),
-            ("ANDAND", /&&/),
-            ("EQOP", /==|eq/)
-            ("MATCHOP", /=~/),
-            ("!", /!/),
-            ("POWOP", /\*\*/),
-            ("POSTINC", /\+\+/),
-            ("POSTDEC", /--/),
-            (")", /\)/),
-            ("(", /\(/),
-            ("{", /\{/),
-            ("}", /\}/),
-            ("[", /\[/),
-            ("]", /\]/)
+sub Lexer {
+    my @tokens = (
+        ("WORD", /^w+/),
+        ("PMFUNC", /^split/),
+        ("SUB", /^sub/),
+        ("WHILE", /^while/),
+        ("IF", /^if/),
+        ("ELSE", /^else/),
+        ("ELSIF", /^elsif/),
+        ("CONTINUE", /^next/),
+        ("FOR", /^(for)|(foreach)/),
+        ("LOOPEX", /^last/),
+        ("DOTDOT", /^\.\.\.?/),
+        ("FUNC0", /^(print)|(printf)|(chomp)|(split)|(exit)|(pop)|(shift)/),
+        ("FUNC1", /^(print)|(printf)|(chomp)|(split)|(exit)|(pop)|(shift)|(reverse)|(open)|(sort)|(keys)/),
+        ("FUNC", /^(print)|(printf)|(chomp)|(split)|(join)|(push)|(unshift)|(open)/),
+        ("UNIOP", /^(exit)|(return)|(scalar)|(chomp)|(close)|(keys)|(pop)|(shift)|(values)/),
+        ("LSTOP", /^(print)|(chomp)|(join)|(push)|(pop)|(shift)|(scalar)|(unshift)|(reverse)|(open)|(sort)|(keys)),
+        ("RELOP", /^(>)|(<)|(<=)|(>=)|(lt)|(gt)|(le)|(ge)/),
+        ("EQOP", /^(==)|(!=)|(<=>)/),
+        ("MULOP", /^[/%x*]/),
+        ("ADDOP", /^[+-.]/),
+        ("DOLSHARP", /^\$#/), 
+        ("MY", /^my/),
+        ("OROP", /^or/),
+        ("ANDOP", /^and/), 
+        ("NOTOP", /^not/),
+        (",", /^,/),
+        ("ASSIGNOP", /^(=)|(\.=)/),
+        ("OROR", /^(\|\|)/),
+        ("ANDAND", /^&&/),
+        ("EQOP", /^(==)|(eq)/)
+        ("MATCHOP", /^=~/),
+        ("!", /^!/),
+        ("POWOP", /^\*\*/),
+        ("POSTINC", /^\+\+/),
+        ("POSTDEC", /^--/),
+        (")", /^\)/),
+        ("(", /^\(/),
+        ("{", /^\{/),
+        ("}", /^\}/),
+        ("[", /^\[/),
+        ("]", /^\]/),
+        ("&", /^\&/),
+        ("#", /^\#/),
+        ("%", /^\%/),
+        ("\$", /^\$/),
+    )
 
-        )
-
-    }
+}
 %}
 
 %token '{'
 
 %token WORD /*METHOD FUNCMETH THING*/ PMFUNC /*PRIVATEREF*/
-%token /*FUNC0SUB*/ UNIOPSUB /*LSTOPSUB*/
+/*%token FUNC0SUB UNIOPSUB LSTOPSUB*/
 /*%token LABEL*/
 %token FORMAT SUB /*ANONSUB*/ PACKAGE USE
 %token WHILE /*UNTIL*/ IF /*UNLESS*/ ELSE ELSIF CONTINUE FOR
@@ -87,7 +92,7 @@
 %left ANDAND
 %nonassoc EQOP
 %nonassoc RELOP
-%nonassoc UNIOP UNIOPSUB
+%nonassoc UNIOP /*UNIOPSUB*/
 /* %left SHIFTOP */
 %left ADDOP
 %left MULOP
@@ -718,9 +723,11 @@ term	:	termbinop
 			{/* $$ = newUNOP($1, 0, $2); */}
 	|	UNIOP term                           /* Unary op */
 			{/* $$ = newUNOP($1, 0, $2); */}
-	|	UNIOPSUB term                        /* Sub treated as unop */
+    /*
+	|	UNIOPSUB term                        /* Sub treated as unop //
 			{/* $$ = newUNOP(OP_ENTERSUB, OPf_STACKED,
-			    append_elem(OP_LIST, $2, scalar($1))); */}
+			    append_elem(OP_LIST, $2, scalar($1))); //}
+    */
 	|	FUNC0                                /* Nullary operator */
 			{/* $$ = newOP($1, 0); */}
 	|	FUNC0 '(' ')'
