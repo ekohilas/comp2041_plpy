@@ -3,7 +3,7 @@ use strict;
 use warnings;
 
 #Recompile parser if old
-if ((-M "plpy.pm" || "inf") > -M "plpy.yp"){
+if ((-M "plpy.pm" or "inf") > -M "plpy.yp"){
     system("yapp plpy.yp");
 }
 

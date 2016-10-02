@@ -14,67 +14,111 @@ use strict;
 @ISA= qw ( Parse::Yapp::Driver );
 use Parse::Yapp::Driver;
 
-#line 13 "plpy.yp"
+#line 7 "plpy.yp"
 
-sub findToken {
+sub getToken {
     my @tokens = (
-        ("WORD", /^w+/),
-        ("PMFUNC", /^split/),
-        ("SUB", /^sub/),
-        ("WHILE", /^while/),
-        ("IF", /^if/),
-        ("ELSE", /^else/),
-        ("ELSIF", /^elsif/),
-        ("CONTINUE", /^next/),
-        ("FOR", /^(for)|(foreach)/),
-        ("LOOPEX", /^last/),
-        ("DOTDOT", /^\.\.\.?/),
-        ("FUNC0", /^(print)|(printf)|(chomp)|(split)|(exit)|(pop)|(shift)/),
-        ("FUNC1", /^(print)|(printf)|(chomp)|(split)|(exit)|(pop)|(shift)|(reverse)|(open)|(sort)|(keys)/),
-        ("FUNC", /^(print)|(printf)|(chomp)|(split)|(join)|(push)|(unshift)|(open)/),
-        ("UNIOP", /^(exit)|(return)|(scalar)|(chomp)|(close)|(keys)|(pop)|(shift)|(values)/),
-        ("LSTOP", /^(print)|(chomp)|(join)|(push)|(pop)|(shift)|(scalar)|(unshift)|(reverse)|(open)|(sort)|(keys)/),
-        ("RELOP", /^(>)|(<)|(<=)|(>=)|(lt)|(gt)|(le)|(ge)/),
-        ("EQOP", /^(==)|(!=)|(<=>)/),
-        ("MULOP", /^[\/%*x]/),
-        ("ADDOP", /^[+-.]/),
-        ("DOLSHARP", /^\$#/), 
-        ("MY", /^my/),
-        ("OROP", /^or/),
-        ("ANDOP", /^and/), 
-        ("NOTOP", /^not/),
-        (",", /^,/),
-        ("ASSIGNOP", /^(=)|(\.=)/),
-        ("OROR", /^(\|\|)/),
-        ("ANDAND", /^&&/),
-        ("EQOP", /^(==)|(eq)/),
-        ("MATCHOP", /^=~/),
-        ("POWOP", /^\*\*/),
-        ("POSTINC", /^\+\+/),
-        ("POSTDEC", /^--/),
-        ("!", /^!/),
-        (")", /^\)/),
-        ("(", /^\(/),
-        ("{", /^\{/),
-        ("}", /^\}/),
-        ("[", /^\[/),
-        ("]", /^\]/),
-        ("&", /^\&/),
-        ("#", /^\#/),
-        ("%", /^\%/),
-        ("\$", /^\$/)
+        ["PMFUNC", qr/split/],
+        ["FUNC0", qr/(print)|(printf)|(chomp)|(split)|(exit)|(pop)|(shift)/],
+        ["FUNC1", qr/(print)|(printf)|(chomp)|(split)|(exit)|(pop)|(shift)|(reverse)|(open)|(sort)|(keys)/],
+        ["FUNC", qr/(print)|(printf)|(chomp)|(split)|(join)|(push)|(unshift)|(open)/],
+        ["UNIOP", qr/(exit)|(return)|(scalar)|(chomp)|(close)|(keys)|(pop)|(shift)|(values)/],
+        ["LSTOP", qr/(print)|(chomp)|(join)|(push)|(pop)|(shift)|(scalar)|(unshift)|(reverse)|(open)|(sort)|(keys)/],
+        ["FOR", qr/(for)|(foreach)/],
+        ["WHILE", qr/while/],
+        ["ELSIF", qr/elsif/],
+        ["ELSE", qr/else/],
+        ["CONTINUE", qr/next/],
+        ["LOOPEX", qr/last/],
+        ["ANDOP", qr/and/],
+        ["NOTOP", qr/not/],
+        ["SUB", qr/sub/],
+        ["IF", qr/if/],
+        ["MY", qr/my/],
+        ["OROP", qr/or/],
+        ["DOTDOT", qr/\.\.\.?/],
+        ["EQOP", qr/(==)|(!=)|(eq)/],
+        ["ANDAND", qr/&&/],
+        ["MATCHOP", qr/=~/],
+        ["POWOP", qr/\*\*/],
+        ["POSTINC", qr/\+\+/],
+        ["POSTDEC", qr/--/],
+        ["DOLSHARP", qr/\$#/],
+        ["ASSIGNOP", qr/(=)|(\.=)/],
+        ["ADDOP", qr/[+-.]/],
+        ["RELOP", qr/(>)|(<)|(<=)|(>=)|(lt)|(gt)|(le)|(ge)/],
+        ["MULOP", qr/[\/%*x]/],
+        ["OROR", qr/\|\|/],
+        [",", qr/,/],
+        ["!", qr/!/],
+        [")", qr/\)/],
+        ["(", qr/\(/],
+        ["{", qr/\{/],
+        ["}", qr/\}/],
+        ["[", qr/\[/],
+        ["]", qr/\]/],
+        ["&", qr/\&/],
+        ["@", qr/\@/],
+        ["%", qr/\%/],
+        ["\$", qr/\$/],
+        ["WORD", qr/\w+/a]
     );
-    
+
     $_[0]->YYData->{"DATA"} =~ s/^\s+//;
-    foreach my $item (@tokens){
-        my ($token, $re) = $item;
-        print "$token: $re\n";  
+    print $_[0]->YYData->{"DATA"}, "\n" ;
+    my @length;
+    #foreach my $item (@tokens){
+    #   my ($a, $b) = @$item;
+    #   print "$a, $b\n";
+#}
+    my $found = 0;
+    for (my $i; $i < scalar @tokens; $i++){
+        my $token = $tokens[$i][0];
+        my $re = $tokens[$i][1];
+        $length[$i] = 0;
+        if ($_[0]->YYData->{"DATA"} =~ /^${re}/){
+            $found = 1;
+            @length[$i] = length($&);
+            print "Found match $token: ($&), $length[$i]\n";
+        }
+        #print "$token, $re\n";
     }
+
+    if ($found){
+        my $maxpos = 0; 
+        my $maxval = 0;
+        for (my $i = 0; $i < scalar @tokens; $i++){
+            if ($length[$i] > $maxval){
+                $maxpos = $i;
+                $maxval = $length[$i];
+            }
+        }
+#for (my $i=scalar @length -1; $i >= 0; $i--){
+#   if ($length[$i] => $maxval){
+#        $maxpos = $i;
+#        $maxval = $length[$i];
+#    }
+#}
+        #print "$tokens[$maxpos][0]\n";
+        my $token = $tokens[$maxpos][0];
+        my $re = $tokens[$maxpos][1];
+        $_[0]->YYData->{"DATA"} =~ s/^${re}//;
+        print "$token : $&\n";
+        return ($token, $&);
+    }
+    else {
+        return ('', undef);
+    }
+
+
+
 
 }
 sub Lexer {
-    findToken($_[0]);
-
+    my ($type, $value) = getToken($_[0]);
+    print "removed token ($type, $value)\n";
+    return ($type, $value);
+    #return ('', undef);
 }
 
 
@@ -3251,72 +3295,72 @@ sub new {
 	[#Rule 1
 		 'prog', 1,
 sub
-#line 123 "plpy.yp"
-{# $$ = $1; newPROG(block_end($1,$2)); 
-			}
+#line 161 "plpy.yp"
+{# $$ = $1; newPROG(block_end($1,$2));
+            }
 	],
 	[#Rule 2
 		 'block', 4,
 sub
-#line 129 "plpy.yp"
+#line 167 "plpy.yp"
 {# /* if (PL_copline > (line_t)$1)
-			 #     PL_copline = (line_t)$1;
-			 # $$ = block_end($2, $3); */ 
+             #     PL_copline = (line_t)$1;
+             # $$ = block_end($2, $3); */
              }
 	],
 	[#Rule 3
 		 'remember', 0,
 sub
-#line 136 "plpy.yp"
-{# $$ = block_start(TRUE); 
-			}
+#line 174 "plpy.yp"
+{# $$ = block_start(TRUE);
+            }
 	],
 	[#Rule 4
 		 'mblock', 4,
 sub
-#line 141 "plpy.yp"
+#line 179 "plpy.yp"
 {#/* if (PL_copline > (line_t)$1)
-			 #     PL_copline = (line_t)$1;
-			 # $$ = block_end($2, $3); */
+             #     PL_copline = (line_t)$1;
+             # $$ = block_end($2, $3); */
              }
 	],
 	[#Rule 5
 		 'mremember', 0,
 sub
-#line 148 "plpy.yp"
-{# $$ = block_start(FALSE); 
-			}
+#line 186 "plpy.yp"
+{# $$ = block_start(FALSE);
+            }
 	],
 	[#Rule 6
 		 'lineseq', 0,
 sub
-#line 154 "plpy.yp"
+#line 192 "plpy.yp"
 {# $$ = Nullop;
-			 }
+             }
 	],
 	[#Rule 7
 		 'lineseq', 2,
 sub
-#line 157 "plpy.yp"
+#line 195 "plpy.yp"
 {# $$ = $1;
-			 }
+             }
 	],
 	[#Rule 8
 		 'lineseq', 2,
 sub
-#line 160 "plpy.yp"
+#line 198 "plpy.yp"
 {#/*   $$ = append_list(OP_LINESEQ,
-			#	(LISTOP*)$1, (LISTOP*)$2);
-			    #PL_pad_reset_pending = TRUE;
-			    #if ($1 && $2) PL_hints |= HINT_BLOCK_SCOPE;*/ 
+            #    (LISTOP*)$1, (LISTOP*)$2);
+                #PL_pad_reset_pending = TRUE;
+                #if ($1 && $2) PL_hints |= HINT_BLOCK_SCOPE;*/
                 }
 	],
 	[#Rule 9
 		 'line', 1,
 sub
-#line 169 "plpy.yp"
-{# $$ = newSTATEOP(0, $1, $2); 
-			}
+#line 207 "plpy.yp"
+{# $$ = newSTATEOP(0, $1, $2);
+            }
 	],
 	[#Rule 10
 		 'line', 1, undef
@@ -3324,164 +3368,164 @@ sub
 	[#Rule 11
 		 'line', 2,
 sub
-#line 184 "plpy.yp"
+#line 222 "plpy.yp"
 {#$$ = newSTATEOP(0, $1, $2);
-			#PL_expect = XSTATE; 
+            #PL_expect = XSTATE;
             }
 	],
 	[#Rule 12
 		 'sideff', 1,
 sub
-#line 191 "plpy.yp"
-{# $$ = Nullop; 
-			}
+#line 229 "plpy.yp"
+{# $$ = Nullop;
+            }
 	],
 	[#Rule 13
 		 'sideff', 1,
 sub
-#line 194 "plpy.yp"
-{# $$ = $1; 
-			}
+#line 232 "plpy.yp"
+{# $$ = $1;
+            }
 	],
 	[#Rule 14
 		 'sideff', 3,
 sub
-#line 197 "plpy.yp"
+#line 235 "plpy.yp"
 {#$$ = newLOGOP(OP_AND, 0, $3, $1);
             }
 	],
 	[#Rule 15
 		 'sideff', 3,
 sub
-#line 204 "plpy.yp"
-{# $$ = newLOOPOP(OPf_PARENS, 1, scalar($3), $1); 
-			}
+#line 242 "plpy.yp"
+{# $$ = newLOOPOP(OPf_PARENS, 1, scalar($3), $1);
+            }
 	],
 	[#Rule 16
 		 'sideff', 3,
 sub
-#line 209 "plpy.yp"
+#line 247 "plpy.yp"
 {#/* $$ = newFOROP(0, Nullch, (line_t)$2,
-			    #Nullop, $3, $1, Nullop); */
+                #Nullop, $3, $1, Nullop); */
                 }
 	],
 	[#Rule 17
 		 'else', 0,
 sub
-#line 216 "plpy.yp"
-{# $$ = Nullop; 
-			}
+#line 254 "plpy.yp"
+{# $$ = Nullop;
+            }
 	],
 	[#Rule 18
 		 'else', 2,
 sub
-#line 219 "plpy.yp"
-{# ($2)->op_flags |= OPf_PARENS; $$ = scope($2); 
-			}
+#line 257 "plpy.yp"
+{# ($2)->op_flags |= OPf_PARENS; $$ = scope($2);
+            }
 	],
 	[#Rule 19
 		 'else', 6,
 sub
-#line 222 "plpy.yp"
+#line 260 "plpy.yp"
 {#/* PL_copline = (line_t)$1;
-			    #$$ = newCONDOP(0, $3, scope($5), $6);
+                #$$ = newCONDOP(0, $3, scope($5), $6);
                 #PL_hints |= HINT_BLOCK_SCOPE; */
                 }
 	],
 	[#Rule 20
 		 'cond', 7,
 sub
-#line 230 "plpy.yp"
+#line 268 "plpy.yp"
 { #/*PL_copline = (line_t)$1;
-			  #  $$ = block_end($3,
-			#	   newCONDOP(0, $4, scope($6), $7)); */
+              #  $$ = block_end($3,
+            #       newCONDOP(0, $4, scope($6), $7)); */
             }
 	],
 	[#Rule 21
 		 'cont', 0,
 sub
-#line 244 "plpy.yp"
-{# $$ = Nullop; 
-			}
+#line 282 "plpy.yp"
+{# $$ = Nullop;
+            }
 	],
 	[#Rule 22
 		 'cont', 2,
 sub
-#line 247 "plpy.yp"
-{# $$ = scope($2); 
-			}
+#line 285 "plpy.yp"
+{# $$ = scope($2);
+            }
 	],
 	[#Rule 23
 		 'loop', 7,
 sub
-#line 253 "plpy.yp"
+#line 291 "plpy.yp"
 {#/* PL_copline = (line_t)$2;
-			#  $$ = block_end($4,
-			#   newSTATEOP(0, $1,
-			#j     newWHILEOP(0, 1, (LOOP*)Nullop,
-		    #			$2, $5, $7, $8))); */
+            #  $$ = block_end($4,
+            #   newSTATEOP(0, $1,
+            #j     newWHILEOP(0, 1, (LOOP*)Nullop,
+            #            $2, $5, $7, $8))); */
             }
 	],
 	[#Rule 24
 		 'loop', 9,
 sub
-#line 268 "plpy.yp"
+#line 306 "plpy.yp"
 {#/* $$ = block_end($4,
-			    #newFOROP(0, $1, (line_t)$2, $5, $7, $9, $10)); */
+                #newFOROP(0, $1, (line_t)$2, $5, $7, $9, $10)); */
             }
 	],
 	[#Rule 25
 		 'loop', 8,
 sub
-#line 272 "plpy.yp"
+#line 310 "plpy.yp"
 {#/* $$ = block_end($5,
-				#newFOROP(0, $1, (line_t)$2, mod($3, OP_ENTERLOOP),
-					  #$6, $8, $9)); */
+                #newFOROP(0, $1, (line_t)$2, mod($3, OP_ENTERLOOP),
+                      #$6, $8, $9)); */
                       }
 	],
 	[#Rule 26
 		 'loop', 7,
 sub
-#line 277 "plpy.yp"
+#line 315 "plpy.yp"
 {#/* $$ = block_end($4,
-				 #newFOROP(0, $1, (line_t)$2, Nullop, $5, $7, $8)); */
+                 #newFOROP(0, $1, (line_t)$2, Nullop, $5, $7, $8)); */
                  }
 	],
 	[#Rule 27
 		 'loop', 10,
 sub
-#line 282 "plpy.yp"
+#line 320 "plpy.yp"
 {#/* OP *forop;
-			 # PL_copline = (line_t)$2;
-			 # forop = newSTATEOP(0, $1,
-					    #newWHILEOP(0, 1, (LOOP*)Nullop,
-						#$2, scalar($7),
-						#j$11, $9));
-			  #if ($5) {
-				#forop = append_elem(OP_LINESEQ,
+             # PL_copline = (line_t)$2;
+             # forop = newSTATEOP(0, $1,
+                        #newWHILEOP(0, 1, (LOOP*)Nullop,
+                        #$2, scalar($7),
+                        #j$11, $9));
+              #if ($5) {
+                #forop = append_elem(OP_LINESEQ,
                                         #newSTATEOP(0, ($1?savepv($1):Nullch),
-						   #$5),
-					#forop);
-			  #}
+                           #$5),
+                    #forop);
+              #}
 
-			  #$$ = block_end($4, forop); */
+              #$$ = block_end($4, forop); */
               }
 	],
 	[#Rule 28
 		 'loop', 2,
 sub
-#line 298 "plpy.yp"
+#line 336 "plpy.yp"
 {#/* $$ = newSTATEOP(0, $1,
-				 #newWHILEOP(0, 1, (LOOP*)Nullop,
-					    #NOLINE, Nullop, $2, $3)); */
+                 #newWHILEOP(0, 1, (LOOP*)Nullop,
+                        #NOLINE, Nullop, $2, $3)); */
             }
 	],
 	[#Rule 29
 		 'nexpr', 0,
 sub
-#line 306 "plpy.yp"
-{# $$ = Nullop; 
-			}
+#line 344 "plpy.yp"
+{# $$ = Nullop;
+            }
 	],
 	[#Rule 30
 		 'nexpr', 1, undef
@@ -3489,9 +3533,9 @@ sub
 	[#Rule 31
 		 'texpr', 0,
 sub
-#line 313 "plpy.yp"
-{# (void)scan_num("1", &yylval); $$ = yylval.opval; 
-			}
+#line 351 "plpy.yp"
+{# (void)scan_num("1", &yylval); $$ = yylval.opval;
+            }
 	],
 	[#Rule 32
 		 'texpr', 1, undef
@@ -3499,131 +3543,131 @@ sub
 	[#Rule 33
 		 'mexpr', 1,
 sub
-#line 327 "plpy.yp"
-{# $$ = $1; intro_my(); 
-			}
+#line 365 "plpy.yp"
+{# $$ = $1; intro_my();
+            }
 	],
 	[#Rule 34
 		 'mnexpr', 1,
 sub
-#line 332 "plpy.yp"
-{# $$ = $1; intro_my(); 
-			}
+#line 370 "plpy.yp"
+{# $$ = $1; intro_my();
+            }
 	],
 	[#Rule 35
 		 'mtexpr', 1,
 sub
-#line 337 "plpy.yp"
-{# $$ = $1; intro_my(); 
-			}
+#line 375 "plpy.yp"
+{# $$ = $1; intro_my();
+            }
 	],
 	[#Rule 36
 		 'decl', 1,
 sub
-#line 356 "plpy.yp"
-{# $$ = 0; 
-			}
+#line 394 "plpy.yp"
+{# $$ = 0;
+            }
 	],
 	[#Rule 37
 		 'decl', 1,
 sub
-#line 359 "plpy.yp"
-{# $$ = 0; 
-			}
+#line 397 "plpy.yp"
+{# $$ = 0;
+            }
 	],
 	[#Rule 38
 		 'decl', 1,
 sub
-#line 366 "plpy.yp"
+#line 404 "plpy.yp"
 {# $$ = 0; */
-		    }
+            }
 	],
 	[#Rule 39
 		 'decl', 1,
 sub
-#line 369 "plpy.yp"
-{# $$ = 0; 
-			}
+#line 407 "plpy.yp"
+{# $$ = 0;
+            }
 	],
 	[#Rule 40
 		 'subrout', 4,
 sub
-#line 390 "plpy.yp"
-{# newATTRSUB($2, $3, $4, $5, $6); 
-		    }
+#line 428 "plpy.yp"
+{# newATTRSUB($2, $3, $4, $5, $6);
+            }
 	],
 	[#Rule 41
 		 'startsub', 0,
 sub
-#line 395 "plpy.yp"
-{# $$ = start_subparse(FALSE, 0); 
+#line 433 "plpy.yp"
+{# $$ = start_subparse(FALSE, 0);
             }
 	],
 	[#Rule 42
 		 'subname', 1,
 sub
-#line 411 "plpy.yp"
+#line 449 "plpy.yp"
 {#/*STRLEN n_a; char *name = SvPV(((SVOP*)$1)->op_sv,n_a);
-			  #if (strEQ(name, "BEGIN") || strEQ(name, "END")
-			      #|| strEQ(name, "INIT") || strEQ(name, "CHECK"))
-			      #CvSPECIAL_on(PL_compcv);
-			  #$$ = $1; */
+              #if (strEQ(name, "BEGIN") || strEQ(name, "END")
+                  #|| strEQ(name, "INIT") || strEQ(name, "CHECK"))
+                  #CvSPECIAL_on(PL_compcv);
+              #$$ = $1; */
               }
 	],
 	[#Rule 43
 		 'subbody', 1,
 sub
-#line 446 "plpy.yp"
+#line 484 "plpy.yp"
 {/* $$ = $1; */}
 	],
 	[#Rule 44
 		 'subbody', 1,
 sub
-#line 447 "plpy.yp"
-{# $$ = Nullop; PL_expect = XSTATE; 
+#line 485 "plpy.yp"
+{# $$ = Nullop; PL_expect = XSTATE;
             }
 	],
 	[#Rule 45
 		 'package', 3,
 sub
-#line 452 "plpy.yp"
+#line 490 "plpy.yp"
 {# package($2);
             }
 	],
 	[#Rule 46
 		 'package', 2,
 sub
-#line 455 "plpy.yp"
+#line 493 "plpy.yp"
 {# package(Nullop);
             }
 	],
 	[#Rule 47
 		 '@1-2', 0,
 sub
-#line 460 "plpy.yp"
-{# CvSPECIAL_on(PL_compcv); /* It's a BEGIN {} */ 
-			}
+#line 498 "plpy.yp"
+{# CvSPECIAL_on(PL_compcv); /* It's a BEGIN {} */
+            }
 	],
 	[#Rule 48
 		 'use', 7,
 sub
-#line 463 "plpy.yp"
-{# utilize($1, $2, $4, $5, $6); 
-			}
+#line 501 "plpy.yp"
+{# utilize($1, $2, $4, $5, $6);
+            }
 	],
 	[#Rule 49
 		 'expr', 3,
 sub
-#line 469 "plpy.yp"
-{# $$ = newLOGOP(OP_AND, 0, $1, $3); 
-			}
+#line 507 "plpy.yp"
+{# $$ = newLOGOP(OP_AND, 0, $1, $3);
+            }
 	],
 	[#Rule 50
 		 'expr', 3,
 sub
-#line 472 "plpy.yp"
-{# $$ = newLOGOP($2, 0, $1, $3); 
-			}
+#line 510 "plpy.yp"
+{# $$ = newLOGOP($2, 0, $1, $3);
+            }
 	],
 	[#Rule 51
 		 'expr', 1, undef
@@ -3631,16 +3675,16 @@ sub
 	[#Rule 52
 		 'argexpr', 2,
 sub
-#line 479 "plpy.yp"
-{# $$ = $1; 
-			}
+#line 517 "plpy.yp"
+{# $$ = $1;
+            }
 	],
 	[#Rule 53
 		 'argexpr', 3,
 sub
-#line 482 "plpy.yp"
-{# $$ = append_elem(OP_LIST, $1, $3); 
-			}
+#line 520 "plpy.yp"
+{# $$ = append_elem(OP_LIST, $1, $3);
+            }
 	],
 	[#Rule 54
 		 'argexpr', 1, undef
@@ -3648,147 +3692,147 @@ sub
 	[#Rule 55
 		 'listop', 3,
 sub
-#line 489 "plpy.yp"
+#line 527 "plpy.yp"
 {# $$ = convert($1, OPf_STACKED,
-				#prepend_elem(OP_LIST, newGVREF($1,$2), $3) );
+                #prepend_elem(OP_LIST, newGVREF($1,$2), $3) );
             }
 	],
 	[#Rule 56
 		 'listop', 5,
 sub
-#line 493 "plpy.yp"
+#line 531 "plpy.yp"
 {# $$ = convert($1, OPf_STACKED,
-				#prepend_elem(OP_LIST, newGVREF($1,$3), $4) );
+                #prepend_elem(OP_LIST, newGVREF($1,$3), $4) );
             }
 	],
 	[#Rule 57
 		 'listop', 2,
 sub
-#line 518 "plpy.yp"
-{# $$ = convert($1, 0, $2); 
-			}
+#line 556 "plpy.yp"
+{# $$ = convert($1, 0, $2);
+            }
 	],
 	[#Rule 58
 		 'listop', 4,
 sub
-#line 521 "plpy.yp"
-{# $$ = convert($1, 0, $3); 
-			}
+#line 559 "plpy.yp"
+{# $$ = convert($1, 0, $3);
+            }
 	],
 	[#Rule 59
 		 'subscripted', 4,
 sub
-#line 550 "plpy.yp"
-{# $$ = newBINOP(OP_AELEM, 0, oopsAV($1), scalar($3)); 
-			}
+#line 588 "plpy.yp"
+{# $$ = newBINOP(OP_AELEM, 0, oopsAV($1), scalar($3));
+            }
 	],
 	[#Rule 60
 		 'termbinop', 3,
 sub
-#line 594 "plpy.yp"
-{# $$ = newASSIGNOP(OPf_STACKED, $1, $2, $3); 
-			}
+#line 632 "plpy.yp"
+{# $$ = newASSIGNOP(OPf_STACKED, $1, $2, $3);
+            }
 	],
 	[#Rule 61
 		 'termbinop', 3,
 sub
-#line 597 "plpy.yp"
-{# $$ = newBINOP($2, 0, scalar($1), scalar($3)); 
-			}
+#line 635 "plpy.yp"
+{# $$ = newBINOP($2, 0, scalar($1), scalar($3));
+            }
 	],
 	[#Rule 62
 		 'termbinop', 3,
 sub
-#line 600 "plpy.yp"
+#line 638 "plpy.yp"
 {#   if ($2 != OP_REPEAT)
-			    #scalar($1);
-			   # $$ = newBINOP($2, 0, $1, scalar($3));
+                #scalar($1);
+               # $$ = newBINOP($2, 0, $1, scalar($3));
             }
 	],
 	[#Rule 63
 		 'termbinop', 3,
 sub
-#line 605 "plpy.yp"
-{# $$ = newBINOP($2, 0, scalar($1), scalar($3)); 
-			}
+#line 643 "plpy.yp"
+{# $$ = newBINOP($2, 0, scalar($1), scalar($3));
+            }
 	],
 	[#Rule 64
 		 'termbinop', 3,
 sub
-#line 612 "plpy.yp"
-{# $$ = newBINOP($2, 0, scalar($1), scalar($3)); 
-			}
+#line 650 "plpy.yp"
+{# $$ = newBINOP($2, 0, scalar($1), scalar($3));
+            }
 	],
 	[#Rule 65
 		 'termbinop', 3,
 sub
-#line 615 "plpy.yp"
-{# $$ = newBINOP($2, 0, scalar($1), scalar($3)); 
-			}
+#line 653 "plpy.yp"
+{# $$ = newBINOP($2, 0, scalar($1), scalar($3));
+            }
 	],
 	[#Rule 66
 		 'termbinop', 3,
 sub
-#line 624 "plpy.yp"
+#line 662 "plpy.yp"
 {# $$ = newRANGE($2, scalar($1), scalar($3));
-			}
+            }
 	],
 	[#Rule 67
 		 'termbinop', 3,
 sub
-#line 627 "plpy.yp"
-{# $$ = newLOGOP(OP_AND, 0, $1, $3); 
-			}
+#line 665 "plpy.yp"
+{# $$ = newLOGOP(OP_AND, 0, $1, $3);
+            }
 	],
 	[#Rule 68
 		 'termbinop', 3,
 sub
-#line 630 "plpy.yp"
-{# $$ = newLOGOP(OP_OR, 0, $1, $3); 
-			}
+#line 668 "plpy.yp"
+{# $$ = newLOGOP(OP_OR, 0, $1, $3);
+            }
 	],
 	[#Rule 69
 		 'termbinop', 3,
 sub
-#line 633 "plpy.yp"
-{# $$ = bind_match($2, $1, $3); 
-			}
+#line 671 "plpy.yp"
+{# $$ = bind_match($2, $1, $3);
+            }
 	],
 	[#Rule 70
 		 'termunop', 2,
 sub
-#line 639 "plpy.yp"
-{# $$ = newUNOP(OP_NEGATE, 0, scalar($2)); 
-			}
+#line 677 "plpy.yp"
+{# $$ = newUNOP(OP_NEGATE, 0, scalar($2));
+            }
 	],
 	[#Rule 71
 		 'termunop', 2,
 sub
-#line 642 "plpy.yp"
-{# $$ = $2; 
-			}
+#line 680 "plpy.yp"
+{# $$ = $2;
+            }
 	],
 	[#Rule 72
 		 'termunop', 2,
 sub
-#line 645 "plpy.yp"
-{# $$ = newUNOP(OP_NOT, 0, scalar($2)); 
-			}
+#line 683 "plpy.yp"
+{# $$ = newUNOP(OP_NOT, 0, scalar($2));
+            }
 	],
 	[#Rule 73
 		 'termunop', 2,
 sub
-#line 652 "plpy.yp"
+#line 690 "plpy.yp"
 {#$$ = newUNOP(OP_POSTINC, 0,
-					#mod(scalar($1), OP_POSTINC));
+                    #mod(scalar($1), OP_POSTINC));
             }
 	],
 	[#Rule 74
 		 'termunop', 2,
 sub
-#line 656 "plpy.yp"
+#line 694 "plpy.yp"
 {#$$ = newUNOP(OP_POSTDEC, 0,
-					#mod(scalar($1), OP_POSTDEC)); */
+                    #mod(scalar($1), OP_POSTDEC)); */
             }
 	],
 	[#Rule 75
@@ -3800,203 +3844,203 @@ sub
 	[#Rule 77
 		 'term', 1,
 sub
-#line 733 "plpy.yp"
-{# $$ = $1; 
-			}
+#line 771 "plpy.yp"
+{# $$ = $1;
+            }
 	],
 	[#Rule 78
 		 'term', 3,
 sub
-#line 740 "plpy.yp"
-{# $$ = sawparens($2); 
-			}
+#line 778 "plpy.yp"
+{# $$ = sawparens($2);
+            }
 	],
 	[#Rule 79
 		 'term', 2,
 sub
-#line 743 "plpy.yp"
-{# $$ = sawparens(newNULLLIST()); 
-			}
+#line 781 "plpy.yp"
+{# $$ = sawparens(newNULLLIST());
+            }
 	],
 	[#Rule 80
 		 'term', 1,
 sub
-#line 746 "plpy.yp"
-{# $$ = $1; 
-			}
+#line 784 "plpy.yp"
+{# $$ = $1;
+            }
 	],
 	[#Rule 81
 		 'term', 1,
 sub
-#line 753 "plpy.yp"
-{# $$ = $1; 
-			}
+#line 791 "plpy.yp"
+{# $$ = $1;
+            }
 	],
 	[#Rule 82
 		 'term', 1,
 sub
-#line 756 "plpy.yp"
-{# $$ = $1; 
-			}
+#line 794 "plpy.yp"
+{# $$ = $1;
+            }
 	],
 	[#Rule 83
 		 'term', 1,
 sub
-#line 759 "plpy.yp"
+#line 797 "plpy.yp"
 {# $$ = newUNOP(OP_AV2ARYLEN, 0, ref($1, OP_AV2ARYLEN));
-			}
+            }
 	],
 	[#Rule 84
 		 'term', 1,
 sub
-#line 762 "plpy.yp"
-{# $$ = $1; 
-			}
+#line 800 "plpy.yp"
+{# $$ = $1;
+            }
 	],
 	[#Rule 85
 		 'term', 6,
 sub
-#line 765 "plpy.yp"
-{# $$ = newSLICEOP(0, $5, $2); 
-			}
+#line 803 "plpy.yp"
+{# $$ = newSLICEOP(0, $5, $2);
+            }
 	],
 	[#Rule 86
 		 'term', 5,
 sub
-#line 768 "plpy.yp"
-{# $$ = newSLICEOP(0, $4, Nullop); 
-			}
+#line 806 "plpy.yp"
+{# $$ = newSLICEOP(0, $4, Nullop);
+            }
 	],
 	[#Rule 87
 		 'term', 4,
 sub
-#line 771 "plpy.yp"
+#line 809 "plpy.yp"
 {#$$ = prepend_elem(OP_ASLICE,
-			#	newOP(OP_PUSHMARK, 0),
-				    #newLISTOP(OP_ASLICE, 0,
-					#list($3),
-					#ref($1, OP_ASLICE)));
+            #    newOP(OP_PUSHMARK, 0),
+                    #newLISTOP(OP_ASLICE, 0,
+                    #list($3),
+                    #ref($1, OP_ASLICE)));
             }
 	],
 	[#Rule 88
 		 'term', 5,
 sub
-#line 778 "plpy.yp"
+#line 816 "plpy.yp"
 {#$$ = prepend_elem(OP_HSLICE,
-			#	newOP(OP_PUSHMARK, 0),
-				    #newLISTOP(OP_HSLICE, 0,
-					#list($3),
-					#ref(oopsHV($1), OP_HSLICE)));
+            #    newOP(OP_PUSHMARK, 0),
+                    #newLISTOP(OP_HSLICE, 0,
+                    #list($3),
+                    #ref(oopsHV($1), OP_HSLICE)));
                 #PL_expect = XOPERATOR; */
                 }
 	],
 	[#Rule 89
 		 'term', 1,
 sub
-#line 790 "plpy.yp"
-{# $$ = newUNOP(OP_ENTERSUB, 0, scalar($1)); 
-			}
+#line 828 "plpy.yp"
+{# $$ = newUNOP(OP_ENTERSUB, 0, scalar($1));
+            }
 	],
 	[#Rule 90
 		 'term', 3,
 sub
-#line 793 "plpy.yp"
-{# $$ = newUNOP(OP_ENTERSUB, OPf_STACKED, scalar($1)); 
-			}
+#line 831 "plpy.yp"
+{# $$ = newUNOP(OP_ENTERSUB, OPf_STACKED, scalar($1));
+            }
 	],
 	[#Rule 91
 		 'term', 4,
 sub
-#line 796 "plpy.yp"
+#line 834 "plpy.yp"
 {# $$ = newUNOP(OP_ENTERSUB, OPf_STACKED,
-			    #append_elem(OP_LIST, $3, scalar($1))); 
+                #append_elem(OP_LIST, $3, scalar($1)));
                 }
 	],
 	[#Rule 92
 		 'term', 3,
 sub
-#line 800 "plpy.yp"
+#line 838 "plpy.yp"
 {# $$ = newUNOP(OP_ENTERSUB, OPf_STACKED,
-			    #append_elem(OP_LIST, $3, scalar($2)));
+                #append_elem(OP_LIST, $3, scalar($2)));
                 }
 	],
 	[#Rule 93
 		 'term', 1,
 sub
-#line 804 "plpy.yp"
+#line 842 "plpy.yp"
 {# $$ = newOP($1, OPf_SPECIAL);
-			    #PL_hints |= HINT_BLOCK_SCOPE;
+                #PL_hints |= HINT_BLOCK_SCOPE;
                 }
 	],
 	[#Rule 94
 		 'term', 2,
 sub
-#line 812 "plpy.yp"
-{# $$ = newUNOP(OP_NOT, 0, scalar($2)); 
-			}
+#line 850 "plpy.yp"
+{# $$ = newUNOP(OP_NOT, 0, scalar($2));
+            }
 	],
 	[#Rule 95
 		 'term', 1,
 sub
-#line 815 "plpy.yp"
-{# $$ = newOP($1, 0); 
-			}
+#line 853 "plpy.yp"
+{# $$ = newOP($1, 0);
+            }
 	],
 	[#Rule 96
 		 'term', 2,
 sub
-#line 818 "plpy.yp"
-{# $$ = newUNOP($1, 0, $2); 
-			}
+#line 856 "plpy.yp"
+{# $$ = newUNOP($1, 0, $2);
+            }
 	],
 	[#Rule 97
 		 'term', 2,
 sub
-#line 821 "plpy.yp"
-{# $$ = newUNOP($1, 0, $2); 
-			}
+#line 859 "plpy.yp"
+{# $$ = newUNOP($1, 0, $2);
+            }
 	],
 	[#Rule 98
 		 'term', 1,
 sub
-#line 829 "plpy.yp"
-{# $$ = newOP($1, 0); 
-			}
+#line 867 "plpy.yp"
+{# $$ = newOP($1, 0);
+            }
 	],
 	[#Rule 99
 		 'term', 3,
 sub
-#line 832 "plpy.yp"
-{# $$ = newOP($1, 0); 
-			}
+#line 870 "plpy.yp"
+{# $$ = newOP($1, 0);
+            }
 	],
 	[#Rule 100
 		 'term', 3,
 sub
-#line 840 "plpy.yp"
+#line 878 "plpy.yp"
 {/* $$ = $1 == OP_NOT ? newUNOP($1, 0, newSVOP(OP_CONST, 0, newSViv(0)))
-					    : newOP($1, OPf_SPECIAL); */}
+                        : newOP($1, OPf_SPECIAL); */}
 	],
 	[#Rule 101
 		 'term', 4,
 sub
-#line 843 "plpy.yp"
-{# $$ = newUNOP($1, 0, $3); 
-			}
+#line 881 "plpy.yp"
+{# $$ = newUNOP($1, 0, $3);
+            }
 	],
 	[#Rule 102
 		 'term', 4,
 sub
-#line 846 "plpy.yp"
-{# $$ = pmruntime($1, $3, Nullop); 
-			}
+#line 884 "plpy.yp"
+{# $$ = pmruntime($1, $3, Nullop);
+            }
 	],
 	[#Rule 103
 		 'term', 6,
 sub
-#line 849 "plpy.yp"
-{# $$ = pmruntime($1, $3, $5); 
-			}
+#line 887 "plpy.yp"
+{# $$ = pmruntime($1, $3, $5);
+            }
 	],
 	[#Rule 104
 		 'term', 1, undef
@@ -4007,161 +4051,161 @@ sub
 	[#Rule 106
 		 'myattrterm', 3,
 sub
-#line 857 "plpy.yp"
-{# $$ = my_attrs($2,$3); 
-			}
+#line 895 "plpy.yp"
+{# $$ = my_attrs($2,$3);
+            }
 	],
 	[#Rule 107
 		 'myattrterm', 2,
 sub
-#line 860 "plpy.yp"
-{# $$ = localize($2,$1); 
-			}
+#line 898 "plpy.yp"
+{# $$ = localize($2,$1);
+            }
 	],
 	[#Rule 108
 		 'myterm', 3,
 sub
-#line 866 "plpy.yp"
-{# $$ = sawparens($2); 
-			}
+#line 904 "plpy.yp"
+{# $$ = sawparens($2);
+            }
 	],
 	[#Rule 109
 		 'myterm', 2,
 sub
-#line 869 "plpy.yp"
-{# $$ = sawparens(newNULLLIST()); 
-			}
+#line 907 "plpy.yp"
+{# $$ = sawparens(newNULLLIST());
+            }
 	],
 	[#Rule 110
 		 'myterm', 1,
 sub
-#line 872 "plpy.yp"
-{# $$ = $1; 
-			}
+#line 910 "plpy.yp"
+{# $$ = $1;
+            }
 	],
 	[#Rule 111
 		 'myterm', 1,
 sub
-#line 875 "plpy.yp"
-{# $$ = $1; 
-			}
+#line 913 "plpy.yp"
+{# $$ = $1;
+            }
 	],
 	[#Rule 112
 		 'myterm', 1,
 sub
-#line 878 "plpy.yp"
-{# $$ = $1; 
-			}
+#line 916 "plpy.yp"
+{# $$ = $1;
+            }
 	],
 	[#Rule 113
 		 'listexpr', 0,
 sub
-#line 884 "plpy.yp"
-{# $$ = Nullop; 
-			}
+#line 922 "plpy.yp"
+{# $$ = Nullop;
+            }
 	],
 	[#Rule 114
 		 'listexpr', 1,
 sub
-#line 887 "plpy.yp"
-{# $$ = $1; 
-			}
+#line 925 "plpy.yp"
+{# $$ = $1;
+            }
 	],
 	[#Rule 115
 		 'listexprcom', 0,
 sub
-#line 892 "plpy.yp"
-{# $$ = Nullop; 
-			}
+#line 930 "plpy.yp"
+{# $$ = Nullop;
+            }
 	],
 	[#Rule 116
 		 'listexprcom', 1,
 sub
-#line 895 "plpy.yp"
-{# $$ = $1; 
-			}
+#line 933 "plpy.yp"
+{# $$ = $1;
+            }
 	],
 	[#Rule 117
 		 'listexprcom', 2,
 sub
-#line 898 "plpy.yp"
-{# $$ = $1; 
-			}
+#line 936 "plpy.yp"
+{# $$ = $1;
+            }
 	],
 	[#Rule 118
 		 'my_scalar', 1,
 sub
-#line 905 "plpy.yp"
-{# PL_in_my = 0; $$ = my($1); 
-			}
+#line 943 "plpy.yp"
+{# PL_in_my = 0; $$ = my($1);
+            }
 	],
 	[#Rule 119
 		 'amper', 2,
 sub
-#line 910 "plpy.yp"
-{# $$ = newCVREF($1,$2); 
-			}
+#line 948 "plpy.yp"
+{# $$ = newCVREF($1,$2);
+            }
 	],
 	[#Rule 120
 		 'scalar', 2,
 sub
-#line 915 "plpy.yp"
-{# $$ = newSVREF($2); 
-			}
+#line 953 "plpy.yp"
+{# $$ = newSVREF($2);
+            }
 	],
 	[#Rule 121
 		 'ary', 2,
 sub
-#line 920 "plpy.yp"
-{# $$ = newAVREF($2); 
-			}
+#line 958 "plpy.yp"
+{# $$ = newAVREF($2);
+            }
 	],
 	[#Rule 122
 		 'hsh', 2,
 sub
-#line 925 "plpy.yp"
-{# $$ = newHVREF($2); 
-			}
+#line 963 "plpy.yp"
+{# $$ = newHVREF($2);
+            }
 	],
 	[#Rule 123
 		 'arylen', 2,
 sub
-#line 930 "plpy.yp"
-{# $$ = newAVREF($2); 
-			}
+#line 968 "plpy.yp"
+{# $$ = newAVREF($2);
+            }
 	],
 	[#Rule 124
 		 'indirob', 1,
 sub
-#line 942 "plpy.yp"
-{# $$ = scalar($1); 
-			}
+#line 980 "plpy.yp"
+{# $$ = scalar($1);
+            }
 	],
 	[#Rule 125
 		 'indirob', 1,
 sub
-#line 945 "plpy.yp"
-{# $$ = scalar($1);  
-			}
+#line 983 "plpy.yp"
+{# $$ = scalar($1);
+            }
 	],
 	[#Rule 126
 		 'indirob', 1,
 sub
-#line 948 "plpy.yp"
-{# $$ = scope($1); 
-			}
+#line 986 "plpy.yp"
+{# $$ = scope($1);
+            }
 	]
 ],
                                   @_);
     bless($self,$class);
 }
 
-#line 956 "plpy.yp"
- 
+#line 994 "plpy.yp"
+
 # PROGRAM */
 
 # more stuff added to make perly_c.diff easier to apply */
-# Tokens.  
+# Tokens.
 #define GRAMPROG 258
 #define GRAMEXPR 259
 #define GRAMBLOCK 260
