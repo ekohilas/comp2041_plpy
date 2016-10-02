@@ -7,13 +7,14 @@
 %{
 sub getToken {
     my @tokens = (
+        ["STRING", qr/"(?!\\"|").*"/],
         ["PMFUNC", qr/split/],
-        ["FUNC0", qr/(print)|(printf)|(chomp)|(split)|(exit)|(pop)|(shift)/],
-        ["FUNC1", qr/(print)|(printf)|(chomp)|(split)|(exit)|(pop)|(shift)|(reverse)|(open)|(sort)|(keys)/],
-        ["FUNC", qr/(print)|(printf)|(chomp)|(split)|(join)|(push)|(unshift)|(open)/],
-        ["UNIOP", qr/(exit)|(return)|(scalar)|(chomp)|(close)|(keys)|(pop)|(shift)|(values)/],
-        ["LSTOP", qr/(print)|(chomp)|(join)|(push)|(pop)|(shift)|(scalar)|(unshift)|(reverse)|(open)|(sort)|(keys)/],
-        ["FOR", qr/(for)|(foreach)/],
+        ["FUNC", qr/print|printf|chomp|split|join|push|unshift|open/],
+        ["FUNC0", qr/print|printf|chomp|split|exit|pop|shift/],
+        ["FUNC1", qr/print|printf|chomp|split|exit|pop|shift|reverse|open|sort|keys/],
+        ["UNIOP", qr/exit|return|scalar|chomp|close|keys|pop|shift|values/],
+        ["LSTOP", qr/print|chomp|join|push|pop|shift|scalar|unshift|reverse|open|sort|keys/],
+        ["FOR", qr/for|foreach/],
         ["WHILE", qr/while/],
         ["ELSIF", qr/elsif/],
         ["ELSE", qr/else/],
@@ -26,17 +27,17 @@ sub getToken {
         ["MY", qr/my/],
         ["OROP", qr/or/],
         ["DOTDOT", qr/\.\.\.?/],
-        ["EQOP", qr/(==)|(!=)|(eq)/],
+        ["EQOP", qr/==|!=|eq/],
         ["ANDAND", qr/&&/],
         ["MATCHOP", qr/=~/],
         ["POWOP", qr/\*\*/],
         ["POSTINC", qr/\+\+/],
         ["POSTDEC", qr/--/],
         ["DOLSHARP", qr/\$#/],
-        ["ASSIGNOP", qr/(=)|(\.=)/],
+        ["ASSIGNOP", qr/=|\.=/],
         ["ADDOP", qr/[+-.]/],
-        ["RELOP", qr/(>)|(<)|(<=)|(>=)|(lt)|(gt)|(le)|(ge)/],
-        ["MULOP", qr/[\/%*x]/],
+        ["RELOP", qr/>|<|<=|>=|lt|gt|le|ge/],
+        ["MULOP", qr/[\/%*]/],
         ["OROR", qr/\|\|/],
         [",", qr/,/],
         ["!", qr/!/],
@@ -44,11 +45,12 @@ sub getToken {
         ["(", qr/\(/],
         ["{", qr/\{/],
         ["}", qr/\}/],
+        [";", qr/;/],
         ["[", qr/\[/],
         ["]", qr/\]/],
-        ["&", qr/\&/],
-        ["@", qr/\@/],
-        ["%", qr/\%/],
+        ["&", qr/&/],
+        ["@", qr/@/],
+        ["%", qr/%/],
         ["\$", qr/\$/],
         ["WORD", qr/\w+/a]
     );
@@ -95,13 +97,14 @@ sub getToken {
         print "$token : $&\n";
         return ($token, $&);
     }
-    else {
+    elsif (!$found && !length($_[0]->YYData->{"DATA"})) {
         return ('', undef);
     }
-
-
-
-
+    else {
+        print "unable to parse\n";
+        print $_[0]->YYData->{"DATA"}, "\n";
+        return ('', undef);
+    }
 }
 sub Lexer {
     my ($type, $value) = getToken($_[0]);
@@ -113,7 +116,7 @@ sub Lexer {
 
 %token '{'
 
-%token WORD PMFUNC /*METHOD FUNCMETH THING PRIVATEREF*/
+%token WORD PMFUNC STRING /*METHOD FUNCMETH THING PRIVATEREF*/
 /*%token FUNC0SUB UNIOPSUB LSTOPSUB*/
 /*%token LABEL*/
 %token /*FORMAT ANONSUB*/ SUB PACKAGE USE
@@ -759,6 +762,7 @@ termdo    :       DO term    %prec UNIOP                     /* do $filename //
 
 term    :    termbinop
     |    termunop
+    |    STRING
     /*|    anonymous*/
     /*|    termdo*/
     /*

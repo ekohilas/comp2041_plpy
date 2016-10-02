@@ -18,13 +18,14 @@ use Parse::Yapp::Driver;
 
 sub getToken {
     my @tokens = (
+        ["STRING", qr/"(?!\\"|").*"/],
         ["PMFUNC", qr/split/],
-        ["FUNC0", qr/(print)|(printf)|(chomp)|(split)|(exit)|(pop)|(shift)/],
-        ["FUNC1", qr/(print)|(printf)|(chomp)|(split)|(exit)|(pop)|(shift)|(reverse)|(open)|(sort)|(keys)/],
-        ["FUNC", qr/(print)|(printf)|(chomp)|(split)|(join)|(push)|(unshift)|(open)/],
-        ["UNIOP", qr/(exit)|(return)|(scalar)|(chomp)|(close)|(keys)|(pop)|(shift)|(values)/],
-        ["LSTOP", qr/(print)|(chomp)|(join)|(push)|(pop)|(shift)|(scalar)|(unshift)|(reverse)|(open)|(sort)|(keys)/],
-        ["FOR", qr/(for)|(foreach)/],
+        ["FUNC", qr/print|printf|chomp|split|join|push|unshift|open/],
+        ["FUNC0", qr/print|printf|chomp|split|exit|pop|shift/],
+        ["FUNC1", qr/print|printf|chomp|split|exit|pop|shift|reverse|open|sort|keys/],
+        ["UNIOP", qr/exit|return|scalar|chomp|close|keys|pop|shift|values/],
+        ["LSTOP", qr/print|chomp|join|push|pop|shift|scalar|unshift|reverse|open|sort|keys/],
+        ["FOR", qr/for|foreach/],
         ["WHILE", qr/while/],
         ["ELSIF", qr/elsif/],
         ["ELSE", qr/else/],
@@ -37,17 +38,17 @@ sub getToken {
         ["MY", qr/my/],
         ["OROP", qr/or/],
         ["DOTDOT", qr/\.\.\.?/],
-        ["EQOP", qr/(==)|(!=)|(eq)/],
+        ["EQOP", qr/==|!=|eq/],
         ["ANDAND", qr/&&/],
         ["MATCHOP", qr/=~/],
         ["POWOP", qr/\*\*/],
         ["POSTINC", qr/\+\+/],
         ["POSTDEC", qr/--/],
         ["DOLSHARP", qr/\$#/],
-        ["ASSIGNOP", qr/(=)|(\.=)/],
+        ["ASSIGNOP", qr/=|\.=/],
         ["ADDOP", qr/[+-.]/],
-        ["RELOP", qr/(>)|(<)|(<=)|(>=)|(lt)|(gt)|(le)|(ge)/],
-        ["MULOP", qr/[\/%*x]/],
+        ["RELOP", qr/>|<|<=|>=|lt|gt|le|ge/],
+        ["MULOP", qr/[\/%*]/],
         ["OROR", qr/\|\|/],
         [",", qr/,/],
         ["!", qr/!/],
@@ -55,11 +56,12 @@ sub getToken {
         ["(", qr/\(/],
         ["{", qr/\{/],
         ["}", qr/\}/],
+        [";", qr/;/],
         ["[", qr/\[/],
         ["]", qr/\]/],
-        ["&", qr/\&/],
-        ["@", qr/\@/],
-        ["%", qr/\%/],
+        ["&", qr/&/],
+        ["@", qr/@/],
+        ["%", qr/%/],
         ["\$", qr/\$/],
         ["WORD", qr/\w+/a]
     );
@@ -106,13 +108,14 @@ sub getToken {
         print "$token : $&\n";
         return ($token, $&);
     }
-    else {
+    elsif (!$found && !length($_[0]->YYData->{"DATA"})) {
         return ('', undef);
     }
-
-
-
-
+    else {
+        print "unable to parse\n";
+        print $_[0]->YYData->{"DATA"}, "\n";
+        return ('', undef);
+    }
 }
 sub Lexer {
     my ($type, $value) = getToken($_[0]);
@@ -149,31 +152,32 @@ sub new {
 			'WORD' => 4,
 			'PACKAGE' => 8,
 			"\@" => 7,
-			"+" => 34,
-			'FOR' => 33,
 			'MY' => 10,
 			"%" => 9,
-			'NOAMP' => 35,
 			'LSTOP' => 11,
-			'FUNC' => 38,
-			'DOLSHARP' => 36,
 			"!" => 14,
 			'IF' => 17,
 			"\$" => 16,
-			'error' => 42,
-			'LOOPEX' => 41,
-			'WHILE' => 44,
 			'PMFUNC' => 22,
 			'NOTOP' => 23,
-			'FUNC0' => 45,
 			'SUB' => 25,
-			"{" => 49,
-			'UNIOP' => 48,
-			"&" => 47,
-			'USE' => 51,
 			"(" => 29,
-			'format' => 52,
-			'FUNC1' => 30
+			'FUNC1' => 30,
+			'FOR' => 33,
+			"+" => 34,
+			'NOAMP' => 35,
+			'DOLSHARP' => 36,
+			'FUNC' => 38,
+			'STRING' => 39,
+			'LOOPEX' => 42,
+			'error' => 43,
+			'WHILE' => 45,
+			'FUNC0' => 46,
+			"&" => 48,
+			'UNIOP' => 49,
+			"{" => 50,
+			'USE' => 52,
+			'format' => 53
 		},
 		GOTOS => {
 			'scalar' => 6,
@@ -182,29 +186,29 @@ sub new {
 			'term' => 37,
 			'loop' => 13,
 			'ary' => 12,
-			'use' => 40,
-			'expr' => 39,
+			'use' => 41,
+			'expr' => 40,
 			'decl' => 15,
 			'termbinop' => 18,
-			'listop' => 43,
+			'listop' => 44,
 			'hsh' => 19,
 			'termunop' => 20,
 			'line' => 21,
 			'cond' => 24,
-			'arylen' => 46,
+			'arylen' => 47,
 			'amper' => 26,
 			'myattrterm' => 27,
 			'subscripted' => 28,
-			'package' => 50,
-			'block' => 53,
-			'argexpr' => 54
+			'package' => 51,
+			'block' => 54,
+			'argexpr' => 55
 		}
 	},
 	{#State 3
 		DEFAULT => 0
 	},
 	{#State 4
-		DEFAULT => -104
+		DEFAULT => -105
 	},
 	{#State 5
 		ACTIONS => {
@@ -217,86 +221,87 @@ sub new {
 			'NOAMP' => 35,
 			'LSTOP' => 11,
 			'FUNC' => 38,
+			'STRING' => 39,
 			'DOLSHARP' => 36,
 			"!" => 14,
 			"\$" => 16,
-			'LOOPEX' => 41,
+			'LOOPEX' => 42,
 			'PMFUNC' => 22,
 			'NOTOP' => 23,
-			'FUNC0' => 45,
-			'UNIOP' => 48,
-			"&" => 47,
+			'FUNC0' => 46,
+			'UNIOP' => 49,
+			"&" => 48,
 			"(" => 29,
 			'FUNC1' => 30
 		},
 		GOTOS => {
 			'scalar' => 6,
-			'arylen' => 46,
+			'arylen' => 47,
 			'myattrterm' => 27,
 			'amper' => 26,
 			'subscripted' => 28,
-			'term' => 55,
+			'term' => 56,
 			'ary' => 12,
 			'termbinop' => 18,
-			'listop' => 43,
+			'listop' => 44,
 			'hsh' => 19,
 			'termunop' => 20
 		}
 	},
 	{#State 6
 		ACTIONS => {
-			"[" => 56
+			"[" => 57
 		},
-		DEFAULT => -80
+		DEFAULT => -81
 	},
 	{#State 7
 		ACTIONS => {
-			'WORD' => 58,
+			'WORD' => 59,
 			"\$" => 16,
-			"{" => 49
+			"{" => 50
 		},
 		GOTOS => {
-			'scalar' => 57,
-			'indirob' => 59,
-			'block' => 60
+			'scalar' => 58,
+			'indirob' => 60,
+			'block' => 61
 		}
 	},
 	{#State 8
 		ACTIONS => {
-			'WORD' => 61,
-			";" => 62
+			'WORD' => 62,
+			";" => 63
 		}
 	},
 	{#State 9
 		ACTIONS => {
-			'WORD' => 58,
+			'WORD' => 59,
 			"\$" => 16,
-			"{" => 49
+			"{" => 50
 		},
 		GOTOS => {
-			'scalar' => 57,
-			'indirob' => 63,
-			'block' => 60
+			'scalar' => 58,
+			'indirob' => 64,
+			'block' => 61
 		}
 	},
 	{#State 10
 		ACTIONS => {
-			"(" => 67,
+			"(" => 68,
 			"\@" => 7,
 			"\$" => 16,
 			"%" => 9
 		},
 		GOTOS => {
-			'scalar' => 64,
-			'myterm' => 68,
-			'hsh' => 66,
-			'ary' => 65
+			'scalar' => 65,
+			'myterm' => 69,
+			'hsh' => 67,
+			'ary' => 66
 		}
 	},
 	{#State 11
 		ACTIONS => {
 			"-" => 5,
-			'WORD' => 69,
+			'WORD' => 70,
 			"\@" => 7,
 			'MY' => 10,
 			"%" => 9,
@@ -310,38 +315,39 @@ sub new {
 			"+" => 34,
 			'NOAMP' => 35,
 			'DOLSHARP' => 36,
+			'STRING' => 39,
 			'FUNC' => 38,
-			'LOOPEX' => 41,
-			'FUNC0' => 45,
-			"&" => 47,
-			'UNIOP' => 48,
-			"{" => 49
+			'LOOPEX' => 42,
+			'FUNC0' => 46,
+			"&" => 48,
+			'UNIOP' => 49,
+			"{" => 50
 		},
-		DEFAULT => -113,
+		DEFAULT => -114,
 		GOTOS => {
-			'scalar' => 70,
-			'arylen' => 46,
-			'indirob' => 71,
+			'scalar' => 71,
+			'arylen' => 47,
+			'indirob' => 72,
 			'myattrterm' => 27,
 			'amper' => 26,
 			'subscripted' => 28,
 			'term' => 37,
 			'ary' => 12,
 			'termbinop' => 18,
-			'block' => 60,
-			'argexpr' => 73,
-			'listop' => 43,
-			'listexpr' => 72,
+			'block' => 61,
+			'argexpr' => 74,
+			'listop' => 44,
+			'listexpr' => 73,
 			'hsh' => 19,
 			'termunop' => 20
 		}
 	},
 	{#State 12
 		ACTIONS => {
-			"[" => 74,
-			"{" => 75
+			"[" => 75,
+			"{" => 76
 		},
-		DEFAULT => -82
+		DEFAULT => -83
 	},
 	{#State 13
 		DEFAULT => -10
@@ -357,28 +363,29 @@ sub new {
 			'NOAMP' => 35,
 			'LSTOP' => 11,
 			'FUNC' => 38,
+			'STRING' => 39,
 			'DOLSHARP' => 36,
 			"!" => 14,
 			"\$" => 16,
-			'LOOPEX' => 41,
+			'LOOPEX' => 42,
 			'PMFUNC' => 22,
 			'NOTOP' => 23,
-			'FUNC0' => 45,
-			'UNIOP' => 48,
-			"&" => 47,
+			'FUNC0' => 46,
+			'UNIOP' => 49,
+			"&" => 48,
 			"(" => 29,
 			'FUNC1' => 30
 		},
 		GOTOS => {
 			'scalar' => 6,
-			'arylen' => 46,
+			'arylen' => 47,
 			'myattrterm' => 27,
 			'amper' => 26,
 			'subscripted' => 28,
-			'term' => 76,
+			'term' => 77,
 			'ary' => 12,
 			'termbinop' => 18,
-			'listop' => 43,
+			'listop' => 44,
 			'hsh' => 19,
 			'termunop' => 20
 		}
@@ -388,26 +395,26 @@ sub new {
 	},
 	{#State 16
 		ACTIONS => {
-			'WORD' => 58,
+			'WORD' => 59,
 			"\$" => 16,
-			"{" => 49
+			"{" => 50
 		},
 		GOTOS => {
-			'scalar' => 57,
-			'indirob' => 77,
-			'block' => 60
+			'scalar' => 58,
+			'indirob' => 78,
+			'block' => 61
 		}
 	},
 	{#State 17
 		ACTIONS => {
-			"(" => 78
+			"(" => 79
 		}
 	},
 	{#State 18
 		DEFAULT => -75
 	},
 	{#State 19
-		DEFAULT => -81
+		DEFAULT => -82
 	},
 	{#State 20
 		DEFAULT => -76
@@ -417,7 +424,7 @@ sub new {
 	},
 	{#State 22
 		ACTIONS => {
-			"(" => 79
+			"(" => 80
 		}
 	},
 	{#State 23
@@ -431,29 +438,30 @@ sub new {
 			'NOAMP' => 35,
 			'LSTOP' => 11,
 			'FUNC' => 38,
+			'STRING' => 39,
 			'DOLSHARP' => 36,
 			"!" => 14,
 			"\$" => 16,
-			'LOOPEX' => 41,
+			'LOOPEX' => 42,
 			'PMFUNC' => 22,
 			'NOTOP' => 23,
-			'FUNC0' => 45,
-			'UNIOP' => 48,
-			"&" => 47,
+			'FUNC0' => 46,
+			'UNIOP' => 49,
+			"&" => 48,
 			"(" => 29,
 			'FUNC1' => 30
 		},
 		GOTOS => {
 			'scalar' => 6,
-			'arylen' => 46,
+			'arylen' => 47,
 			'myattrterm' => 27,
 			'amper' => 26,
 			'subscripted' => 28,
 			'term' => 37,
 			'ary' => 12,
 			'termbinop' => 18,
-			'argexpr' => 80,
-			'listop' => 43,
+			'argexpr' => 81,
+			'listop' => 44,
 			'hsh' => 19,
 			'termunop' => 20
 		}
@@ -464,20 +472,20 @@ sub new {
 	{#State 25
 		DEFAULT => -41,
 		GOTOS => {
-			'startsub' => 81
+			'startsub' => 82
 		}
 	},
 	{#State 26
 		ACTIONS => {
-			"(" => 82
+			"(" => 83
 		},
-		DEFAULT => -89
+		DEFAULT => -90
 	},
 	{#State 27
-		DEFAULT => -77
+		DEFAULT => -78
 	},
 	{#State 28
-		DEFAULT => -84
+		DEFAULT => -85
 	},
 	{#State 29
 		ACTIONS => {
@@ -490,38 +498,39 @@ sub new {
 			'NOAMP' => 35,
 			'LSTOP' => 11,
 			'FUNC' => 38,
+			'STRING' => 39,
 			'DOLSHARP' => 36,
 			"!" => 14,
 			"\$" => 16,
-			'LOOPEX' => 41,
-			")" => 84,
+			'LOOPEX' => 42,
+			")" => 85,
 			'PMFUNC' => 22,
 			'NOTOP' => 23,
-			'FUNC0' => 45,
-			'UNIOP' => 48,
-			"&" => 47,
+			'FUNC0' => 46,
+			'UNIOP' => 49,
+			"&" => 48,
 			"(" => 29,
 			'FUNC1' => 30
 		},
 		GOTOS => {
 			'scalar' => 6,
-			'arylen' => 46,
+			'arylen' => 47,
 			'myattrterm' => 27,
 			'amper' => 26,
 			'subscripted' => 28,
 			'term' => 37,
 			'ary' => 12,
-			'expr' => 83,
+			'expr' => 84,
 			'termbinop' => 18,
-			'argexpr' => 54,
-			'listop' => 43,
+			'argexpr' => 55,
+			'listop' => 44,
 			'hsh' => 19,
 			'termunop' => 20
 		}
 	},
 	{#State 30
 		ACTIONS => {
-			"(" => 85
+			"(" => 86
 		}
 	},
 	{#State 31
@@ -529,17 +538,17 @@ sub new {
 	},
 	{#State 32
 		ACTIONS => {
-			";" => 86
+			";" => 87
 		}
 	},
 	{#State 33
 		ACTIONS => {
-			"(" => 89,
+			"(" => 90,
 			"\$" => 16,
-			'MY' => 88
+			'MY' => 89
 		},
 		GOTOS => {
-			'scalar' => 87
+			'scalar' => 88
 		}
 	},
 	{#State 34
@@ -553,120 +562,124 @@ sub new {
 			'NOAMP' => 35,
 			'LSTOP' => 11,
 			'FUNC' => 38,
+			'STRING' => 39,
 			'DOLSHARP' => 36,
 			"!" => 14,
 			"\$" => 16,
-			'LOOPEX' => 41,
+			'LOOPEX' => 42,
 			'PMFUNC' => 22,
 			'NOTOP' => 23,
-			'FUNC0' => 45,
-			'UNIOP' => 48,
-			"&" => 47,
+			'FUNC0' => 46,
+			'UNIOP' => 49,
+			"&" => 48,
 			"(" => 29,
 			'FUNC1' => 30
 		},
 		GOTOS => {
 			'scalar' => 6,
-			'arylen' => 46,
+			'arylen' => 47,
 			'myattrterm' => 27,
 			'amper' => 26,
 			'subscripted' => 28,
-			'term' => 90,
+			'term' => 91,
 			'ary' => 12,
 			'termbinop' => 18,
-			'listop' => 43,
+			'listop' => 44,
 			'hsh' => 19,
 			'termunop' => 20
 		}
 	},
 	{#State 35
 		ACTIONS => {
-			'WORD' => 91
+			'WORD' => 92
 		}
 	},
 	{#State 36
 		ACTIONS => {
-			'WORD' => 58,
+			'WORD' => 59,
 			"\$" => 16,
-			"{" => 49
+			"{" => 50
 		},
 		GOTOS => {
-			'scalar' => 57,
-			'indirob' => 92,
-			'block' => 60
+			'scalar' => 58,
+			'indirob' => 93,
+			'block' => 61
 		}
 	},
 	{#State 37
 		ACTIONS => {
-			'ADDOP' => 99,
-			'ASSIGNOP' => 93,
-			'POSTINC' => 100,
-			'POWOP' => 94,
-			'MATCHOP' => 95,
-			'POSTDEC' => 101,
-			'DOTDOT' => 102,
-			'MULOP' => 103,
-			'ANDAND' => 96,
-			'OROR' => 104,
-			'RELOP' => 98,
-			'EQOP' => 97
+			'ADDOP' => 100,
+			'ASSIGNOP' => 94,
+			'POSTINC' => 101,
+			'POWOP' => 95,
+			'MATCHOP' => 96,
+			'POSTDEC' => 102,
+			'DOTDOT' => 103,
+			'MULOP' => 104,
+			'ANDAND' => 97,
+			'OROR' => 105,
+			'RELOP' => 99,
+			'EQOP' => 98
 		},
 		DEFAULT => -54
 	},
 	{#State 38
 		ACTIONS => {
-			"(" => 105
+			"(" => 106
 		}
 	},
 	{#State 39
+		DEFAULT => -77
+	},
+	{#State 40
 		ACTIONS => {
-			'FOR' => 109,
-			'OROP' => 108,
-			'ANDOP' => 106,
-			'IF' => 107,
-			'WHILE' => 110
+			'FOR' => 110,
+			'OROP' => 109,
+			'ANDOP' => 107,
+			'IF' => 108,
+			'WHILE' => 111
 		},
 		DEFAULT => -13
 	},
-	{#State 40
+	{#State 41
 		DEFAULT => -39
 	},
-	{#State 41
-		DEFAULT => -93
-	},
 	{#State 42
-		DEFAULT => -12
+		DEFAULT => -94
 	},
 	{#State 43
-		DEFAULT => -105
+		DEFAULT => -12
 	},
 	{#State 44
-		ACTIONS => {
-			"(" => 111
-		}
+		DEFAULT => -106
 	},
 	{#State 45
 		ACTIONS => {
 			"(" => 112
-		},
-		DEFAULT => -98
-	},
-	{#State 46
-		DEFAULT => -83
-	},
-	{#State 47
-		ACTIONS => {
-			'WORD' => 58,
-			"\$" => 16,
-			"{" => 49
-		},
-		GOTOS => {
-			'scalar' => 57,
-			'indirob' => 113,
-			'block' => 60
 		}
 	},
+	{#State 46
+		ACTIONS => {
+			"(" => 113
+		},
+		DEFAULT => -99
+	},
+	{#State 47
+		DEFAULT => -84
+	},
 	{#State 48
+		ACTIONS => {
+			'WORD' => 59,
+			"\$" => 16,
+			"{" => 50
+		},
+		GOTOS => {
+			'scalar' => 58,
+			'indirob' => 114,
+			'block' => 61
+		}
+	},
+	{#State 49
 		ACTIONS => {
 			"-" => 5,
 			'WORD' => 4,
@@ -683,142 +696,72 @@ sub new {
 			"+" => 34,
 			'NOAMP' => 35,
 			'DOLSHARP' => 36,
+			'STRING' => 39,
 			'FUNC' => 38,
-			'LOOPEX' => 41,
-			'FUNC0' => 45,
-			"&" => 47,
-			'UNIOP' => 48,
-			"{" => 49
+			'LOOPEX' => 42,
+			'FUNC0' => 46,
+			"&" => 48,
+			'UNIOP' => 49,
+			"{" => 50
 		},
-		DEFAULT => -95,
+		DEFAULT => -96,
 		GOTOS => {
 			'scalar' => 6,
-			'arylen' => 46,
+			'arylen' => 47,
 			'myattrterm' => 27,
 			'amper' => 26,
 			'subscripted' => 28,
-			'term' => 114,
+			'term' => 115,
 			'ary' => 12,
 			'termbinop' => 18,
-			'block' => 115,
-			'listop' => 43,
+			'block' => 116,
+			'listop' => 44,
 			'hsh' => 19,
 			'termunop' => 20
-		}
-	},
-	{#State 49
-		DEFAULT => -3,
-		GOTOS => {
-			'remember' => 116
 		}
 	},
 	{#State 50
-		DEFAULT => -38
+		DEFAULT => -3,
+		GOTOS => {
+			'remember' => 117
+		}
 	},
 	{#State 51
-		DEFAULT => -41,
-		GOTOS => {
-			'startsub' => 117
-		}
+		DEFAULT => -38
 	},
 	{#State 52
-		DEFAULT => -36
+		DEFAULT => -41,
+		GOTOS => {
+			'startsub' => 118
+		}
 	},
 	{#State 53
-		ACTIONS => {
-			'CONTINUE' => 118
-		},
-		DEFAULT => -21,
-		GOTOS => {
-			'cont' => 119
-		}
+		DEFAULT => -36
 	},
 	{#State 54
 		ACTIONS => {
-			"," => 120
+			'CONTINUE' => 119
 		},
-		DEFAULT => -51
+		DEFAULT => -21,
+		GOTOS => {
+			'cont' => 120
+		}
 	},
 	{#State 55
 		ACTIONS => {
-			'POSTINC' => 100,
-			'POWOP' => 94,
-			'POSTDEC' => 101
+			"," => 121
 		},
-		DEFAULT => -70
+		DEFAULT => -51
 	},
 	{#State 56
 		ACTIONS => {
-			"-" => 5,
-			'WORD' => 4,
-			"\@" => 7,
-			"+" => 34,
-			'MY' => 10,
-			"%" => 9,
-			'NOAMP' => 35,
-			'LSTOP' => 11,
-			'FUNC' => 38,
-			'DOLSHARP' => 36,
-			"!" => 14,
-			"\$" => 16,
-			'LOOPEX' => 41,
-			'PMFUNC' => 22,
-			'NOTOP' => 23,
-			'FUNC0' => 45,
-			'UNIOP' => 48,
-			"&" => 47,
-			"(" => 29,
-			'FUNC1' => 30
+			'POSTINC' => 101,
+			'POWOP' => 95,
+			'POSTDEC' => 102
 		},
-		GOTOS => {
-			'scalar' => 6,
-			'arylen' => 46,
-			'myattrterm' => 27,
-			'amper' => 26,
-			'subscripted' => 28,
-			'term' => 37,
-			'ary' => 12,
-			'expr' => 121,
-			'termbinop' => 18,
-			'argexpr' => 54,
-			'listop' => 43,
-			'hsh' => 19,
-			'termunop' => 20
-		}
+		DEFAULT => -70
 	},
 	{#State 57
-		DEFAULT => -125
-	},
-	{#State 58
-		DEFAULT => -124
-	},
-	{#State 59
-		DEFAULT => -121
-	},
-	{#State 60
-		DEFAULT => -126
-	},
-	{#State 61
-		ACTIONS => {
-			";" => 122
-		}
-	},
-	{#State 62
-		DEFAULT => -46
-	},
-	{#State 63
-		DEFAULT => -122
-	},
-	{#State 64
-		DEFAULT => -110
-	},
-	{#State 65
-		DEFAULT => -112
-	},
-	{#State 66
-		DEFAULT => -111
-	},
-	{#State 67
 		ACTIONS => {
 			"-" => 5,
 			'WORD' => 4,
@@ -829,65 +772,113 @@ sub new {
 			'NOAMP' => 35,
 			'LSTOP' => 11,
 			'FUNC' => 38,
+			'STRING' => 39,
 			'DOLSHARP' => 36,
 			"!" => 14,
 			"\$" => 16,
-			'LOOPEX' => 41,
-			")" => 124,
+			'LOOPEX' => 42,
 			'PMFUNC' => 22,
 			'NOTOP' => 23,
-			'FUNC0' => 45,
-			'UNIOP' => 48,
-			"&" => 47,
+			'FUNC0' => 46,
+			'UNIOP' => 49,
+			"&" => 48,
 			"(" => 29,
 			'FUNC1' => 30
 		},
 		GOTOS => {
 			'scalar' => 6,
-			'arylen' => 46,
+			'arylen' => 47,
 			'myattrterm' => 27,
 			'amper' => 26,
 			'subscripted' => 28,
 			'term' => 37,
 			'ary' => 12,
-			'expr' => 123,
+			'expr' => 122,
 			'termbinop' => 18,
-			'argexpr' => 54,
-			'listop' => 43,
+			'argexpr' => 55,
+			'listop' => 44,
 			'hsh' => 19,
 			'termunop' => 20
 		}
+	},
+	{#State 58
+		DEFAULT => -126
+	},
+	{#State 59
+		DEFAULT => -125
+	},
+	{#State 60
+		DEFAULT => -122
+	},
+	{#State 61
+		DEFAULT => -127
+	},
+	{#State 62
+		ACTIONS => {
+			";" => 123
+		}
+	},
+	{#State 63
+		DEFAULT => -46
+	},
+	{#State 64
+		DEFAULT => -123
+	},
+	{#State 65
+		DEFAULT => -111
+	},
+	{#State 66
+		DEFAULT => -113
+	},
+	{#State 67
+		DEFAULT => -112
 	},
 	{#State 68
 		ACTIONS => {
-			'myattrlist' => 125
+			"-" => 5,
+			'WORD' => 4,
+			"\@" => 7,
+			"+" => 34,
+			'MY' => 10,
+			"%" => 9,
+			'NOAMP' => 35,
+			'LSTOP' => 11,
+			'FUNC' => 38,
+			'STRING' => 39,
+			'DOLSHARP' => 36,
+			"!" => 14,
+			"\$" => 16,
+			'LOOPEX' => 42,
+			")" => 125,
+			'PMFUNC' => 22,
+			'NOTOP' => 23,
+			'FUNC0' => 46,
+			'UNIOP' => 49,
+			"&" => 48,
+			"(" => 29,
+			'FUNC1' => 30
 		},
-		DEFAULT => -107
+		GOTOS => {
+			'scalar' => 6,
+			'arylen' => 47,
+			'myattrterm' => 27,
+			'amper' => 26,
+			'subscripted' => 28,
+			'term' => 37,
+			'ary' => 12,
+			'expr' => 124,
+			'termbinop' => 18,
+			'argexpr' => 55,
+			'listop' => 44,
+			'hsh' => 19,
+			'termunop' => 20
+		}
 	},
 	{#State 69
 		ACTIONS => {
-			"-" => -124,
-			'WORD' => -124,
-			"\@" => -124,
-			"%" => -124,
-			'MY' => -124,
-			'LSTOP' => -124,
-			"!" => -124,
-			"\$" => -124,
-			'NOTOP' => -124,
-			'PMFUNC' => -124,
-			"(" => -124,
-			'FUNC1' => -124,
-			"+" => -124,
-			'NOAMP' => -124,
-			'FUNC' => -124,
-			'DOLSHARP' => -124,
-			'LOOPEX' => -124,
-			'FUNC0' => -124,
-			"&" => -124,
-			'UNIOP' => -124
+			'myattrlist' => 126
 		},
-		DEFAULT => -104
+		DEFAULT => -108
 	},
 	{#State 70
 		ACTIONS => {
@@ -899,13 +890,13 @@ sub new {
 			'LSTOP' => -125,
 			"!" => -125,
 			"\$" => -125,
-			"[" => 56,
 			'NOTOP' => -125,
 			'PMFUNC' => -125,
 			"(" => -125,
 			'FUNC1' => -125,
 			"+" => -125,
 			'NOAMP' => -125,
+			'STRING' => -125,
 			'FUNC' => -125,
 			'DOLSHARP' => -125,
 			'LOOPEX' => -125,
@@ -913,10 +904,37 @@ sub new {
 			"&" => -125,
 			'UNIOP' => -125
 		},
-		DEFAULT => -80
+		DEFAULT => -105
 	},
 	{#State 71
 		ACTIONS => {
+			"-" => -126,
+			'WORD' => -126,
+			"\@" => -126,
+			"%" => -126,
+			'MY' => -126,
+			'LSTOP' => -126,
+			"!" => -126,
+			"\$" => -126,
+			"[" => 57,
+			'NOTOP' => -126,
+			'PMFUNC' => -126,
+			"(" => -126,
+			'FUNC1' => -126,
+			"+" => -126,
+			'NOAMP' => -126,
+			'STRING' => -126,
+			'FUNC' => -126,
+			'DOLSHARP' => -126,
+			'LOOPEX' => -126,
+			'FUNC0' => -126,
+			"&" => -126,
+			'UNIOP' => -126
+		},
+		DEFAULT => -81
+	},
+	{#State 72
+		ACTIONS => {
 			"-" => 5,
 			'WORD' => 4,
 			"\@" => 7,
@@ -926,80 +944,42 @@ sub new {
 			'NOAMP' => 35,
 			'LSTOP' => 11,
 			'FUNC' => 38,
+			'STRING' => 39,
 			'DOLSHARP' => 36,
 			"!" => 14,
 			"\$" => 16,
-			'LOOPEX' => 41,
+			'LOOPEX' => 42,
 			'PMFUNC' => 22,
 			'NOTOP' => 23,
-			'FUNC0' => 45,
-			'UNIOP' => 48,
-			"&" => 47,
+			'FUNC0' => 46,
+			'UNIOP' => 49,
+			"&" => 48,
 			"(" => 29,
 			'FUNC1' => 30
 		},
 		GOTOS => {
 			'scalar' => 6,
-			'arylen' => 46,
+			'arylen' => 47,
 			'myattrterm' => 27,
 			'amper' => 26,
 			'subscripted' => 28,
 			'term' => 37,
 			'ary' => 12,
 			'termbinop' => 18,
-			'argexpr' => 126,
-			'listop' => 43,
+			'argexpr' => 127,
+			'listop' => 44,
 			'hsh' => 19,
 			'termunop' => 20
 		}
 	},
-	{#State 72
-		DEFAULT => -57
-	},
 	{#State 73
-		ACTIONS => {
-			"," => 120
-		},
-		DEFAULT => -114
+		DEFAULT => -57
 	},
 	{#State 74
 		ACTIONS => {
-			"-" => 5,
-			'WORD' => 4,
-			"\@" => 7,
-			"+" => 34,
-			'MY' => 10,
-			"%" => 9,
-			'NOAMP' => 35,
-			'LSTOP' => 11,
-			'FUNC' => 38,
-			'DOLSHARP' => 36,
-			"!" => 14,
-			"\$" => 16,
-			'LOOPEX' => 41,
-			'PMFUNC' => 22,
-			'NOTOP' => 23,
-			'FUNC0' => 45,
-			'UNIOP' => 48,
-			"&" => 47,
-			"(" => 29,
-			'FUNC1' => 30
+			"," => 121
 		},
-		GOTOS => {
-			'scalar' => 6,
-			'arylen' => 46,
-			'myattrterm' => 27,
-			'amper' => 26,
-			'subscripted' => 28,
-			'term' => 37,
-			'ary' => 12,
-			'expr' => 127,
-			'termbinop' => 18,
-			'argexpr' => 54,
-			'listop' => 43,
-			'hsh' => 19,
-			'termunop' => 20
-		}
+		DEFAULT => -115
 	},
 	{#State 75
 		ACTIONS => {
@@ -1012,21 +992,22 @@ sub new {
 			'NOAMP' => 35,
 			'LSTOP' => 11,
 			'FUNC' => 38,
+			'STRING' => 39,
 			'DOLSHARP' => 36,
 			"!" => 14,
 			"\$" => 16,
-			'LOOPEX' => 41,
+			'LOOPEX' => 42,
 			'PMFUNC' => 22,
 			'NOTOP' => 23,
-			'FUNC0' => 45,
-			'UNIOP' => 48,
-			"&" => 47,
+			'FUNC0' => 46,
+			'UNIOP' => 49,
+			"&" => 48,
 			"(" => 29,
 			'FUNC1' => 30
 		},
 		GOTOS => {
 			'scalar' => 6,
-			'arylen' => 46,
+			'arylen' => 47,
 			'myattrterm' => 27,
 			'amper' => 26,
 			'subscripted' => 28,
@@ -1034,31 +1015,14 @@ sub new {
 			'ary' => 12,
 			'expr' => 128,
 			'termbinop' => 18,
-			'argexpr' => 54,
-			'listop' => 43,
+			'argexpr' => 55,
+			'listop' => 44,
 			'hsh' => 19,
 			'termunop' => 20
 		}
 	},
 	{#State 76
 		ACTIONS => {
-			'POSTINC' => 100,
-			'POWOP' => 94,
-			'POSTDEC' => 101
-		},
-		DEFAULT => -72
-	},
-	{#State 77
-		DEFAULT => -120
-	},
-	{#State 78
-		DEFAULT => -3,
-		GOTOS => {
-			'remember' => 129
-		}
-	},
-	{#State 79
-		ACTIONS => {
 			"-" => 5,
 			'WORD' => 4,
 			"\@" => 7,
@@ -1068,48 +1032,54 @@ sub new {
 			'NOAMP' => 35,
 			'LSTOP' => 11,
 			'FUNC' => 38,
+			'STRING' => 39,
 			'DOLSHARP' => 36,
 			"!" => 14,
 			"\$" => 16,
-			'LOOPEX' => 41,
+			'LOOPEX' => 42,
 			'PMFUNC' => 22,
 			'NOTOP' => 23,
-			'FUNC0' => 45,
-			'UNIOP' => 48,
-			"&" => 47,
+			'FUNC0' => 46,
+			'UNIOP' => 49,
+			"&" => 48,
 			"(" => 29,
 			'FUNC1' => 30
 		},
 		GOTOS => {
 			'scalar' => 6,
-			'arylen' => 46,
+			'arylen' => 47,
 			'myattrterm' => 27,
 			'amper' => 26,
 			'subscripted' => 28,
-			'term' => 130,
+			'term' => 37,
 			'ary' => 12,
+			'expr' => 129,
 			'termbinop' => 18,
-			'listop' => 43,
+			'argexpr' => 55,
+			'listop' => 44,
 			'hsh' => 19,
 			'termunop' => 20
+		}
+	},
+	{#State 77
+		ACTIONS => {
+			'POSTINC' => 101,
+			'POWOP' => 95,
+			'POSTDEC' => 102
+		},
+		DEFAULT => -72
+	},
+	{#State 78
+		DEFAULT => -121
+	},
+	{#State 79
+		DEFAULT => -3,
+		GOTOS => {
+			'remember' => 130
 		}
 	},
 	{#State 80
 		ACTIONS => {
-			"," => 120
-		},
-		DEFAULT => -94
-	},
-	{#State 81
-		ACTIONS => {
-			'WORD' => 131
-		},
-		GOTOS => {
-			'subname' => 132
-		}
-	},
-	{#State 82
-		ACTIONS => {
 			"-" => 5,
 			'WORD' => 4,
 			"\@" => 7,
@@ -1119,49 +1089,102 @@ sub new {
 			'NOAMP' => 35,
 			'LSTOP' => 11,
 			'FUNC' => 38,
+			'STRING' => 39,
 			'DOLSHARP' => 36,
 			"!" => 14,
 			"\$" => 16,
-			'LOOPEX' => 41,
-			")" => 134,
+			'LOOPEX' => 42,
 			'PMFUNC' => 22,
 			'NOTOP' => 23,
-			'FUNC0' => 45,
-			'UNIOP' => 48,
-			"&" => 47,
+			'FUNC0' => 46,
+			'UNIOP' => 49,
+			"&" => 48,
 			"(" => 29,
 			'FUNC1' => 30
 		},
 		GOTOS => {
 			'scalar' => 6,
-			'arylen' => 46,
+			'arylen' => 47,
 			'myattrterm' => 27,
 			'amper' => 26,
 			'subscripted' => 28,
-			'term' => 37,
+			'term' => 131,
 			'ary' => 12,
-			'expr' => 133,
 			'termbinop' => 18,
-			'argexpr' => 54,
-			'listop' => 43,
+			'listop' => 44,
 			'hsh' => 19,
 			'termunop' => 20
+		}
+	},
+	{#State 81
+		ACTIONS => {
+			"," => 121
+		},
+		DEFAULT => -95
+	},
+	{#State 82
+		ACTIONS => {
+			'WORD' => 132
+		},
+		GOTOS => {
+			'subname' => 133
 		}
 	},
 	{#State 83
 		ACTIONS => {
-			'OROP' => 108,
+			"-" => 5,
+			'WORD' => 4,
+			"\@" => 7,
+			"+" => 34,
+			'MY' => 10,
+			"%" => 9,
+			'NOAMP' => 35,
+			'LSTOP' => 11,
+			'FUNC' => 38,
+			'STRING' => 39,
+			'DOLSHARP' => 36,
+			"!" => 14,
+			"\$" => 16,
+			'LOOPEX' => 42,
 			")" => 135,
-			'ANDOP' => 106
+			'PMFUNC' => 22,
+			'NOTOP' => 23,
+			'FUNC0' => 46,
+			'UNIOP' => 49,
+			"&" => 48,
+			"(" => 29,
+			'FUNC1' => 30
+		},
+		GOTOS => {
+			'scalar' => 6,
+			'arylen' => 47,
+			'myattrterm' => 27,
+			'amper' => 26,
+			'subscripted' => 28,
+			'term' => 37,
+			'ary' => 12,
+			'expr' => 134,
+			'termbinop' => 18,
+			'argexpr' => 55,
+			'listop' => 44,
+			'hsh' => 19,
+			'termunop' => 20
 		}
 	},
 	{#State 84
 		ACTIONS => {
-			"[" => 136
-		},
-		DEFAULT => -79
+			'OROP' => 109,
+			")" => 136,
+			'ANDOP' => 107
+		}
 	},
 	{#State 85
+		ACTIONS => {
+			"[" => 137
+		},
+		DEFAULT => -80
+	},
+	{#State 86
 		ACTIONS => {
 			"-" => 5,
 			'WORD' => 4,
@@ -1172,47 +1195,42 @@ sub new {
 			'NOAMP' => 35,
 			'LSTOP' => 11,
 			'FUNC' => 38,
+			'STRING' => 39,
 			'DOLSHARP' => 36,
 			"!" => 14,
 			"\$" => 16,
-			'LOOPEX' => 41,
-			")" => 138,
+			'LOOPEX' => 42,
+			")" => 139,
 			'PMFUNC' => 22,
 			'NOTOP' => 23,
-			'FUNC0' => 45,
-			'UNIOP' => 48,
-			"&" => 47,
+			'FUNC0' => 46,
+			'UNIOP' => 49,
+			"&" => 48,
 			"(" => 29,
 			'FUNC1' => 30
 		},
 		GOTOS => {
 			'scalar' => 6,
-			'arylen' => 46,
+			'arylen' => 47,
 			'myattrterm' => 27,
 			'amper' => 26,
 			'subscripted' => 28,
 			'term' => 37,
 			'ary' => 12,
-			'expr' => 137,
+			'expr' => 138,
 			'termbinop' => 18,
-			'argexpr' => 54,
-			'listop' => 43,
+			'argexpr' => 55,
+			'listop' => 44,
 			'hsh' => 19,
 			'termunop' => 20
 		}
 	},
-	{#State 86
+	{#State 87
 		DEFAULT => -11
 	},
-	{#State 87
-		ACTIONS => {
-			"(" => 139
-		}
-	},
 	{#State 88
-		DEFAULT => -3,
-		GOTOS => {
-			'remember' => 140
+		ACTIONS => {
+			"(" => 140
 		}
 	},
 	{#State 89
@@ -1222,14 +1240,20 @@ sub new {
 		}
 	},
 	{#State 90
+		DEFAULT => -3,
+		GOTOS => {
+			'remember' => 142
+		}
+	},
+	{#State 91
 		ACTIONS => {
-			'POSTINC' => 100,
-			'POWOP' => 94,
-			'POSTDEC' => 101
+			'POSTINC' => 101,
+			'POWOP' => 95,
+			'POSTDEC' => 102
 		},
 		DEFAULT => -71
 	},
-	{#State 91
+	{#State 92
 		ACTIONS => {
 			"-" => 5,
 			'WORD' => 4,
@@ -1246,68 +1270,32 @@ sub new {
 			"+" => 34,
 			'NOAMP' => 35,
 			'DOLSHARP' => 36,
+			'STRING' => 39,
 			'FUNC' => 38,
-			'LOOPEX' => 41,
-			'FUNC0' => 45,
-			"&" => 47,
-			'UNIOP' => 48
+			'LOOPEX' => 42,
+			'FUNC0' => 46,
+			"&" => 48,
+			'UNIOP' => 49
 		},
-		DEFAULT => -113,
+		DEFAULT => -114,
 		GOTOS => {
 			'scalar' => 6,
-			'arylen' => 46,
+			'arylen' => 47,
 			'myattrterm' => 27,
 			'amper' => 26,
 			'subscripted' => 28,
 			'term' => 37,
 			'ary' => 12,
 			'termbinop' => 18,
-			'argexpr' => 73,
-			'listop' => 43,
-			'listexpr' => 142,
+			'argexpr' => 74,
+			'listop' => 44,
+			'listexpr' => 143,
 			'hsh' => 19,
 			'termunop' => 20
 		}
-	},
-	{#State 92
-		DEFAULT => -123
 	},
 	{#State 93
-		ACTIONS => {
-			"-" => 5,
-			'WORD' => 4,
-			"\@" => 7,
-			"+" => 34,
-			'MY' => 10,
-			"%" => 9,
-			'NOAMP' => 35,
-			'LSTOP' => 11,
-			'FUNC' => 38,
-			'DOLSHARP' => 36,
-			"!" => 14,
-			"\$" => 16,
-			'LOOPEX' => 41,
-			'PMFUNC' => 22,
-			'NOTOP' => 23,
-			'FUNC0' => 45,
-			'UNIOP' => 48,
-			"&" => 47,
-			"(" => 29,
-			'FUNC1' => 30
-		},
-		GOTOS => {
-			'scalar' => 6,
-			'arylen' => 46,
-			'myattrterm' => 27,
-			'amper' => 26,
-			'subscripted' => 28,
-			'term' => 143,
-			'ary' => 12,
-			'termbinop' => 18,
-			'listop' => 43,
-			'hsh' => 19,
-			'termunop' => 20
-		}
+		DEFAULT => -124
 	},
 	{#State 94
 		ACTIONS => {
@@ -1320,28 +1308,29 @@ sub new {
 			'NOAMP' => 35,
 			'LSTOP' => 11,
 			'FUNC' => 38,
+			'STRING' => 39,
 			'DOLSHARP' => 36,
 			"!" => 14,
 			"\$" => 16,
-			'LOOPEX' => 41,
+			'LOOPEX' => 42,
 			'PMFUNC' => 22,
 			'NOTOP' => 23,
-			'FUNC0' => 45,
-			'UNIOP' => 48,
-			"&" => 47,
+			'FUNC0' => 46,
+			'UNIOP' => 49,
+			"&" => 48,
 			"(" => 29,
 			'FUNC1' => 30
 		},
 		GOTOS => {
 			'scalar' => 6,
-			'arylen' => 46,
+			'arylen' => 47,
 			'myattrterm' => 27,
 			'amper' => 26,
 			'subscripted' => 28,
 			'term' => 144,
 			'ary' => 12,
 			'termbinop' => 18,
-			'listop' => 43,
+			'listop' => 44,
 			'hsh' => 19,
 			'termunop' => 20
 		}
@@ -1357,28 +1346,29 @@ sub new {
 			'NOAMP' => 35,
 			'LSTOP' => 11,
 			'FUNC' => 38,
+			'STRING' => 39,
 			'DOLSHARP' => 36,
 			"!" => 14,
 			"\$" => 16,
-			'LOOPEX' => 41,
+			'LOOPEX' => 42,
 			'PMFUNC' => 22,
 			'NOTOP' => 23,
-			'FUNC0' => 45,
-			'UNIOP' => 48,
-			"&" => 47,
+			'FUNC0' => 46,
+			'UNIOP' => 49,
+			"&" => 48,
 			"(" => 29,
 			'FUNC1' => 30
 		},
 		GOTOS => {
 			'scalar' => 6,
-			'arylen' => 46,
+			'arylen' => 47,
 			'myattrterm' => 27,
 			'amper' => 26,
 			'subscripted' => 28,
 			'term' => 145,
 			'ary' => 12,
 			'termbinop' => 18,
-			'listop' => 43,
+			'listop' => 44,
 			'hsh' => 19,
 			'termunop' => 20
 		}
@@ -1394,28 +1384,29 @@ sub new {
 			'NOAMP' => 35,
 			'LSTOP' => 11,
 			'FUNC' => 38,
+			'STRING' => 39,
 			'DOLSHARP' => 36,
 			"!" => 14,
 			"\$" => 16,
-			'LOOPEX' => 41,
+			'LOOPEX' => 42,
 			'PMFUNC' => 22,
 			'NOTOP' => 23,
-			'FUNC0' => 45,
-			'UNIOP' => 48,
-			"&" => 47,
+			'FUNC0' => 46,
+			'UNIOP' => 49,
+			"&" => 48,
 			"(" => 29,
 			'FUNC1' => 30
 		},
 		GOTOS => {
 			'scalar' => 6,
-			'arylen' => 46,
+			'arylen' => 47,
 			'myattrterm' => 27,
 			'amper' => 26,
 			'subscripted' => 28,
 			'term' => 146,
 			'ary' => 12,
 			'termbinop' => 18,
-			'listop' => 43,
+			'listop' => 44,
 			'hsh' => 19,
 			'termunop' => 20
 		}
@@ -1431,28 +1422,29 @@ sub new {
 			'NOAMP' => 35,
 			'LSTOP' => 11,
 			'FUNC' => 38,
+			'STRING' => 39,
 			'DOLSHARP' => 36,
 			"!" => 14,
 			"\$" => 16,
-			'LOOPEX' => 41,
+			'LOOPEX' => 42,
 			'PMFUNC' => 22,
 			'NOTOP' => 23,
-			'FUNC0' => 45,
-			'UNIOP' => 48,
-			"&" => 47,
+			'FUNC0' => 46,
+			'UNIOP' => 49,
+			"&" => 48,
 			"(" => 29,
 			'FUNC1' => 30
 		},
 		GOTOS => {
 			'scalar' => 6,
-			'arylen' => 46,
+			'arylen' => 47,
 			'myattrterm' => 27,
 			'amper' => 26,
 			'subscripted' => 28,
 			'term' => 147,
 			'ary' => 12,
 			'termbinop' => 18,
-			'listop' => 43,
+			'listop' => 44,
 			'hsh' => 19,
 			'termunop' => 20
 		}
@@ -1468,28 +1460,29 @@ sub new {
 			'NOAMP' => 35,
 			'LSTOP' => 11,
 			'FUNC' => 38,
+			'STRING' => 39,
 			'DOLSHARP' => 36,
 			"!" => 14,
 			"\$" => 16,
-			'LOOPEX' => 41,
+			'LOOPEX' => 42,
 			'PMFUNC' => 22,
 			'NOTOP' => 23,
-			'FUNC0' => 45,
-			'UNIOP' => 48,
-			"&" => 47,
+			'FUNC0' => 46,
+			'UNIOP' => 49,
+			"&" => 48,
 			"(" => 29,
 			'FUNC1' => 30
 		},
 		GOTOS => {
 			'scalar' => 6,
-			'arylen' => 46,
+			'arylen' => 47,
 			'myattrterm' => 27,
 			'amper' => 26,
 			'subscripted' => 28,
 			'term' => 148,
 			'ary' => 12,
 			'termbinop' => 18,
-			'listop' => 43,
+			'listop' => 44,
 			'hsh' => 19,
 			'termunop' => 20
 		}
@@ -1505,39 +1498,34 @@ sub new {
 			'NOAMP' => 35,
 			'LSTOP' => 11,
 			'FUNC' => 38,
+			'STRING' => 39,
 			'DOLSHARP' => 36,
 			"!" => 14,
 			"\$" => 16,
-			'LOOPEX' => 41,
+			'LOOPEX' => 42,
 			'PMFUNC' => 22,
 			'NOTOP' => 23,
-			'FUNC0' => 45,
-			'UNIOP' => 48,
-			"&" => 47,
+			'FUNC0' => 46,
+			'UNIOP' => 49,
+			"&" => 48,
 			"(" => 29,
 			'FUNC1' => 30
 		},
 		GOTOS => {
 			'scalar' => 6,
-			'arylen' => 46,
+			'arylen' => 47,
 			'myattrterm' => 27,
 			'amper' => 26,
 			'subscripted' => 28,
 			'term' => 149,
 			'ary' => 12,
 			'termbinop' => 18,
-			'listop' => 43,
+			'listop' => 44,
 			'hsh' => 19,
 			'termunop' => 20
 		}
 	},
 	{#State 100
-		DEFAULT => -73
-	},
-	{#State 101
-		DEFAULT => -74
-	},
-	{#State 102
 		ACTIONS => {
 			"-" => 5,
 			'WORD' => 4,
@@ -1548,31 +1536,38 @@ sub new {
 			'NOAMP' => 35,
 			'LSTOP' => 11,
 			'FUNC' => 38,
+			'STRING' => 39,
 			'DOLSHARP' => 36,
 			"!" => 14,
 			"\$" => 16,
-			'LOOPEX' => 41,
+			'LOOPEX' => 42,
 			'PMFUNC' => 22,
 			'NOTOP' => 23,
-			'FUNC0' => 45,
-			'UNIOP' => 48,
-			"&" => 47,
+			'FUNC0' => 46,
+			'UNIOP' => 49,
+			"&" => 48,
 			"(" => 29,
 			'FUNC1' => 30
 		},
 		GOTOS => {
 			'scalar' => 6,
-			'arylen' => 46,
+			'arylen' => 47,
 			'myattrterm' => 27,
 			'amper' => 26,
 			'subscripted' => 28,
 			'term' => 150,
 			'ary' => 12,
 			'termbinop' => 18,
-			'listop' => 43,
+			'listop' => 44,
 			'hsh' => 19,
 			'termunop' => 20
 		}
+	},
+	{#State 101
+		DEFAULT => -73
+	},
+	{#State 102
+		DEFAULT => -74
 	},
 	{#State 103
 		ACTIONS => {
@@ -1585,28 +1580,29 @@ sub new {
 			'NOAMP' => 35,
 			'LSTOP' => 11,
 			'FUNC' => 38,
+			'STRING' => 39,
 			'DOLSHARP' => 36,
 			"!" => 14,
 			"\$" => 16,
-			'LOOPEX' => 41,
+			'LOOPEX' => 42,
 			'PMFUNC' => 22,
 			'NOTOP' => 23,
-			'FUNC0' => 45,
-			'UNIOP' => 48,
-			"&" => 47,
+			'FUNC0' => 46,
+			'UNIOP' => 49,
+			"&" => 48,
 			"(" => 29,
 			'FUNC1' => 30
 		},
 		GOTOS => {
 			'scalar' => 6,
-			'arylen' => 46,
+			'arylen' => 47,
 			'myattrterm' => 27,
 			'amper' => 26,
 			'subscripted' => 28,
 			'term' => 151,
 			'ary' => 12,
 			'termbinop' => 18,
-			'listop' => 43,
+			'listop' => 44,
 			'hsh' => 19,
 			'termunop' => 20
 		}
@@ -1622,77 +1618,34 @@ sub new {
 			'NOAMP' => 35,
 			'LSTOP' => 11,
 			'FUNC' => 38,
+			'STRING' => 39,
 			'DOLSHARP' => 36,
 			"!" => 14,
 			"\$" => 16,
-			'LOOPEX' => 41,
+			'LOOPEX' => 42,
 			'PMFUNC' => 22,
 			'NOTOP' => 23,
-			'FUNC0' => 45,
-			'UNIOP' => 48,
-			"&" => 47,
+			'FUNC0' => 46,
+			'UNIOP' => 49,
+			"&" => 48,
 			"(" => 29,
 			'FUNC1' => 30
 		},
 		GOTOS => {
 			'scalar' => 6,
-			'arylen' => 46,
+			'arylen' => 47,
 			'myattrterm' => 27,
 			'amper' => 26,
 			'subscripted' => 28,
 			'term' => 152,
 			'ary' => 12,
 			'termbinop' => 18,
-			'listop' => 43,
+			'listop' => 44,
 			'hsh' => 19,
 			'termunop' => 20
 		}
 	},
 	{#State 105
-		ACTIONS => {
-			"-" => 5,
-			'WORD' => 69,
-			"\@" => 7,
-			"+" => 34,
-			'MY' => 10,
-			"%" => 9,
-			'NOAMP' => 35,
-			'LSTOP' => 11,
-			'FUNC' => 38,
-			'DOLSHARP' => 36,
-			"!" => 14,
-			"\$" => 16,
-			'LOOPEX' => 41,
-			'PMFUNC' => 22,
-			'NOTOP' => 23,
-			'FUNC0' => 45,
-			"{" => 49,
-			'UNIOP' => 48,
-			"&" => 47,
-			"(" => 29,
-			'FUNC1' => 30
-		},
-		DEFAULT => -115,
-		GOTOS => {
-			'scalar' => 70,
-			'indirob' => 153,
-			'term' => 37,
-			'ary' => 12,
-			'expr' => 155,
-			'termbinop' => 18,
-			'listexprcom' => 154,
-			'listop' => 43,
-			'hsh' => 19,
-			'termunop' => 20,
-			'arylen' => 46,
-			'amper' => 26,
-			'myattrterm' => 27,
-			'subscripted' => 28,
-			'block' => 60,
-			'argexpr' => 54
-		}
-	},
-	{#State 106
 		ACTIONS => {
 			"-" => 5,
 			'WORD' => 4,
@@ -1703,32 +1656,76 @@ sub new {
 			'NOAMP' => 35,
 			'LSTOP' => 11,
 			'FUNC' => 38,
+			'STRING' => 39,
 			'DOLSHARP' => 36,
 			"!" => 14,
 			"\$" => 16,
-			'LOOPEX' => 41,
+			'LOOPEX' => 42,
 			'PMFUNC' => 22,
 			'NOTOP' => 23,
-			'FUNC0' => 45,
-			'UNIOP' => 48,
-			"&" => 47,
+			'FUNC0' => 46,
+			'UNIOP' => 49,
+			"&" => 48,
 			"(" => 29,
 			'FUNC1' => 30
 		},
 		GOTOS => {
 			'scalar' => 6,
-			'arylen' => 46,
+			'arylen' => 47,
 			'myattrterm' => 27,
 			'amper' => 26,
 			'subscripted' => 28,
+			'term' => 153,
+			'ary' => 12,
+			'termbinop' => 18,
+			'listop' => 44,
+			'hsh' => 19,
+			'termunop' => 20
+		}
+	},
+	{#State 106
+		ACTIONS => {
+			"-" => 5,
+			'WORD' => 70,
+			"\@" => 7,
+			"+" => 34,
+			'MY' => 10,
+			"%" => 9,
+			'NOAMP' => 35,
+			'LSTOP' => 11,
+			'FUNC' => 38,
+			'STRING' => 39,
+			'DOLSHARP' => 36,
+			"!" => 14,
+			"\$" => 16,
+			'LOOPEX' => 42,
+			'PMFUNC' => 22,
+			'NOTOP' => 23,
+			'FUNC0' => 46,
+			"{" => 50,
+			'UNIOP' => 49,
+			"&" => 48,
+			"(" => 29,
+			'FUNC1' => 30
+		},
+		DEFAULT => -116,
+		GOTOS => {
+			'scalar' => 71,
+			'indirob' => 154,
 			'term' => 37,
 			'ary' => 12,
 			'expr' => 156,
 			'termbinop' => 18,
-			'argexpr' => 54,
-			'listop' => 43,
+			'listexprcom' => 155,
+			'listop' => 44,
 			'hsh' => 19,
-			'termunop' => 20
+			'termunop' => 20,
+			'arylen' => 47,
+			'amper' => 26,
+			'myattrterm' => 27,
+			'subscripted' => 28,
+			'block' => 61,
+			'argexpr' => 55
 		}
 	},
 	{#State 107
@@ -1742,21 +1739,22 @@ sub new {
 			'NOAMP' => 35,
 			'LSTOP' => 11,
 			'FUNC' => 38,
+			'STRING' => 39,
 			'DOLSHARP' => 36,
 			"!" => 14,
 			"\$" => 16,
-			'LOOPEX' => 41,
+			'LOOPEX' => 42,
 			'PMFUNC' => 22,
 			'NOTOP' => 23,
-			'FUNC0' => 45,
-			'UNIOP' => 48,
-			"&" => 47,
+			'FUNC0' => 46,
+			'UNIOP' => 49,
+			"&" => 48,
 			"(" => 29,
 			'FUNC1' => 30
 		},
 		GOTOS => {
 			'scalar' => 6,
-			'arylen' => 46,
+			'arylen' => 47,
 			'myattrterm' => 27,
 			'amper' => 26,
 			'subscripted' => 28,
@@ -1764,8 +1762,8 @@ sub new {
 			'ary' => 12,
 			'expr' => 157,
 			'termbinop' => 18,
-			'argexpr' => 54,
-			'listop' => 43,
+			'argexpr' => 55,
+			'listop' => 44,
 			'hsh' => 19,
 			'termunop' => 20
 		}
@@ -1781,21 +1779,22 @@ sub new {
 			'NOAMP' => 35,
 			'LSTOP' => 11,
 			'FUNC' => 38,
+			'STRING' => 39,
 			'DOLSHARP' => 36,
 			"!" => 14,
 			"\$" => 16,
-			'LOOPEX' => 41,
+			'LOOPEX' => 42,
 			'PMFUNC' => 22,
 			'NOTOP' => 23,
-			'FUNC0' => 45,
-			'UNIOP' => 48,
-			"&" => 47,
+			'FUNC0' => 46,
+			'UNIOP' => 49,
+			"&" => 48,
 			"(" => 29,
 			'FUNC1' => 30
 		},
 		GOTOS => {
 			'scalar' => 6,
-			'arylen' => 46,
+			'arylen' => 47,
 			'myattrterm' => 27,
 			'amper' => 26,
 			'subscripted' => 28,
@@ -1803,8 +1802,8 @@ sub new {
 			'ary' => 12,
 			'expr' => 158,
 			'termbinop' => 18,
-			'argexpr' => 54,
-			'listop' => 43,
+			'argexpr' => 55,
+			'listop' => 44,
 			'hsh' => 19,
 			'termunop' => 20
 		}
@@ -1820,21 +1819,22 @@ sub new {
 			'NOAMP' => 35,
 			'LSTOP' => 11,
 			'FUNC' => 38,
+			'STRING' => 39,
 			'DOLSHARP' => 36,
 			"!" => 14,
 			"\$" => 16,
-			'LOOPEX' => 41,
+			'LOOPEX' => 42,
 			'PMFUNC' => 22,
 			'NOTOP' => 23,
-			'FUNC0' => 45,
-			'UNIOP' => 48,
-			"&" => 47,
+			'FUNC0' => 46,
+			'UNIOP' => 49,
+			"&" => 48,
 			"(" => 29,
 			'FUNC1' => 30
 		},
 		GOTOS => {
 			'scalar' => 6,
-			'arylen' => 46,
+			'arylen' => 47,
 			'myattrterm' => 27,
 			'amper' => 26,
 			'subscripted' => 28,
@@ -1842,8 +1842,8 @@ sub new {
 			'ary' => 12,
 			'expr' => 159,
 			'termbinop' => 18,
-			'argexpr' => 54,
-			'listop' => 43,
+			'argexpr' => 55,
+			'listop' => 44,
 			'hsh' => 19,
 			'termunop' => 20
 		}
@@ -1859,21 +1859,22 @@ sub new {
 			'NOAMP' => 35,
 			'LSTOP' => 11,
 			'FUNC' => 38,
+			'STRING' => 39,
 			'DOLSHARP' => 36,
 			"!" => 14,
 			"\$" => 16,
-			'LOOPEX' => 41,
+			'LOOPEX' => 42,
 			'PMFUNC' => 22,
 			'NOTOP' => 23,
-			'FUNC0' => 45,
-			'UNIOP' => 48,
-			"&" => 47,
+			'FUNC0' => 46,
+			'UNIOP' => 49,
+			"&" => 48,
 			"(" => 29,
 			'FUNC1' => 30
 		},
 		GOTOS => {
 			'scalar' => 6,
-			'arylen' => 46,
+			'arylen' => 47,
 			'myattrterm' => 27,
 			'amper' => 26,
 			'subscripted' => 28,
@@ -1881,64 +1882,104 @@ sub new {
 			'ary' => 12,
 			'expr' => 160,
 			'termbinop' => 18,
-			'argexpr' => 54,
-			'listop' => 43,
+			'argexpr' => 55,
+			'listop' => 44,
 			'hsh' => 19,
 			'termunop' => 20
 		}
 	},
 	{#State 111
-		DEFAULT => -3,
+		ACTIONS => {
+			"-" => 5,
+			'WORD' => 4,
+			"\@" => 7,
+			"+" => 34,
+			'MY' => 10,
+			"%" => 9,
+			'NOAMP' => 35,
+			'LSTOP' => 11,
+			'FUNC' => 38,
+			'STRING' => 39,
+			'DOLSHARP' => 36,
+			"!" => 14,
+			"\$" => 16,
+			'LOOPEX' => 42,
+			'PMFUNC' => 22,
+			'NOTOP' => 23,
+			'FUNC0' => 46,
+			'UNIOP' => 49,
+			"&" => 48,
+			"(" => 29,
+			'FUNC1' => 30
+		},
 		GOTOS => {
-			'remember' => 161
+			'scalar' => 6,
+			'arylen' => 47,
+			'myattrterm' => 27,
+			'amper' => 26,
+			'subscripted' => 28,
+			'term' => 37,
+			'ary' => 12,
+			'expr' => 161,
+			'termbinop' => 18,
+			'argexpr' => 55,
+			'listop' => 44,
+			'hsh' => 19,
+			'termunop' => 20
 		}
 	},
 	{#State 112
-		ACTIONS => {
-			")" => 162
+		DEFAULT => -3,
+		GOTOS => {
+			'remember' => 162
 		}
 	},
 	{#State 113
-		DEFAULT => -119
-	},
-	{#State 114
 		ACTIONS => {
-			'ADDOP' => 99,
-			'POSTINC' => 100,
-			'POWOP' => 94,
-			'MATCHOP' => 95,
-			'POSTDEC' => 101,
-			'MULOP' => 103
-		},
-		DEFAULT => -97
-	},
-	{#State 115
-		DEFAULT => -96
-	},
-	{#State 116
-		DEFAULT => -6,
-		GOTOS => {
-			'lineseq' => 163
+			")" => 163
 		}
 	},
+	{#State 114
+		DEFAULT => -120
+	},
+	{#State 115
+		ACTIONS => {
+			'ADDOP' => 100,
+			'POSTINC' => 101,
+			'POWOP' => 95,
+			'MATCHOP' => 96,
+			'POSTDEC' => 102,
+			'MULOP' => 104
+		},
+		DEFAULT => -98
+	},
+	{#State 116
+		DEFAULT => -97
+	},
 	{#State 117
-		DEFAULT => -47,
+		DEFAULT => -6,
 		GOTOS => {
-			'@1-2' => 164
+			'lineseq' => 164
 		}
 	},
 	{#State 118
-		ACTIONS => {
-			"{" => 49
-		},
+		DEFAULT => -47,
 		GOTOS => {
-			'block' => 165
+			'@1-2' => 165
 		}
 	},
 	{#State 119
-		DEFAULT => -28
+		ACTIONS => {
+			"{" => 50
+		},
+		GOTOS => {
+			'block' => 166
+		}
 	},
 	{#State 120
+		DEFAULT => -28
+	},
+	{#State 121
 		ACTIONS => {
 			"-" => 5,
 			'WORD' => 4,
@@ -1955,158 +1996,160 @@ sub new {
 			"+" => 34,
 			'NOAMP' => 35,
 			'DOLSHARP' => 36,
+			'STRING' => 39,
 			'FUNC' => 38,
-			'LOOPEX' => 41,
-			'FUNC0' => 45,
-			"&" => 47,
-			'UNIOP' => 48
+			'LOOPEX' => 42,
+			'FUNC0' => 46,
+			"&" => 48,
+			'UNIOP' => 49
 		},
 		DEFAULT => -52,
 		GOTOS => {
 			'scalar' => 6,
-			'arylen' => 46,
+			'arylen' => 47,
 			'myattrterm' => 27,
 			'amper' => 26,
 			'subscripted' => 28,
-			'term' => 166,
+			'term' => 167,
 			'ary' => 12,
 			'termbinop' => 18,
-			'listop' => 43,
+			'listop' => 44,
 			'hsh' => 19,
 			'termunop' => 20
 		}
 	},
-	{#State 121
-		ACTIONS => {
-			'OROP' => 108,
-			"]" => 167,
-			'ANDOP' => 106
-		}
-	},
 	{#State 122
-		DEFAULT => -45
+		ACTIONS => {
+			'OROP' => 109,
+			"]" => 168,
+			'ANDOP' => 107
+		}
 	},
 	{#State 123
-		ACTIONS => {
-			'OROP' => 108,
-			")" => 168,
-			'ANDOP' => 106
-		}
+		DEFAULT => -45
 	},
 	{#State 124
-		DEFAULT => -109
+		ACTIONS => {
+			'OROP' => 109,
+			")" => 169,
+			'ANDOP' => 107
+		}
 	},
 	{#State 125
-		DEFAULT => -106
+		DEFAULT => -110
 	},
 	{#State 126
-		ACTIONS => {
-			"," => 120
-		},
-		DEFAULT => -55
+		DEFAULT => -107
 	},
 	{#State 127
 		ACTIONS => {
-			'OROP' => 108,
-			"]" => 169,
-			'ANDOP' => 106
-		}
+			"," => 121
+		},
+		DEFAULT => -55
 	},
 	{#State 128
 		ACTIONS => {
-			";" => 170,
-			'OROP' => 108,
-			'ANDOP' => 106
+			'OROP' => 109,
+			"]" => 170,
+			'ANDOP' => 107
 		}
 	},
 	{#State 129
 		ACTIONS => {
-			"-" => 5,
-			'WORD' => 4,
-			"\@" => 7,
-			"+" => 34,
-			'MY' => 10,
-			"%" => 9,
-			'NOAMP' => 35,
-			'LSTOP' => 11,
-			'FUNC' => 38,
-			'DOLSHARP' => 36,
-			"!" => 14,
-			"\$" => 16,
-			'LOOPEX' => 41,
-			'PMFUNC' => 22,
-			'NOTOP' => 23,
-			'FUNC0' => 45,
-			'UNIOP' => 48,
-			"&" => 47,
-			"(" => 29,
-			'FUNC1' => 30
-		},
-		GOTOS => {
-			'mexpr' => 171,
-			'scalar' => 6,
-			'arylen' => 46,
-			'myattrterm' => 27,
-			'amper' => 26,
-			'subscripted' => 28,
-			'term' => 37,
-			'ary' => 12,
-			'expr' => 172,
-			'termbinop' => 18,
-			'argexpr' => 54,
-			'listop' => 43,
-			'hsh' => 19,
-			'termunop' => 20
+			";" => 171,
+			'OROP' => 109,
+			'ANDOP' => 107
 		}
 	},
 	{#State 130
 		ACTIONS => {
-			'MATCHOP' => 95,
-			'POSTDEC' => 101,
-			'MULOP' => 103,
-			'DOTDOT' => 102,
-			'ADDOP' => 99,
-			"," => 173,
-			'ASSIGNOP' => 93,
-			'OROR' => 104,
-			'POSTINC' => 100,
-			'ANDAND' => 96,
-			")" => 174,
-			'POWOP' => 94,
-			'EQOP' => 97,
-			'RELOP' => 98
+			"-" => 5,
+			'WORD' => 4,
+			"\@" => 7,
+			"+" => 34,
+			'MY' => 10,
+			"%" => 9,
+			'NOAMP' => 35,
+			'LSTOP' => 11,
+			'FUNC' => 38,
+			'STRING' => 39,
+			'DOLSHARP' => 36,
+			"!" => 14,
+			"\$" => 16,
+			'LOOPEX' => 42,
+			'PMFUNC' => 22,
+			'NOTOP' => 23,
+			'FUNC0' => 46,
+			'UNIOP' => 49,
+			"&" => 48,
+			"(" => 29,
+			'FUNC1' => 30
+		},
+		GOTOS => {
+			'mexpr' => 172,
+			'scalar' => 6,
+			'arylen' => 47,
+			'myattrterm' => 27,
+			'amper' => 26,
+			'subscripted' => 28,
+			'term' => 37,
+			'ary' => 12,
+			'expr' => 173,
+			'termbinop' => 18,
+			'argexpr' => 55,
+			'listop' => 44,
+			'hsh' => 19,
+			'termunop' => 20
 		}
 	},
 	{#State 131
-		DEFAULT => -42
+		ACTIONS => {
+			'MATCHOP' => 96,
+			'POSTDEC' => 102,
+			'MULOP' => 104,
+			'DOTDOT' => 103,
+			'ADDOP' => 100,
+			"," => 174,
+			'ASSIGNOP' => 94,
+			'OROR' => 105,
+			'POSTINC' => 101,
+			'ANDAND' => 97,
+			")" => 175,
+			'POWOP' => 95,
+			'EQOP' => 98,
+			'RELOP' => 99
+		}
 	},
 	{#State 132
-		ACTIONS => {
-			";" => 176,
-			"{" => 49
-		},
-		GOTOS => {
-			'block' => 177,
-			'subbody' => 175
-		}
+		DEFAULT => -42
 	},
 	{#State 133
 		ACTIONS => {
-			'OROP' => 108,
-			")" => 178,
-			'ANDOP' => 106
+			";" => 177,
+			"{" => 50
+		},
+		GOTOS => {
+			'block' => 178,
+			'subbody' => 176
 		}
 	},
 	{#State 134
-		DEFAULT => -90
+		ACTIONS => {
+			'OROP' => 109,
+			")" => 179,
+			'ANDOP' => 107
+		}
 	},
 	{#State 135
-		ACTIONS => {
-			"[" => 179
-		},
-		DEFAULT => -78
+		DEFAULT => -91
 	},
 	{#State 136
+		ACTIONS => {
+			"[" => 180
+		},
+		DEFAULT => -79
+	},
+	{#State 137
 		ACTIONS => {
 			"-" => 5,
 			'WORD' => 4,
@@ -2117,60 +2160,61 @@ sub new {
 			'NOAMP' => 35,
 			'LSTOP' => 11,
 			'FUNC' => 38,
+			'STRING' => 39,
 			'DOLSHARP' => 36,
 			"!" => 14,
 			"\$" => 16,
-			'LOOPEX' => 41,
+			'LOOPEX' => 42,
 			'PMFUNC' => 22,
 			'NOTOP' => 23,
-			'FUNC0' => 45,
-			'UNIOP' => 48,
-			"&" => 47,
+			'FUNC0' => 46,
+			'UNIOP' => 49,
+			"&" => 48,
 			"(" => 29,
 			'FUNC1' => 30
 		},
 		GOTOS => {
 			'scalar' => 6,
-			'arylen' => 46,
+			'arylen' => 47,
 			'myattrterm' => 27,
 			'amper' => 26,
 			'subscripted' => 28,
 			'term' => 37,
 			'ary' => 12,
-			'expr' => 180,
+			'expr' => 181,
 			'termbinop' => 18,
-			'argexpr' => 54,
-			'listop' => 43,
+			'argexpr' => 55,
+			'listop' => 44,
 			'hsh' => 19,
 			'termunop' => 20
 		}
 	},
-	{#State 137
-		ACTIONS => {
-			'OROP' => 108,
-			")" => 181,
-			'ANDOP' => 106
-		}
-	},
 	{#State 138
-		DEFAULT => -100
+		ACTIONS => {
+			'OROP' => 109,
+			")" => 182,
+			'ANDOP' => 107
+		}
 	},
 	{#State 139
-		DEFAULT => -3,
-		GOTOS => {
-			'remember' => 182
-		}
+		DEFAULT => -101
 	},
 	{#State 140
+		DEFAULT => -3,
+		GOTOS => {
+			'remember' => 183
+		}
+	},
+	{#State 141
 		ACTIONS => {
 			"\$" => 16
 		},
 		GOTOS => {
-			'scalar' => 183,
-			'my_scalar' => 184
+			'scalar' => 184,
+			'my_scalar' => 185
 		}
 	},
-	{#State 141
+	{#State 142
 		ACTIONS => {
 			"-" => 5,
 			'WORD' => 4,
@@ -2182,163 +2226,164 @@ sub new {
 			'NOAMP' => 35,
 			'LSTOP' => 11,
 			'FUNC' => 38,
+			'STRING' => 39,
 			'DOLSHARP' => 36,
 			"!" => 14,
 			"\$" => 16,
-			'error' => 42,
-			'LOOPEX' => 41,
+			'error' => 43,
+			'LOOPEX' => 42,
 			'PMFUNC' => 22,
 			'NOTOP' => 23,
-			'FUNC0' => 45,
-			'UNIOP' => 48,
-			"&" => 47,
+			'FUNC0' => 46,
+			'UNIOP' => 49,
+			"&" => 48,
 			"(" => 29,
 			'FUNC1' => 30
 		},
 		GOTOS => {
-			'mexpr' => 185,
+			'mexpr' => 186,
 			'scalar' => 6,
-			'sideff' => 187,
+			'sideff' => 188,
 			'term' => 37,
 			'ary' => 12,
-			'expr' => 188,
-			'nexpr' => 189,
+			'expr' => 189,
+			'nexpr' => 190,
 			'termbinop' => 18,
-			'listop' => 43,
+			'listop' => 44,
 			'hsh' => 19,
 			'termunop' => 20,
-			'arylen' => 46,
-			'mnexpr' => 186,
+			'arylen' => 47,
+			'mnexpr' => 187,
 			'amper' => 26,
 			'myattrterm' => 27,
 			'subscripted' => 28,
-			'argexpr' => 54
+			'argexpr' => 55
 		}
 	},
-	{#State 142
-		DEFAULT => -92
-	},
 	{#State 143
-		ACTIONS => {
-			'ADDOP' => 99,
-			'ASSIGNOP' => 93,
-			'POSTINC' => 100,
-			'POWOP' => 94,
-			'MATCHOP' => 95,
-			'POSTDEC' => 101,
-			'DOTDOT' => 102,
-			'MULOP' => 103,
-			'ANDAND' => 96,
-			'OROR' => 104,
-			'RELOP' => 98,
-			'EQOP' => 97
-		},
-		DEFAULT => -60
+		DEFAULT => -93
 	},
 	{#State 144
 		ACTIONS => {
-			'POSTINC' => 100,
-			'POWOP' => 94,
-			'POSTDEC' => 101
+			'ADDOP' => 100,
+			'ASSIGNOP' => 94,
+			'POSTINC' => 101,
+			'POWOP' => 95,
+			'MATCHOP' => 96,
+			'POSTDEC' => 102,
+			'DOTDOT' => 103,
+			'MULOP' => 104,
+			'ANDAND' => 97,
+			'OROR' => 105,
+			'RELOP' => 99,
+			'EQOP' => 98
 		},
-		DEFAULT => -61
+		DEFAULT => -60
 	},
 	{#State 145
 		ACTIONS => {
-			'POSTINC' => 100,
-			'POWOP' => 94,
-			'POSTDEC' => 101
+			'POSTINC' => 101,
+			'POWOP' => 95,
+			'POSTDEC' => 102
 		},
-		DEFAULT => -69
+		DEFAULT => -61
 	},
 	{#State 146
 		ACTIONS => {
-			'ADDOP' => 99,
-			'POSTINC' => 100,
-			'POWOP' => 94,
-			'MATCHOP' => 95,
-			'POSTDEC' => 101,
-			'MULOP' => 103,
-			'RELOP' => 98,
-			'EQOP' => 97
+			'POSTINC' => 101,
+			'POWOP' => 95,
+			'POSTDEC' => 102
 		},
-		DEFAULT => -67
+		DEFAULT => -69
 	},
 	{#State 147
 		ACTIONS => {
-			'ADDOP' => 99,
-			'POSTINC' => 100,
-			'POWOP' => 94,
-			'MATCHOP' => 95,
-			'POSTDEC' => 101,
-			'MULOP' => 103,
-			'RELOP' => 98,
+			'ADDOP' => 100,
+			'POSTINC' => 101,
+			'POWOP' => 95,
+			'MATCHOP' => 96,
+			'POSTDEC' => 102,
+			'MULOP' => 104,
+			'RELOP' => 99,
+			'EQOP' => 98
+		},
+		DEFAULT => -67
+	},
+	{#State 148
+		ACTIONS => {
+			'ADDOP' => 100,
+			'POSTINC' => 101,
+			'POWOP' => 95,
+			'MATCHOP' => 96,
+			'POSTDEC' => 102,
+			'MULOP' => 104,
+			'RELOP' => 99,
 			'EQOP' => undef
 		},
 		DEFAULT => -65
 	},
-	{#State 148
+	{#State 149
 		ACTIONS => {
-			'ADDOP' => 99,
-			'POSTINC' => 100,
-			'POWOP' => 94,
-			'MATCHOP' => 95,
-			'POSTDEC' => 101,
-			'MULOP' => 103,
+			'ADDOP' => 100,
+			'POSTINC' => 101,
+			'POWOP' => 95,
+			'MATCHOP' => 96,
+			'POSTDEC' => 102,
+			'MULOP' => 104,
 			'RELOP' => undef
 		},
 		DEFAULT => -64
 	},
-	{#State 149
+	{#State 150
 		ACTIONS => {
-			'POSTINC' => 100,
-			'POWOP' => 94,
-			'MATCHOP' => 95,
-			'POSTDEC' => 101,
-			'MULOP' => 103
+			'POSTINC' => 101,
+			'POWOP' => 95,
+			'MATCHOP' => 96,
+			'POSTDEC' => 102,
+			'MULOP' => 104
 		},
 		DEFAULT => -63
 	},
-	{#State 150
+	{#State 151
 		ACTIONS => {
-			'ADDOP' => 99,
-			'POSTINC' => 100,
-			'POWOP' => 94,
-			'MATCHOP' => 95,
-			'POSTDEC' => 101,
+			'ADDOP' => 100,
+			'POSTINC' => 101,
+			'POWOP' => 95,
+			'MATCHOP' => 96,
+			'POSTDEC' => 102,
 			'DOTDOT' => undef,
-			'MULOP' => 103,
-			'ANDAND' => 96,
-			'OROR' => 104,
-			'RELOP' => 98,
-			'EQOP' => 97
+			'MULOP' => 104,
+			'ANDAND' => 97,
+			'OROR' => 105,
+			'RELOP' => 99,
+			'EQOP' => 98
 		},
 		DEFAULT => -66
 	},
-	{#State 151
+	{#State 152
 		ACTIONS => {
-			'POSTINC' => 100,
-			'POWOP' => 94,
-			'MATCHOP' => 95,
-			'POSTDEC' => 101
+			'POSTINC' => 101,
+			'POWOP' => 95,
+			'MATCHOP' => 96,
+			'POSTDEC' => 102
 		},
 		DEFAULT => -62
 	},
-	{#State 152
+	{#State 153
 		ACTIONS => {
-			'ADDOP' => 99,
-			'POSTINC' => 100,
-			'POWOP' => 94,
-			'MATCHOP' => 95,
-			'POSTDEC' => 101,
-			'MULOP' => 103,
-			'ANDAND' => 96,
-			'RELOP' => 98,
-			'EQOP' => 97
+			'ADDOP' => 100,
+			'POSTINC' => 101,
+			'POWOP' => 95,
+			'MATCHOP' => 96,
+			'POSTDEC' => 102,
+			'MULOP' => 104,
+			'ANDAND' => 97,
+			'RELOP' => 99,
+			'EQOP' => 98
 		},
 		DEFAULT => -68
 	},
-	{#State 153
+	{#State 154
 		ACTIONS => {
 			"-" => 5,
 			'WORD' => 4,
@@ -2349,78 +2394,79 @@ sub new {
 			'NOAMP' => 35,
 			'LSTOP' => 11,
 			'FUNC' => 38,
+			'STRING' => 39,
 			'DOLSHARP' => 36,
 			"!" => 14,
 			"\$" => 16,
-			'LOOPEX' => 41,
+			'LOOPEX' => 42,
 			'PMFUNC' => 22,
 			'NOTOP' => 23,
-			'FUNC0' => 45,
-			'UNIOP' => 48,
-			"&" => 47,
+			'FUNC0' => 46,
+			'UNIOP' => 49,
+			"&" => 48,
 			"(" => 29,
 			'FUNC1' => 30
 		},
 		GOTOS => {
 			'scalar' => 6,
-			'arylen' => 46,
+			'arylen' => 47,
 			'myattrterm' => 27,
 			'amper' => 26,
 			'subscripted' => 28,
 			'term' => 37,
 			'ary' => 12,
-			'expr' => 190,
+			'expr' => 191,
 			'termbinop' => 18,
-			'argexpr' => 54,
-			'listop' => 43,
+			'argexpr' => 55,
+			'listop' => 44,
 			'hsh' => 19,
 			'termunop' => 20
-		}
-	},
-	{#State 154
-		ACTIONS => {
-			")" => 191
 		}
 	},
 	{#State 155
 		ACTIONS => {
-			'OROP' => 108,
-			"," => 192,
-			'ANDOP' => 106
-		},
-		DEFAULT => -116
+			")" => 192
+		}
 	},
 	{#State 156
-		DEFAULT => -49
+		ACTIONS => {
+			'OROP' => 109,
+			"," => 193,
+			'ANDOP' => 107
+		},
+		DEFAULT => -117
 	},
 	{#State 157
-		ACTIONS => {
-			'OROP' => 108,
-			'ANDOP' => 106
-		},
-		DEFAULT => -14
+		DEFAULT => -49
 	},
 	{#State 158
 		ACTIONS => {
-			'ANDOP' => 106
+			'OROP' => 109,
+			'ANDOP' => 107
 		},
-		DEFAULT => -50
+		DEFAULT => -14
 	},
 	{#State 159
 		ACTIONS => {
-			'OROP' => 108,
-			'ANDOP' => 106
+			'ANDOP' => 107
 		},
-		DEFAULT => -16
+		DEFAULT => -50
 	},
 	{#State 160
 		ACTIONS => {
-			'OROP' => 108,
-			'ANDOP' => 106
+			'OROP' => 109,
+			'ANDOP' => 107
+		},
+		DEFAULT => -16
+	},
+	{#State 161
+		ACTIONS => {
+			'OROP' => 109,
+			'ANDOP' => 107
 		},
 		DEFAULT => -15
 	},
-	{#State 161
+	{#State 162
 		ACTIONS => {
 			"-" => 5,
 			'WORD' => 4,
@@ -2431,43 +2477,44 @@ sub new {
 			'NOAMP' => 35,
 			'LSTOP' => 11,
 			'FUNC' => 38,
+			'STRING' => 39,
 			'DOLSHARP' => 36,
 			"!" => 14,
 			"\$" => 16,
-			'LOOPEX' => 41,
+			'LOOPEX' => 42,
 			'PMFUNC' => 22,
 			'NOTOP' => 23,
-			'FUNC0' => 45,
-			'UNIOP' => 48,
-			"&" => 47,
+			'FUNC0' => 46,
+			'UNIOP' => 49,
+			"&" => 48,
 			"(" => 29,
 			'FUNC1' => 30
 		},
 		DEFAULT => -31,
 		GOTOS => {
 			'scalar' => 6,
-			'arylen' => 46,
+			'arylen' => 47,
 			'myattrterm' => 27,
 			'amper' => 26,
 			'subscripted' => 28,
 			'term' => 37,
 			'ary' => 12,
-			'expr' => 195,
-			'texpr' => 193,
+			'expr' => 196,
+			'texpr' => 194,
 			'termbinop' => 18,
-			'mtexpr' => 194,
-			'argexpr' => 54,
-			'listop' => 43,
+			'mtexpr' => 195,
+			'argexpr' => 55,
+			'listop' => 44,
 			'hsh' => 19,
 			'termunop' => 20
 		}
 	},
-	{#State 162
-		DEFAULT => -99
-	},
 	{#State 163
+		DEFAULT => -100
+	},
+	{#State 164
 		ACTIONS => {
-			"}" => 196,
+			"}" => 197,
 			"-" => 5,
 			'WORD' => 4,
 			'PACKAGE' => 8,
@@ -2479,23 +2526,24 @@ sub new {
 			'NOAMP' => 35,
 			'LSTOP' => 11,
 			'FUNC' => 38,
+			'STRING' => 39,
 			'DOLSHARP' => 36,
 			"!" => 14,
 			'IF' => 17,
 			"\$" => 16,
-			'error' => 42,
-			'LOOPEX' => 41,
-			'WHILE' => 44,
+			'error' => 43,
+			'LOOPEX' => 42,
+			'WHILE' => 45,
 			'PMFUNC' => 22,
 			'NOTOP' => 23,
-			'FUNC0' => 45,
+			'FUNC0' => 46,
 			'SUB' => 25,
-			"{" => 49,
-			'UNIOP' => 48,
-			"&" => 47,
-			'USE' => 51,
+			"{" => 50,
+			'UNIOP' => 49,
+			"&" => 48,
+			'USE' => 52,
 			"(" => 29,
-			'format' => 52,
+			'format' => 53,
 			'FUNC1' => 30
 		},
 		GOTOS => {
@@ -2505,128 +2553,76 @@ sub new {
 			'term' => 37,
 			'loop' => 13,
 			'ary' => 12,
-			'expr' => 39,
-			'use' => 40,
+			'expr' => 40,
+			'use' => 41,
 			'decl' => 15,
 			'termbinop' => 18,
-			'listop' => 43,
+			'listop' => 44,
 			'hsh' => 19,
 			'termunop' => 20,
 			'line' => 21,
 			'cond' => 24,
-			'arylen' => 46,
+			'arylen' => 47,
 			'amper' => 26,
 			'myattrterm' => 27,
 			'subscripted' => 28,
-			'package' => 50,
-			'block' => 53,
-			'argexpr' => 54
-		}
-	},
-	{#State 164
-		ACTIONS => {
-			'WORD' => 197
+			'package' => 51,
+			'block' => 54,
+			'argexpr' => 55
 		}
 	},
 	{#State 165
-		DEFAULT => -22
+		ACTIONS => {
+			'WORD' => 198
+		}
 	},
 	{#State 166
+		DEFAULT => -22
+	},
+	{#State 167
 		ACTIONS => {
-			'ADDOP' => 99,
-			'ASSIGNOP' => 93,
-			'POSTINC' => 100,
-			'POWOP' => 94,
-			'MATCHOP' => 95,
-			'POSTDEC' => 101,
-			'DOTDOT' => 102,
-			'MULOP' => 103,
-			'ANDAND' => 96,
-			'OROR' => 104,
-			'RELOP' => 98,
-			'EQOP' => 97
+			'ADDOP' => 100,
+			'ASSIGNOP' => 94,
+			'POSTINC' => 101,
+			'POWOP' => 95,
+			'MATCHOP' => 96,
+			'POSTDEC' => 102,
+			'DOTDOT' => 103,
+			'MULOP' => 104,
+			'ANDAND' => 97,
+			'OROR' => 105,
+			'RELOP' => 99,
+			'EQOP' => 98
 		},
 		DEFAULT => -53
 	},
-	{#State 167
+	{#State 168
 		DEFAULT => -59
 	},
-	{#State 168
-		DEFAULT => -108
-	},
 	{#State 169
-		DEFAULT => -87
+		DEFAULT => -109
 	},
 	{#State 170
-		ACTIONS => {
-			"}" => 198
-		}
+		DEFAULT => -88
 	},
 	{#State 171
 		ACTIONS => {
-			")" => 199
+			"}" => 199
 		}
 	},
 	{#State 172
 		ACTIONS => {
-			'OROP' => 108,
-			'ANDOP' => 106
-		},
-		DEFAULT => -33
+			")" => 200
+		}
 	},
 	{#State 173
 		ACTIONS => {
-			"-" => 5,
-			'WORD' => 4,
-			"\@" => 7,
-			"+" => 34,
-			'MY' => 10,
-			"%" => 9,
-			'NOAMP' => 35,
-			'LSTOP' => 11,
-			'FUNC' => 38,
-			'DOLSHARP' => 36,
-			"!" => 14,
-			"\$" => 16,
-			'LOOPEX' => 41,
-			'PMFUNC' => 22,
-			'NOTOP' => 23,
-			'FUNC0' => 45,
-			'UNIOP' => 48,
-			"&" => 47,
-			"(" => 29,
-			'FUNC1' => 30
+			'OROP' => 109,
+			'ANDOP' => 107
 		},
-		GOTOS => {
-			'scalar' => 6,
-			'arylen' => 46,
-			'myattrterm' => 27,
-			'amper' => 26,
-			'subscripted' => 28,
-			'term' => 200,
-			'ary' => 12,
-			'termbinop' => 18,
-			'listop' => 43,
-			'hsh' => 19,
-			'termunop' => 20
-		}
+		DEFAULT => -33
 	},
 	{#State 174
-		DEFAULT => -102
-	},
-	{#State 175
-		DEFAULT => -40
-	},
-	{#State 176
-		DEFAULT => -44
-	},
-	{#State 177
-		DEFAULT => -43
-	},
-	{#State 178
-		DEFAULT => -91
-	},
-	{#State 179
 		ACTIONS => {
 			"-" => 5,
 			'WORD' => 4,
@@ -2637,45 +2633,99 @@ sub new {
 			'NOAMP' => 35,
 			'LSTOP' => 11,
 			'FUNC' => 38,
+			'STRING' => 39,
 			'DOLSHARP' => 36,
 			"!" => 14,
 			"\$" => 16,
-			'LOOPEX' => 41,
+			'LOOPEX' => 42,
 			'PMFUNC' => 22,
 			'NOTOP' => 23,
-			'FUNC0' => 45,
-			'UNIOP' => 48,
-			"&" => 47,
+			'FUNC0' => 46,
+			'UNIOP' => 49,
+			"&" => 48,
 			"(" => 29,
 			'FUNC1' => 30
 		},
 		GOTOS => {
 			'scalar' => 6,
-			'arylen' => 46,
+			'arylen' => 47,
 			'myattrterm' => 27,
 			'amper' => 26,
 			'subscripted' => 28,
-			'term' => 37,
+			'term' => 201,
 			'ary' => 12,
-			'expr' => 201,
 			'termbinop' => 18,
-			'argexpr' => 54,
-			'listop' => 43,
+			'listop' => 44,
 			'hsh' => 19,
 			'termunop' => 20
 		}
+	},
+	{#State 175
+		DEFAULT => -103
+	},
+	{#State 176
+		DEFAULT => -40
+	},
+	{#State 177
+		DEFAULT => -44
+	},
+	{#State 178
+		DEFAULT => -43
+	},
+	{#State 179
+		DEFAULT => -92
 	},
 	{#State 180
 		ACTIONS => {
-			'OROP' => 108,
-			"]" => 202,
-			'ANDOP' => 106
+			"-" => 5,
+			'WORD' => 4,
+			"\@" => 7,
+			"+" => 34,
+			'MY' => 10,
+			"%" => 9,
+			'NOAMP' => 35,
+			'LSTOP' => 11,
+			'FUNC' => 38,
+			'STRING' => 39,
+			'DOLSHARP' => 36,
+			"!" => 14,
+			"\$" => 16,
+			'LOOPEX' => 42,
+			'PMFUNC' => 22,
+			'NOTOP' => 23,
+			'FUNC0' => 46,
+			'UNIOP' => 49,
+			"&" => 48,
+			"(" => 29,
+			'FUNC1' => 30
+		},
+		GOTOS => {
+			'scalar' => 6,
+			'arylen' => 47,
+			'myattrterm' => 27,
+			'amper' => 26,
+			'subscripted' => 28,
+			'term' => 37,
+			'ary' => 12,
+			'expr' => 202,
+			'termbinop' => 18,
+			'argexpr' => 55,
+			'listop' => 44,
+			'hsh' => 19,
+			'termunop' => 20
 		}
 	},
 	{#State 181
-		DEFAULT => -101
+		ACTIONS => {
+			'OROP' => 109,
+			"]" => 203,
+			'ANDOP' => 107
+		}
 	},
 	{#State 182
+		DEFAULT => -102
+	},
+	{#State 183
 		ACTIONS => {
 			"-" => 5,
 			'WORD' => 4,
@@ -2686,150 +2736,151 @@ sub new {
 			'NOAMP' => 35,
 			'LSTOP' => 11,
 			'FUNC' => 38,
+			'STRING' => 39,
 			'DOLSHARP' => 36,
 			"!" => 14,
 			"\$" => 16,
-			'LOOPEX' => 41,
+			'LOOPEX' => 42,
 			'PMFUNC' => 22,
 			'NOTOP' => 23,
-			'FUNC0' => 45,
-			'UNIOP' => 48,
-			"&" => 47,
+			'FUNC0' => 46,
+			'UNIOP' => 49,
+			"&" => 48,
 			"(" => 29,
 			'FUNC1' => 30
 		},
 		GOTOS => {
-			'mexpr' => 203,
+			'mexpr' => 204,
 			'scalar' => 6,
-			'arylen' => 46,
+			'arylen' => 47,
 			'myattrterm' => 27,
 			'amper' => 26,
 			'subscripted' => 28,
 			'term' => 37,
 			'ary' => 12,
-			'expr' => 172,
+			'expr' => 173,
 			'termbinop' => 18,
-			'argexpr' => 54,
-			'listop' => 43,
+			'argexpr' => 55,
+			'listop' => 44,
 			'hsh' => 19,
 			'termunop' => 20
 		}
 	},
-	{#State 183
-		DEFAULT => -118
-	},
 	{#State 184
-		ACTIONS => {
-			"(" => 204
-		}
+		DEFAULT => -119
 	},
 	{#State 185
 		ACTIONS => {
-			")" => 205
+			"(" => 205
 		}
 	},
 	{#State 186
 		ACTIONS => {
-			";" => 206
+			")" => 206
 		}
 	},
 	{#State 187
-		DEFAULT => -30
+		ACTIONS => {
+			";" => 207
+		}
 	},
 	{#State 188
+		DEFAULT => -30
+	},
+	{#State 189
 		ACTIONS => {
-			'FOR' => 109,
-			'OROP' => 108,
-			'ANDOP' => 106,
-			'IF' => 107,
+			'FOR' => 110,
+			'OROP' => 109,
+			'ANDOP' => 107,
+			'IF' => 108,
 			")" => -33,
-			'WHILE' => 110
+			'WHILE' => 111
 		},
 		DEFAULT => -13
 	},
-	{#State 189
+	{#State 190
 		DEFAULT => -34
 	},
-	{#State 190
-		ACTIONS => {
-			'OROP' => 108,
-			")" => 207,
-			'ANDOP' => 106
-		}
-	},
 	{#State 191
-		DEFAULT => -58
+		ACTIONS => {
+			'OROP' => 109,
+			")" => 208,
+			'ANDOP' => 107
+		}
 	},
 	{#State 192
-		DEFAULT => -117
+		DEFAULT => -58
 	},
 	{#State 193
-		DEFAULT => -35
+		DEFAULT => -118
 	},
 	{#State 194
-		ACTIONS => {
-			")" => 208
-		}
+		DEFAULT => -35
 	},
 	{#State 195
 		ACTIONS => {
-			'OROP' => 108,
-			'ANDOP' => 106
+			")" => 209
+		}
+	},
+	{#State 196
+		ACTIONS => {
+			'OROP' => 109,
+			'ANDOP' => 107
 		},
 		DEFAULT => -32
 	},
-	{#State 196
+	{#State 197
 		DEFAULT => -2
 	},
-	{#State 197
-		ACTIONS => {
-			'WORD' => 209
-		}
-	},
 	{#State 198
-		DEFAULT => -88
+		ACTIONS => {
+			'WORD' => 210
+		}
 	},
 	{#State 199
-		ACTIONS => {
-			"{" => 210
-		},
-		GOTOS => {
-			'mblock' => 211
-		}
+		DEFAULT => -89
 	},
 	{#State 200
 		ACTIONS => {
-			'MATCHOP' => 95,
-			'POSTDEC' => 101,
-			'MULOP' => 103,
-			'DOTDOT' => 102,
-			'ADDOP' => 99,
-			'ASSIGNOP' => 93,
-			'OROR' => 104,
-			'ANDAND' => 96,
-			'POSTINC' => 100,
-			")" => 212,
-			'POWOP' => 94,
-			'EQOP' => 97,
-			'RELOP' => 98
+			"{" => 211
+		},
+		GOTOS => {
+			'mblock' => 212
 		}
 	},
 	{#State 201
 		ACTIONS => {
-			'OROP' => 108,
-			"]" => 213,
-			'ANDOP' => 106
+			'MATCHOP' => 96,
+			'POSTDEC' => 102,
+			'MULOP' => 104,
+			'DOTDOT' => 103,
+			'ADDOP' => 100,
+			'ASSIGNOP' => 94,
+			'OROR' => 105,
+			'ANDAND' => 97,
+			'POSTINC' => 101,
+			")" => 213,
+			'POWOP' => 95,
+			'EQOP' => 98,
+			'RELOP' => 99
 		}
 	},
 	{#State 202
-		DEFAULT => -86
-	},
-	{#State 203
 		ACTIONS => {
-			")" => 214
+			'OROP' => 109,
+			"]" => 214,
+			'ANDOP' => 107
 		}
 	},
+	{#State 203
+		DEFAULT => -87
+	},
 	{#State 204
+		ACTIONS => {
+			")" => 215
+		}
+	},
+	{#State 205
 		ACTIONS => {
 			"-" => 5,
 			'WORD' => 4,
@@ -2840,44 +2891,45 @@ sub new {
 			'NOAMP' => 35,
 			'LSTOP' => 11,
 			'FUNC' => 38,
+			'STRING' => 39,
 			'DOLSHARP' => 36,
 			"!" => 14,
 			"\$" => 16,
-			'LOOPEX' => 41,
+			'LOOPEX' => 42,
 			'PMFUNC' => 22,
 			'NOTOP' => 23,
-			'FUNC0' => 45,
-			'UNIOP' => 48,
-			"&" => 47,
+			'FUNC0' => 46,
+			'UNIOP' => 49,
+			"&" => 48,
 			"(" => 29,
 			'FUNC1' => 30
 		},
 		GOTOS => {
-			'mexpr' => 215,
+			'mexpr' => 216,
 			'scalar' => 6,
-			'arylen' => 46,
+			'arylen' => 47,
 			'myattrterm' => 27,
 			'amper' => 26,
 			'subscripted' => 28,
 			'term' => 37,
 			'ary' => 12,
-			'expr' => 172,
+			'expr' => 173,
 			'termbinop' => 18,
-			'argexpr' => 54,
-			'listop' => 43,
+			'argexpr' => 55,
+			'listop' => 44,
 			'hsh' => 19,
 			'termunop' => 20
 		}
 	},
-	{#State 205
+	{#State 206
 		ACTIONS => {
-			"{" => 210
+			"{" => 211
 		},
 		GOTOS => {
-			'mblock' => 216
+			'mblock' => 217
 		}
 	},
-	{#State 206
+	{#State 207
 		ACTIONS => {
 			"-" => 5,
 			'WORD' => 4,
@@ -2888,49 +2940,50 @@ sub new {
 			'NOAMP' => 35,
 			'LSTOP' => 11,
 			'FUNC' => 38,
+			'STRING' => 39,
 			'DOLSHARP' => 36,
 			"!" => 14,
 			"\$" => 16,
-			'LOOPEX' => 41,
+			'LOOPEX' => 42,
 			'PMFUNC' => 22,
 			'NOTOP' => 23,
-			'FUNC0' => 45,
-			'UNIOP' => 48,
-			"&" => 47,
+			'FUNC0' => 46,
+			'UNIOP' => 49,
+			"&" => 48,
 			"(" => 29,
 			'FUNC1' => 30
 		},
 		DEFAULT => -31,
 		GOTOS => {
 			'scalar' => 6,
-			'arylen' => 46,
+			'arylen' => 47,
 			'myattrterm' => 27,
 			'amper' => 26,
 			'subscripted' => 28,
 			'term' => 37,
 			'ary' => 12,
-			'expr' => 195,
-			'texpr' => 193,
+			'expr' => 196,
+			'texpr' => 194,
 			'termbinop' => 18,
-			'mtexpr' => 217,
-			'argexpr' => 54,
-			'listop' => 43,
+			'mtexpr' => 218,
+			'argexpr' => 55,
+			'listop' => 44,
 			'hsh' => 19,
 			'termunop' => 20
 		}
 	},
-	{#State 207
+	{#State 208
 		DEFAULT => -56
 	},
-	{#State 208
+	{#State 209
 		ACTIONS => {
-			"{" => 210
+			"{" => 211
 		},
 		GOTOS => {
-			'mblock' => 218
+			'mblock' => 219
 		}
 	},
-	{#State 209
+	{#State 210
 		ACTIONS => {
 			"-" => 5,
 			'WORD' => 4,
@@ -2941,141 +2994,142 @@ sub new {
 			'NOAMP' => 35,
 			'LSTOP' => 11,
 			'FUNC' => 38,
+			'STRING' => 39,
 			'DOLSHARP' => 36,
 			"!" => 14,
 			"\$" => 16,
-			'LOOPEX' => 41,
+			'LOOPEX' => 42,
 			'PMFUNC' => 22,
 			'NOTOP' => 23,
-			'FUNC0' => 45,
-			'UNIOP' => 48,
-			"&" => 47,
+			'FUNC0' => 46,
+			'UNIOP' => 49,
+			"&" => 48,
 			"(" => 29,
 			'FUNC1' => 30
 		},
-		DEFAULT => -113,
+		DEFAULT => -114,
 		GOTOS => {
 			'scalar' => 6,
-			'arylen' => 46,
+			'arylen' => 47,
 			'myattrterm' => 27,
 			'amper' => 26,
 			'subscripted' => 28,
 			'term' => 37,
 			'ary' => 12,
 			'termbinop' => 18,
-			'argexpr' => 73,
-			'listop' => 43,
-			'listexpr' => 219,
+			'argexpr' => 74,
+			'listop' => 44,
+			'listexpr' => 220,
 			'hsh' => 19,
 			'termunop' => 20
 		}
 	},
-	{#State 210
+	{#State 211
 		DEFAULT => -5,
 		GOTOS => {
-			'mremember' => 220
-		}
-	},
-	{#State 211
-		ACTIONS => {
-			'ELSE' => 221,
-			'ELSIF' => 223
-		},
-		DEFAULT => -17,
-		GOTOS => {
-			'else' => 222
+			'mremember' => 221
 		}
 	},
 	{#State 212
-		DEFAULT => -103
+		ACTIONS => {
+			'ELSE' => 222,
+			'ELSIF' => 224
+		},
+		DEFAULT => -17,
+		GOTOS => {
+			'else' => 223
+		}
 	},
 	{#State 213
-		DEFAULT => -85
+		DEFAULT => -104
 	},
 	{#State 214
-		ACTIONS => {
-			"{" => 210
-		},
-		GOTOS => {
-			'mblock' => 224
-		}
+		DEFAULT => -86
 	},
 	{#State 215
 		ACTIONS => {
-			")" => 225
+			"{" => 211
+		},
+		GOTOS => {
+			'mblock' => 225
 		}
 	},
 	{#State 216
 		ACTIONS => {
-			'CONTINUE' => 118
-		},
-		DEFAULT => -21,
-		GOTOS => {
-			'cont' => 226
+			")" => 226
 		}
 	},
 	{#State 217
 		ACTIONS => {
-			";" => 227
+			'CONTINUE' => 119
+		},
+		DEFAULT => -21,
+		GOTOS => {
+			'cont' => 227
 		}
 	},
 	{#State 218
 		ACTIONS => {
-			'CONTINUE' => 118
-		},
-		DEFAULT => -21,
-		GOTOS => {
-			'cont' => 228
+			";" => 228
 		}
 	},
 	{#State 219
 		ACTIONS => {
-			";" => 229
-		}
-	},
-	{#State 220
-		DEFAULT => -6,
-		GOTOS => {
-			'lineseq' => 230
-		}
-	},
-	{#State 221
-		ACTIONS => {
-			"{" => 210
-		},
-		GOTOS => {
-			'mblock' => 231
-		}
-	},
-	{#State 222
-		DEFAULT => -20
-	},
-	{#State 223
-		ACTIONS => {
-			"(" => 232
-		}
-	},
-	{#State 224
-		ACTIONS => {
-			'CONTINUE' => 118
+			'CONTINUE' => 119
 		},
 		DEFAULT => -21,
 		GOTOS => {
-			'cont' => 233
+			'cont' => 229
+		}
+	},
+	{#State 220
+		ACTIONS => {
+			";" => 230
+		}
+	},
+	{#State 221
+		DEFAULT => -6,
+		GOTOS => {
+			'lineseq' => 231
+		}
+	},
+	{#State 222
+		ACTIONS => {
+			"{" => 211
+		},
+		GOTOS => {
+			'mblock' => 232
+		}
+	},
+	{#State 223
+		DEFAULT => -20
+	},
+	{#State 224
+		ACTIONS => {
+			"(" => 233
 		}
 	},
 	{#State 225
 		ACTIONS => {
-			"{" => 210
+			'CONTINUE' => 119
 		},
+		DEFAULT => -21,
 		GOTOS => {
-			'mblock' => 234
+			'cont' => 234
 		}
 	},
 	{#State 226
-		DEFAULT => -26
+		ACTIONS => {
+			"{" => 211
+		},
+		GOTOS => {
+			'mblock' => 235
+		}
 	},
 	{#State 227
+		DEFAULT => -26
+	},
+	{#State 228
 		ACTIONS => {
 			"-" => 5,
 			'WORD' => 4,
@@ -3086,48 +3140,49 @@ sub new {
 			'NOAMP' => 35,
 			'LSTOP' => 11,
 			'FUNC' => 38,
+			'STRING' => 39,
 			'DOLSHARP' => 36,
 			"!" => 14,
 			"\$" => 16,
-			'error' => 42,
-			'LOOPEX' => 41,
+			'error' => 43,
+			'LOOPEX' => 42,
 			")" => -29,
 			'PMFUNC' => 22,
 			'NOTOP' => 23,
-			'FUNC0' => 45,
-			'UNIOP' => 48,
-			"&" => 47,
+			'FUNC0' => 46,
+			'UNIOP' => 49,
+			"&" => 48,
 			"(" => 29,
 			'FUNC1' => 30
 		},
 		GOTOS => {
 			'scalar' => 6,
-			'sideff' => 187,
+			'sideff' => 188,
 			'term' => 37,
 			'ary' => 12,
-			'expr' => 39,
-			'nexpr' => 189,
+			'expr' => 40,
+			'nexpr' => 190,
 			'termbinop' => 18,
-			'listop' => 43,
+			'listop' => 44,
 			'hsh' => 19,
 			'termunop' => 20,
-			'arylen' => 46,
-			'mnexpr' => 235,
+			'arylen' => 47,
+			'mnexpr' => 236,
 			'amper' => 26,
 			'myattrterm' => 27,
 			'subscripted' => 28,
-			'argexpr' => 54
+			'argexpr' => 55
 		}
 	},
-	{#State 228
+	{#State 229
 		DEFAULT => -23
 	},
-	{#State 229
+	{#State 230
 		DEFAULT => -48
 	},
-	{#State 230
+	{#State 231
 		ACTIONS => {
-			"}" => 236,
+			"}" => 237,
 			"-" => 5,
 			'WORD' => 4,
 			'PACKAGE' => 8,
@@ -3139,23 +3194,24 @@ sub new {
 			'NOAMP' => 35,
 			'LSTOP' => 11,
 			'FUNC' => 38,
+			'STRING' => 39,
 			'DOLSHARP' => 36,
 			"!" => 14,
 			'IF' => 17,
 			"\$" => 16,
-			'error' => 42,
-			'LOOPEX' => 41,
-			'WHILE' => 44,
+			'error' => 43,
+			'LOOPEX' => 42,
+			'WHILE' => 45,
 			'PMFUNC' => 22,
 			'NOTOP' => 23,
-			'FUNC0' => 45,
+			'FUNC0' => 46,
 			'SUB' => 25,
-			"{" => 49,
-			'UNIOP' => 48,
-			"&" => 47,
-			'USE' => 51,
+			"{" => 50,
+			'UNIOP' => 49,
+			"&" => 48,
+			'USE' => 52,
 			"(" => 29,
-			'format' => 52,
+			'format' => 53,
 			'FUNC1' => 30
 		},
 		GOTOS => {
@@ -3165,28 +3221,28 @@ sub new {
 			'term' => 37,
 			'loop' => 13,
 			'ary' => 12,
-			'expr' => 39,
-			'use' => 40,
+			'expr' => 40,
+			'use' => 41,
 			'decl' => 15,
 			'termbinop' => 18,
-			'listop' => 43,
+			'listop' => 44,
 			'hsh' => 19,
 			'termunop' => 20,
 			'line' => 21,
 			'cond' => 24,
-			'arylen' => 46,
+			'arylen' => 47,
 			'amper' => 26,
 			'myattrterm' => 27,
 			'subscripted' => 28,
-			'package' => 50,
-			'block' => 53,
-			'argexpr' => 54
+			'package' => 51,
+			'block' => 54,
+			'argexpr' => 55
 		}
 	},
-	{#State 231
+	{#State 232
 		DEFAULT => -18
 	},
-	{#State 232
+	{#State 233
 		ACTIONS => {
 			"-" => 5,
 			'WORD' => 4,
@@ -3197,93 +3253,94 @@ sub new {
 			'NOAMP' => 35,
 			'LSTOP' => 11,
 			'FUNC' => 38,
+			'STRING' => 39,
 			'DOLSHARP' => 36,
 			"!" => 14,
 			"\$" => 16,
-			'LOOPEX' => 41,
+			'LOOPEX' => 42,
 			'PMFUNC' => 22,
 			'NOTOP' => 23,
-			'FUNC0' => 45,
-			'UNIOP' => 48,
-			"&" => 47,
+			'FUNC0' => 46,
+			'UNIOP' => 49,
+			"&" => 48,
 			"(" => 29,
 			'FUNC1' => 30
 		},
 		GOTOS => {
-			'mexpr' => 237,
+			'mexpr' => 238,
 			'scalar' => 6,
-			'arylen' => 46,
+			'arylen' => 47,
 			'myattrterm' => 27,
 			'amper' => 26,
 			'subscripted' => 28,
 			'term' => 37,
 			'ary' => 12,
-			'expr' => 172,
+			'expr' => 173,
 			'termbinop' => 18,
-			'argexpr' => 54,
-			'listop' => 43,
+			'argexpr' => 55,
+			'listop' => 44,
 			'hsh' => 19,
 			'termunop' => 20
 		}
 	},
-	{#State 233
-		DEFAULT => -25
-	},
 	{#State 234
-		ACTIONS => {
-			'CONTINUE' => 118
-		},
-		DEFAULT => -21,
-		GOTOS => {
-			'cont' => 238
-		}
+		DEFAULT => -25
 	},
 	{#State 235
 		ACTIONS => {
-			")" => 239
+			'CONTINUE' => 119
+		},
+		DEFAULT => -21,
+		GOTOS => {
+			'cont' => 239
 		}
 	},
 	{#State 236
-		DEFAULT => -4
-	},
-	{#State 237
 		ACTIONS => {
 			")" => 240
 		}
 	},
+	{#State 237
+		DEFAULT => -4
+	},
 	{#State 238
-		DEFAULT => -24
+		ACTIONS => {
+			")" => 241
+		}
 	},
 	{#State 239
-		ACTIONS => {
-			"{" => 210
-		},
-		GOTOS => {
-			'mblock' => 241
-		}
+		DEFAULT => -24
 	},
 	{#State 240
 		ACTIONS => {
-			"{" => 210
+			"{" => 211
 		},
 		GOTOS => {
 			'mblock' => 242
 		}
 	},
 	{#State 241
-		DEFAULT => -27
+		ACTIONS => {
+			"{" => 211
+		},
+		GOTOS => {
+			'mblock' => 243
+		}
 	},
 	{#State 242
+		DEFAULT => -27
+	},
+	{#State 243
 		ACTIONS => {
-			'ELSE' => 221,
-			'ELSIF' => 223
+			'ELSE' => 222,
+			'ELSIF' => 224
 		},
 		DEFAULT => -17,
 		GOTOS => {
-			'else' => 243
+			'else' => 244
 		}
 	},
-	{#State 243
+	{#State 244
 		DEFAULT => -19
 	}
 ],
@@ -3295,14 +3352,14 @@ sub new {
 	[#Rule 1
 		 'prog', 1,
 sub
-#line 161 "plpy.yp"
+#line 164 "plpy.yp"
 {# $$ = $1; newPROG(block_end($1,$2));
             }
 	],
 	[#Rule 2
 		 'block', 4,
 sub
-#line 167 "plpy.yp"
+#line 170 "plpy.yp"
 {# /* if (PL_copline > (line_t)$1)
              #     PL_copline = (line_t)$1;
              # $$ = block_end($2, $3); */
@@ -3311,14 +3368,14 @@ sub
 	[#Rule 3
 		 'remember', 0,
 sub
-#line 174 "plpy.yp"
+#line 177 "plpy.yp"
 {# $$ = block_start(TRUE);
             }
 	],
 	[#Rule 4
 		 'mblock', 4,
 sub
-#line 179 "plpy.yp"
+#line 182 "plpy.yp"
 {#/* if (PL_copline > (line_t)$1)
              #     PL_copline = (line_t)$1;
              # $$ = block_end($2, $3); */
@@ -3327,28 +3384,28 @@ sub
 	[#Rule 5
 		 'mremember', 0,
 sub
-#line 186 "plpy.yp"
+#line 189 "plpy.yp"
 {# $$ = block_start(FALSE);
             }
 	],
 	[#Rule 6
 		 'lineseq', 0,
 sub
-#line 192 "plpy.yp"
+#line 195 "plpy.yp"
 {# $$ = Nullop;
              }
 	],
 	[#Rule 7
 		 'lineseq', 2,
 sub
-#line 195 "plpy.yp"
+#line 198 "plpy.yp"
 {# $$ = $1;
              }
 	],
 	[#Rule 8
 		 'lineseq', 2,
 sub
-#line 198 "plpy.yp"
+#line 201 "plpy.yp"
 {#/*   $$ = append_list(OP_LINESEQ,
             #    (LISTOP*)$1, (LISTOP*)$2);
                 #PL_pad_reset_pending = TRUE;
@@ -3358,7 +3415,7 @@ sub
 	[#Rule 9
 		 'line', 1,
 sub
-#line 207 "plpy.yp"
+#line 210 "plpy.yp"
 {# $$ = newSTATEOP(0, $1, $2);
             }
 	],
@@ -3368,7 +3425,7 @@ sub
 	[#Rule 11
 		 'line', 2,
 sub
-#line 222 "plpy.yp"
+#line 225 "plpy.yp"
 {#$$ = newSTATEOP(0, $1, $2);
             #PL_expect = XSTATE;
             }
@@ -3376,35 +3433,35 @@ sub
 	[#Rule 12
 		 'sideff', 1,
 sub
-#line 229 "plpy.yp"
+#line 232 "plpy.yp"
 {# $$ = Nullop;
             }
 	],
 	[#Rule 13
 		 'sideff', 1,
 sub
-#line 232 "plpy.yp"
+#line 235 "plpy.yp"
 {# $$ = $1;
             }
 	],
 	[#Rule 14
 		 'sideff', 3,
 sub
-#line 235 "plpy.yp"
+#line 238 "plpy.yp"
 {#$$ = newLOGOP(OP_AND, 0, $3, $1);
             }
 	],
 	[#Rule 15
 		 'sideff', 3,
 sub
-#line 242 "plpy.yp"
+#line 245 "plpy.yp"
 {# $$ = newLOOPOP(OPf_PARENS, 1, scalar($3), $1);
             }
 	],
 	[#Rule 16
 		 'sideff', 3,
 sub
-#line 247 "plpy.yp"
+#line 250 "plpy.yp"
 {#/* $$ = newFOROP(0, Nullch, (line_t)$2,
                 #Nullop, $3, $1, Nullop); */
                 }
@@ -3412,21 +3469,21 @@ sub
 	[#Rule 17
 		 'else', 0,
 sub
-#line 254 "plpy.yp"
+#line 257 "plpy.yp"
 {# $$ = Nullop;
             }
 	],
 	[#Rule 18
 		 'else', 2,
 sub
-#line 257 "plpy.yp"
+#line 260 "plpy.yp"
 {# ($2)->op_flags |= OPf_PARENS; $$ = scope($2);
             }
 	],
 	[#Rule 19
 		 'else', 6,
 sub
-#line 260 "plpy.yp"
+#line 263 "plpy.yp"
 {#/* PL_copline = (line_t)$1;
                 #$$ = newCONDOP(0, $3, scope($5), $6);
                 #PL_hints |= HINT_BLOCK_SCOPE; */
@@ -3435,7 +3492,7 @@ sub
 	[#Rule 20
 		 'cond', 7,
 sub
-#line 268 "plpy.yp"
+#line 271 "plpy.yp"
 { #/*PL_copline = (line_t)$1;
               #  $$ = block_end($3,
             #       newCONDOP(0, $4, scope($6), $7)); */
@@ -3444,21 +3501,21 @@ sub
 	[#Rule 21
 		 'cont', 0,
 sub
-#line 282 "plpy.yp"
+#line 285 "plpy.yp"
 {# $$ = Nullop;
             }
 	],
 	[#Rule 22
 		 'cont', 2,
 sub
-#line 285 "plpy.yp"
+#line 288 "plpy.yp"
 {# $$ = scope($2);
             }
 	],
 	[#Rule 23
 		 'loop', 7,
 sub
-#line 291 "plpy.yp"
+#line 294 "plpy.yp"
 {#/* PL_copline = (line_t)$2;
             #  $$ = block_end($4,
             #   newSTATEOP(0, $1,
@@ -3469,7 +3526,7 @@ sub
 	[#Rule 24
 		 'loop', 9,
 sub
-#line 306 "plpy.yp"
+#line 309 "plpy.yp"
 {#/* $$ = block_end($4,
                 #newFOROP(0, $1, (line_t)$2, $5, $7, $9, $10)); */
             }
@@ -3477,7 +3534,7 @@ sub
 	[#Rule 25
 		 'loop', 8,
 sub
-#line 310 "plpy.yp"
+#line 313 "plpy.yp"
 {#/* $$ = block_end($5,
                 #newFOROP(0, $1, (line_t)$2, mod($3, OP_ENTERLOOP),
                       #$6, $8, $9)); */
@@ -3486,7 +3543,7 @@ sub
 	[#Rule 26
 		 'loop', 7,
 sub
-#line 315 "plpy.yp"
+#line 318 "plpy.yp"
 {#/* $$ = block_end($4,
                  #newFOROP(0, $1, (line_t)$2, Nullop, $5, $7, $8)); */
                  }
@@ -3494,7 +3551,7 @@ sub
 	[#Rule 27
 		 'loop', 10,
 sub
-#line 320 "plpy.yp"
+#line 323 "plpy.yp"
 {#/* OP *forop;
              # PL_copline = (line_t)$2;
              # forop = newSTATEOP(0, $1,
@@ -3514,7 +3571,7 @@ sub
 	[#Rule 28
 		 'loop', 2,
 sub
-#line 336 "plpy.yp"
+#line 339 "plpy.yp"
 {#/* $$ = newSTATEOP(0, $1,
                  #newWHILEOP(0, 1, (LOOP*)Nullop,
                         #NOLINE, Nullop, $2, $3)); */
@@ -3523,7 +3580,7 @@ sub
 	[#Rule 29
 		 'nexpr', 0,
 sub
-#line 344 "plpy.yp"
+#line 347 "plpy.yp"
 {# $$ = Nullop;
             }
 	],
@@ -3533,7 +3590,7 @@ sub
 	[#Rule 31
 		 'texpr', 0,
 sub
-#line 351 "plpy.yp"
+#line 354 "plpy.yp"
 {# (void)scan_num("1", &yylval); $$ = yylval.opval;
             }
 	],
@@ -3543,70 +3600,70 @@ sub
 	[#Rule 33
 		 'mexpr', 1,
 sub
-#line 365 "plpy.yp"
+#line 368 "plpy.yp"
 {# $$ = $1; intro_my();
             }
 	],
 	[#Rule 34
 		 'mnexpr', 1,
 sub
-#line 370 "plpy.yp"
+#line 373 "plpy.yp"
 {# $$ = $1; intro_my();
             }
 	],
 	[#Rule 35
 		 'mtexpr', 1,
 sub
-#line 375 "plpy.yp"
+#line 378 "plpy.yp"
 {# $$ = $1; intro_my();
             }
 	],
 	[#Rule 36
 		 'decl', 1,
 sub
-#line 394 "plpy.yp"
+#line 397 "plpy.yp"
 {# $$ = 0;
             }
 	],
 	[#Rule 37
 		 'decl', 1,
 sub
-#line 397 "plpy.yp"
+#line 400 "plpy.yp"
 {# $$ = 0;
             }
 	],
 	[#Rule 38
 		 'decl', 1,
 sub
-#line 404 "plpy.yp"
+#line 407 "plpy.yp"
 {# $$ = 0; */
             }
 	],
 	[#Rule 39
 		 'decl', 1,
 sub
-#line 407 "plpy.yp"
+#line 410 "plpy.yp"
 {# $$ = 0;
             }
 	],
 	[#Rule 40
 		 'subrout', 4,
 sub
-#line 428 "plpy.yp"
+#line 431 "plpy.yp"
 {# newATTRSUB($2, $3, $4, $5, $6);
             }
 	],
 	[#Rule 41
 		 'startsub', 0,
 sub
-#line 433 "plpy.yp"
+#line 436 "plpy.yp"
 {# $$ = start_subparse(FALSE, 0);
             }
 	],
 	[#Rule 42
 		 'subname', 1,
 sub
-#line 449 "plpy.yp"
+#line 452 "plpy.yp"
 {#/*STRLEN n_a; char *name = SvPV(((SVOP*)$1)->op_sv,n_a);
               #if (strEQ(name, "BEGIN") || strEQ(name, "END")
                   #|| strEQ(name, "INIT") || strEQ(name, "CHECK"))
@@ -3617,55 +3674,55 @@ sub
 	[#Rule 43
 		 'subbody', 1,
 sub
-#line 484 "plpy.yp"
+#line 487 "plpy.yp"
 {/* $$ = $1; */}
 	],
 	[#Rule 44
 		 'subbody', 1,
 sub
-#line 485 "plpy.yp"
+#line 488 "plpy.yp"
 {# $$ = Nullop; PL_expect = XSTATE;
             }
 	],
 	[#Rule 45
 		 'package', 3,
 sub
-#line 490 "plpy.yp"
+#line 493 "plpy.yp"
 {# package($2);
             }
 	],
 	[#Rule 46
 		 'package', 2,
 sub
-#line 493 "plpy.yp"
+#line 496 "plpy.yp"
 {# package(Nullop);
             }
 	],
 	[#Rule 47
 		 '@1-2', 0,
 sub
-#line 498 "plpy.yp"
+#line 501 "plpy.yp"
 {# CvSPECIAL_on(PL_compcv); /* It's a BEGIN {} */
             }
 	],
 	[#Rule 48
 		 'use', 7,
 sub
-#line 501 "plpy.yp"
+#line 504 "plpy.yp"
 {# utilize($1, $2, $4, $5, $6);
             }
 	],
 	[#Rule 49
 		 'expr', 3,
 sub
-#line 507 "plpy.yp"
+#line 510 "plpy.yp"
 {# $$ = newLOGOP(OP_AND, 0, $1, $3);
             }
 	],
 	[#Rule 50
 		 'expr', 3,
 sub
-#line 510 "plpy.yp"
+#line 513 "plpy.yp"
 {# $$ = newLOGOP($2, 0, $1, $3);
             }
 	],
@@ -3675,14 +3732,14 @@ sub
 	[#Rule 52
 		 'argexpr', 2,
 sub
-#line 517 "plpy.yp"
+#line 520 "plpy.yp"
 {# $$ = $1;
             }
 	],
 	[#Rule 53
 		 'argexpr', 3,
 sub
-#line 520 "plpy.yp"
+#line 523 "plpy.yp"
 {# $$ = append_elem(OP_LIST, $1, $3);
             }
 	],
@@ -3692,7 +3749,7 @@ sub
 	[#Rule 55
 		 'listop', 3,
 sub
-#line 527 "plpy.yp"
+#line 530 "plpy.yp"
 {# $$ = convert($1, OPf_STACKED,
                 #prepend_elem(OP_LIST, newGVREF($1,$2), $3) );
             }
@@ -3700,7 +3757,7 @@ sub
 	[#Rule 56
 		 'listop', 5,
 sub
-#line 531 "plpy.yp"
+#line 534 "plpy.yp"
 {# $$ = convert($1, OPf_STACKED,
                 #prepend_elem(OP_LIST, newGVREF($1,$3), $4) );
             }
@@ -3708,42 +3765,42 @@ sub
 	[#Rule 57
 		 'listop', 2,
 sub
-#line 556 "plpy.yp"
+#line 559 "plpy.yp"
 {# $$ = convert($1, 0, $2);
             }
 	],
 	[#Rule 58
 		 'listop', 4,
 sub
-#line 559 "plpy.yp"
+#line 562 "plpy.yp"
 {# $$ = convert($1, 0, $3);
             }
 	],
 	[#Rule 59
 		 'subscripted', 4,
 sub
-#line 588 "plpy.yp"
+#line 591 "plpy.yp"
 {# $$ = newBINOP(OP_AELEM, 0, oopsAV($1), scalar($3));
             }
 	],
 	[#Rule 60
 		 'termbinop', 3,
 sub
-#line 632 "plpy.yp"
+#line 635 "plpy.yp"
 {# $$ = newASSIGNOP(OPf_STACKED, $1, $2, $3);
             }
 	],
 	[#Rule 61
 		 'termbinop', 3,
 sub
-#line 635 "plpy.yp"
+#line 638 "plpy.yp"
 {# $$ = newBINOP($2, 0, scalar($1), scalar($3));
             }
 	],
 	[#Rule 62
 		 'termbinop', 3,
 sub
-#line 638 "plpy.yp"
+#line 641 "plpy.yp"
 {#   if ($2 != OP_REPEAT)
                 #scalar($1);
                # $$ = newBINOP($2, 0, $1, scalar($3));
@@ -3752,77 +3809,77 @@ sub
 	[#Rule 63
 		 'termbinop', 3,
 sub
-#line 643 "plpy.yp"
+#line 646 "plpy.yp"
 {# $$ = newBINOP($2, 0, scalar($1), scalar($3));
             }
 	],
 	[#Rule 64
 		 'termbinop', 3,
 sub
-#line 650 "plpy.yp"
+#line 653 "plpy.yp"
 {# $$ = newBINOP($2, 0, scalar($1), scalar($3));
             }
 	],
 	[#Rule 65
 		 'termbinop', 3,
 sub
-#line 653 "plpy.yp"
+#line 656 "plpy.yp"
 {# $$ = newBINOP($2, 0, scalar($1), scalar($3));
             }
 	],
 	[#Rule 66
 		 'termbinop', 3,
 sub
-#line 662 "plpy.yp"
+#line 665 "plpy.yp"
 {# $$ = newRANGE($2, scalar($1), scalar($3));
             }
 	],
 	[#Rule 67
 		 'termbinop', 3,
 sub
-#line 665 "plpy.yp"
+#line 668 "plpy.yp"
 {# $$ = newLOGOP(OP_AND, 0, $1, $3);
             }
 	],
 	[#Rule 68
 		 'termbinop', 3,
 sub
-#line 668 "plpy.yp"
+#line 671 "plpy.yp"
 {# $$ = newLOGOP(OP_OR, 0, $1, $3);
             }
 	],
 	[#Rule 69
 		 'termbinop', 3,
 sub
-#line 671 "plpy.yp"
+#line 674 "plpy.yp"
 {# $$ = bind_match($2, $1, $3);
             }
 	],
 	[#Rule 70
 		 'termunop', 2,
 sub
-#line 677 "plpy.yp"
+#line 680 "plpy.yp"
 {# $$ = newUNOP(OP_NEGATE, 0, scalar($2));
             }
 	],
 	[#Rule 71
 		 'termunop', 2,
 sub
-#line 680 "plpy.yp"
+#line 683 "plpy.yp"
 {# $$ = $2;
             }
 	],
 	[#Rule 72
 		 'termunop', 2,
 sub
-#line 683 "plpy.yp"
+#line 686 "plpy.yp"
 {# $$ = newUNOP(OP_NOT, 0, scalar($2));
             }
 	],
 	[#Rule 73
 		 'termunop', 2,
 sub
-#line 690 "plpy.yp"
+#line 693 "plpy.yp"
 {#$$ = newUNOP(OP_POSTINC, 0,
                     #mod(scalar($1), OP_POSTINC));
             }
@@ -3830,7 +3887,7 @@ sub
 	[#Rule 74
 		 'termunop', 2,
 sub
-#line 694 "plpy.yp"
+#line 697 "plpy.yp"
 {#$$ = newUNOP(OP_POSTDEC, 0,
                     #mod(scalar($1), OP_POSTDEC)); */
             }
@@ -3842,79 +3899,82 @@ sub
 		 'term', 1, undef
 	],
 	[#Rule 77
-		 'term', 1,
-sub
-#line 771 "plpy.yp"
-{# $$ = $1;
-            }
+		 'term', 1, undef
 	],
 	[#Rule 78
-		 'term', 3,
+		 'term', 1,
 sub
-#line 778 "plpy.yp"
-{# $$ = sawparens($2);
+#line 775 "plpy.yp"
+{# $$ = $1;
             }
 	],
 	[#Rule 79
-		 'term', 2,
+		 'term', 3,
 sub
-#line 781 "plpy.yp"
-{# $$ = sawparens(newNULLLIST());
+#line 782 "plpy.yp"
+{# $$ = sawparens($2);
             }
 	],
 	[#Rule 80
-		 'term', 1,
+		 'term', 2,
 sub
-#line 784 "plpy.yp"
-{# $$ = $1;
+#line 785 "plpy.yp"
+{# $$ = sawparens(newNULLLIST());
             }
 	],
 	[#Rule 81
 		 'term', 1,
 sub
-#line 791 "plpy.yp"
+#line 788 "plpy.yp"
 {# $$ = $1;
             }
 	],
 	[#Rule 82
 		 'term', 1,
 sub
-#line 794 "plpy.yp"
+#line 795 "plpy.yp"
 {# $$ = $1;
             }
 	],
 	[#Rule 83
 		 'term', 1,
 sub
-#line 797 "plpy.yp"
-{# $$ = newUNOP(OP_AV2ARYLEN, 0, ref($1, OP_AV2ARYLEN));
+#line 798 "plpy.yp"
+{# $$ = $1;
             }
 	],
 	[#Rule 84
 		 'term', 1,
 sub
-#line 800 "plpy.yp"
-{# $$ = $1;
+#line 801 "plpy.yp"
+{# $$ = newUNOP(OP_AV2ARYLEN, 0, ref($1, OP_AV2ARYLEN));
             }
 	],
 	[#Rule 85
-		 'term', 6,
+		 'term', 1,
 sub
-#line 803 "plpy.yp"
-{# $$ = newSLICEOP(0, $5, $2);
+#line 804 "plpy.yp"
+{# $$ = $1;
             }
 	],
 	[#Rule 86
-		 'term', 5,
+		 'term', 6,
 sub
-#line 806 "plpy.yp"
-{# $$ = newSLICEOP(0, $4, Nullop);
+#line 807 "plpy.yp"
+{# $$ = newSLICEOP(0, $5, $2);
             }
 	],
 	[#Rule 87
+		 'term', 5,
+sub
+#line 810 "plpy.yp"
+{# $$ = newSLICEOP(0, $4, Nullop);
+            }
+	],
+	[#Rule 88
 		 'term', 4,
 sub
-#line 809 "plpy.yp"
+#line 813 "plpy.yp"
 {#$$ = prepend_elem(OP_ASLICE,
             #    newOP(OP_PUSHMARK, 0),
                     #newLISTOP(OP_ASLICE, 0,
@@ -3922,10 +3982,10 @@ sub
                     #ref($1, OP_ASLICE)));
             }
 	],
-	[#Rule 88
+	[#Rule 89
 		 'term', 5,
 sub
-#line 816 "plpy.yp"
+#line 820 "plpy.yp"
 {#$$ = prepend_elem(OP_HSLICE,
             #    newOP(OP_PUSHMARK, 0),
                     #newLISTOP(OP_HSLICE, 0,
@@ -3934,264 +3994,264 @@ sub
                 #PL_expect = XOPERATOR; */
                 }
 	],
-	[#Rule 89
+	[#Rule 90
 		 'term', 1,
 sub
-#line 828 "plpy.yp"
+#line 832 "plpy.yp"
 {# $$ = newUNOP(OP_ENTERSUB, 0, scalar($1));
             }
 	],
-	[#Rule 90
+	[#Rule 91
 		 'term', 3,
 sub
-#line 831 "plpy.yp"
+#line 835 "plpy.yp"
 {# $$ = newUNOP(OP_ENTERSUB, OPf_STACKED, scalar($1));
             }
 	],
-	[#Rule 91
+	[#Rule 92
 		 'term', 4,
 sub
-#line 834 "plpy.yp"
+#line 838 "plpy.yp"
 {# $$ = newUNOP(OP_ENTERSUB, OPf_STACKED,
                 #append_elem(OP_LIST, $3, scalar($1)));
                 }
 	],
-	[#Rule 92
+	[#Rule 93
 		 'term', 3,
 sub
-#line 838 "plpy.yp"
+#line 842 "plpy.yp"
 {# $$ = newUNOP(OP_ENTERSUB, OPf_STACKED,
                 #append_elem(OP_LIST, $3, scalar($2)));
                 }
 	],
-	[#Rule 93
+	[#Rule 94
 		 'term', 1,
 sub
-#line 842 "plpy.yp"
+#line 846 "plpy.yp"
 {# $$ = newOP($1, OPf_SPECIAL);
                 #PL_hints |= HINT_BLOCK_SCOPE;
                 }
 	],
-	[#Rule 94
+	[#Rule 95
 		 'term', 2,
 sub
-#line 850 "plpy.yp"
+#line 854 "plpy.yp"
 {# $$ = newUNOP(OP_NOT, 0, scalar($2));
             }
 	],
-	[#Rule 95
+	[#Rule 96
 		 'term', 1,
 sub
-#line 853 "plpy.yp"
+#line 857 "plpy.yp"
 {# $$ = newOP($1, 0);
-            }
-	],
-	[#Rule 96
-		 'term', 2,
-sub
-#line 856 "plpy.yp"
-{# $$ = newUNOP($1, 0, $2);
             }
 	],
 	[#Rule 97
 		 'term', 2,
 sub
-#line 859 "plpy.yp"
+#line 860 "plpy.yp"
 {# $$ = newUNOP($1, 0, $2);
             }
 	],
 	[#Rule 98
-		 'term', 1,
+		 'term', 2,
 sub
-#line 867 "plpy.yp"
-{# $$ = newOP($1, 0);
+#line 863 "plpy.yp"
+{# $$ = newUNOP($1, 0, $2);
             }
 	],
 	[#Rule 99
-		 'term', 3,
+		 'term', 1,
 sub
-#line 870 "plpy.yp"
+#line 871 "plpy.yp"
 {# $$ = newOP($1, 0);
             }
 	],
 	[#Rule 100
 		 'term', 3,
 sub
-#line 878 "plpy.yp"
-{/* $$ = $1 == OP_NOT ? newUNOP($1, 0, newSVOP(OP_CONST, 0, newSViv(0)))
-                        : newOP($1, OPf_SPECIAL); */}
+#line 874 "plpy.yp"
+{# $$ = newOP($1, 0);
+            }
 	],
 	[#Rule 101
-		 'term', 4,
+		 'term', 3,
 sub
-#line 881 "plpy.yp"
-{# $$ = newUNOP($1, 0, $3);
-            }
+#line 882 "plpy.yp"
+{/* $$ = $1 == OP_NOT ? newUNOP($1, 0, newSVOP(OP_CONST, 0, newSViv(0)))
+                        : newOP($1, OPf_SPECIAL); */}
 	],
 	[#Rule 102
 		 'term', 4,
 sub
-#line 884 "plpy.yp"
-{# $$ = pmruntime($1, $3, Nullop);
+#line 885 "plpy.yp"
+{# $$ = newUNOP($1, 0, $3);
             }
 	],
 	[#Rule 103
-		 'term', 6,
+		 'term', 4,
 sub
-#line 887 "plpy.yp"
-{# $$ = pmruntime($1, $3, $5);
+#line 888 "plpy.yp"
+{# $$ = pmruntime($1, $3, Nullop);
             }
 	],
 	[#Rule 104
-		 'term', 1, undef
+		 'term', 6,
+sub
+#line 891 "plpy.yp"
+{# $$ = pmruntime($1, $3, $5);
+            }
 	],
 	[#Rule 105
 		 'term', 1, undef
 	],
 	[#Rule 106
+		 'term', 1, undef
+	],
+	[#Rule 107
 		 'myattrterm', 3,
 sub
-#line 895 "plpy.yp"
+#line 899 "plpy.yp"
 {# $$ = my_attrs($2,$3);
             }
 	],
-	[#Rule 107
+	[#Rule 108
 		 'myattrterm', 2,
 sub
-#line 898 "plpy.yp"
+#line 902 "plpy.yp"
 {# $$ = localize($2,$1);
             }
 	],
-	[#Rule 108
+	[#Rule 109
 		 'myterm', 3,
 sub
-#line 904 "plpy.yp"
+#line 908 "plpy.yp"
 {# $$ = sawparens($2);
             }
 	],
-	[#Rule 109
+	[#Rule 110
 		 'myterm', 2,
 sub
-#line 907 "plpy.yp"
+#line 911 "plpy.yp"
 {# $$ = sawparens(newNULLLIST());
-            }
-	],
-	[#Rule 110
-		 'myterm', 1,
-sub
-#line 910 "plpy.yp"
-{# $$ = $1;
             }
 	],
 	[#Rule 111
 		 'myterm', 1,
 sub
-#line 913 "plpy.yp"
+#line 914 "plpy.yp"
 {# $$ = $1;
             }
 	],
 	[#Rule 112
 		 'myterm', 1,
 sub
-#line 916 "plpy.yp"
+#line 917 "plpy.yp"
 {# $$ = $1;
             }
 	],
 	[#Rule 113
-		 'listexpr', 0,
+		 'myterm', 1,
 sub
-#line 922 "plpy.yp"
-{# $$ = Nullop;
+#line 920 "plpy.yp"
+{# $$ = $1;
             }
 	],
 	[#Rule 114
-		 'listexpr', 1,
+		 'listexpr', 0,
 sub
-#line 925 "plpy.yp"
-{# $$ = $1;
-            }
-	],
-	[#Rule 115
-		 'listexprcom', 0,
-sub
-#line 930 "plpy.yp"
+#line 926 "plpy.yp"
 {# $$ = Nullop;
             }
 	],
-	[#Rule 116
-		 'listexprcom', 1,
+	[#Rule 115
+		 'listexpr', 1,
 sub
-#line 933 "plpy.yp"
+#line 929 "plpy.yp"
 {# $$ = $1;
             }
 	],
-	[#Rule 117
-		 'listexprcom', 2,
+	[#Rule 116
+		 'listexprcom', 0,
 sub
-#line 936 "plpy.yp"
+#line 934 "plpy.yp"
+{# $$ = Nullop;
+            }
+	],
+	[#Rule 117
+		 'listexprcom', 1,
+sub
+#line 937 "plpy.yp"
 {# $$ = $1;
             }
 	],
 	[#Rule 118
-		 'my_scalar', 1,
+		 'listexprcom', 2,
 sub
-#line 943 "plpy.yp"
-{# PL_in_my = 0; $$ = my($1);
+#line 940 "plpy.yp"
+{# $$ = $1;
             }
 	],
 	[#Rule 119
-		 'amper', 2,
+		 'my_scalar', 1,
 sub
-#line 948 "plpy.yp"
-{# $$ = newCVREF($1,$2);
+#line 947 "plpy.yp"
+{# PL_in_my = 0; $$ = my($1);
             }
 	],
 	[#Rule 120
-		 'scalar', 2,
+		 'amper', 2,
 sub
-#line 953 "plpy.yp"
-{# $$ = newSVREF($2);
+#line 952 "plpy.yp"
+{# $$ = newCVREF($1,$2);
             }
 	],
 	[#Rule 121
-		 'ary', 2,
+		 'scalar', 2,
 sub
-#line 958 "plpy.yp"
-{# $$ = newAVREF($2);
+#line 957 "plpy.yp"
+{# $$ = newSVREF($2);
             }
 	],
 	[#Rule 122
-		 'hsh', 2,
+		 'ary', 2,
 sub
-#line 963 "plpy.yp"
-{# $$ = newHVREF($2);
-            }
-	],
-	[#Rule 123
-		 'arylen', 2,
-sub
-#line 968 "plpy.yp"
+#line 962 "plpy.yp"
 {# $$ = newAVREF($2);
             }
 	],
-	[#Rule 124
-		 'indirob', 1,
+	[#Rule 123
+		 'hsh', 2,
 sub
-#line 980 "plpy.yp"
-{# $$ = scalar($1);
+#line 967 "plpy.yp"
+{# $$ = newHVREF($2);
+            }
+	],
+	[#Rule 124
+		 'arylen', 2,
+sub
+#line 972 "plpy.yp"
+{# $$ = newAVREF($2);
             }
 	],
 	[#Rule 125
 		 'indirob', 1,
 sub
-#line 983 "plpy.yp"
+#line 984 "plpy.yp"
 {# $$ = scalar($1);
             }
 	],
 	[#Rule 126
 		 'indirob', 1,
 sub
-#line 986 "plpy.yp"
+#line 987 "plpy.yp"
+{# $$ = scalar($1);
+            }
+	],
+	[#Rule 127
+		 'indirob', 1,
+sub
+#line 990 "plpy.yp"
 {# $$ = scope($1);
             }
 	]
@@ -4200,7 +4260,7 @@ sub
     bless($self,$class);
 }
 
-#line 994 "plpy.yp"
+#line 998 "plpy.yp"
 
 # PROGRAM */
 
