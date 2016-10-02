@@ -11,10 +11,10 @@
     ^(\/[^/]*\/)|(s\/[^/]*\/[^/]*\/)
 */
 %{
-sub Lexer {
+sub findToken {
     my @tokens = (
         ("WORD", /^w+/),
-        ("PMFUNC", /^split/),
+        ("PMFUNC", /^split//),
         ("SUB", /^sub/),
         ("WHILE", /^while/),
         ("IF", /^if/),
@@ -44,10 +44,10 @@ sub Lexer {
         ("ANDAND", /^&&/),
         ("EQOP", /^(==)|(eq)/)
         ("MATCHOP", /^=~/),
-        ("!", /^!/),
         ("POWOP", /^\*\*/),
         ("POSTINC", /^\+\+/),
         ("POSTDEC", /^--/),
+        ("!", /^!/),
         (")", /^\)/),
         ("(", /^\(/),
         ("{", /^\{/),
@@ -59,6 +59,15 @@ sub Lexer {
         ("%", /^\%/),
         ("\$", /^\$/),
     )
+    
+    $ARG[0]->YYData->{"DATA"} =~ s/^\s+//;
+    foreach my ($token, $re) (@tokens){
+        print "$token, $re";  
+    }
+
+}
+sub Lexer {
+    findToken($ARG[0]);
 
 }
 %}
