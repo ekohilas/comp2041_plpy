@@ -181,11 +181,6 @@ sub printer{
 /* The whole program */
 prog    :    lineseq
             {
-                #print "prog->lineseq\n";
-                #print "prog->", $_[1], "\n";
-                #print "('", $_[0]->YYCurtok, "': '", $_[0]->YYCurval, "')\n";
-                #print "YYExpect: ", join("\n", $_[0]->YYExpect), "\n";
-                #print "-----\n";
                 printer(\@_, "prog", "lineseq");
                 return "$_[1]";
             }
@@ -215,10 +210,7 @@ lineseq    :    /* NULL */
             {}
     |    lineseq line
             {
-                print "lineseq->lineseq->line\n";
-                print "lineseq->", $_[1], "->", $_[2], "\n";
-                print "('", $_[0]->YYCurtok, "': '", $_[0]->YYCurval, "')\n";
-                #print "YYExpect: ", join("\n", $_[0]->YYExpect), "\n";
+                printer(\@_, "lineseq", "lineseq", "line");
                 return "$_[1]$_[2]";
             }
     ;
@@ -229,10 +221,7 @@ line    :    /*label*/ cond
     |    loop    /* loops add their own labels */
     |    /*label*/ sideff ';'
             {
-                print "line->sideff->';'\n";
-                print "line->", $_[1], "->", $_[2], "\n";
-                print "('", $_[0]->YYCurtok, "': '", $_[0]->YYCurval, "')\n";
-                #print "YYExpect: ", join("\n", $_[0]->YYExpect), "\n";
+                printer(\@_, "line", "sideff", "';'");
                 return "$_[1]\n";
             }
     ;
@@ -242,10 +231,7 @@ sideff    :    error
             {}
     |    expr
             {
-                print "sideff->expr;\n";
-                print "sideff->", $_[1], "\n";
-                print "('", $_[0]->YYCurtok, "': '", $_[0]->YYCurval, "')\n";
-                #print "YYExpect: ", join("\n", $_[0]->YYExpect), "\n";
+                printer(\@_, "sideff", "expr");
                 return $_[1];
             }
             
@@ -383,10 +369,7 @@ argexpr    :    argexpr ','
             {}
     |    term %prec PREC_LOW
             {
-                print "argexpr->term\n";
-                print "argexpr->", $_[1], "\n";
-                print "('", $_[0]->YYCurtok, "': '", $_[0]->YYCurval, "')\n";
-                #print "YYExpect: ", join("\n", $_[0]->YYExpect), "\n";
+                printer (\@_, "argexpr", "term");
                 return $_[1];
             }
     ;
@@ -438,10 +421,7 @@ term    :    termbinop
     |    termunop
     |    STRING 
             {
-                print "term->STRING\n";
-                print "term->", $_[1], "\n";
-                print "('", $_[0]->YYCurtok, "': '", $_[0]->YYCurval, "')\n";
-                #print "YYExpect: ", join("\n", $_[0]->YYExpect), "\n";
+                printer (\@_, "term", "STRING");
                 return $_[1];
             
             }
@@ -505,10 +485,7 @@ term    :    termbinop
             {}
     |    LSTOP listexpr                       /* print @args */
             {
-                print "term->LSTOP->listexpr\n";
-                print "term->", $_[1], "->", $_[2], "\n";
-                print "('", $_[0]->YYCurtok, "': '", $_[0]->YYCurval, "')\n";
-                #print "YYExpect: ", join("\n", $_[0]->YYExpect), "\n";
+                printer (\@_, "term", "LSTOP", "listexpr");
                 return "print($_[2])";
             
             }
@@ -542,10 +519,7 @@ listexpr:    /* NULL */ %prec PREC_LOW
             {print "empty listexpr\n";}
     |    argexpr    %prec PREC_LOW
             {
-                print "listexpr->argexpr\n";
-                print "listexpr", "->", $_[1], "\n";
-                print "('", $_[0]->YYCurtok, "': '", $_[0]->YYCurval, "')\n";
-                #print "YYExpect: ", join("\n", $_[0]->YYExpect), "\n";
+                printer (\@_, "listexpr", "argexpr");
                 return $_[1];
             }
     ;
