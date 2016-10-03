@@ -18,6 +18,7 @@ sub getToken {
         ["FUNC1", qr/(?:${uni})(?=\s*\()/],
         ["UNIOP", qr/(?:${uni})(?!\s*\()/],
         ["LSTOP", qr/(?:${lop})/],
+        ["COMMENT", qr/\#.*/],
         ["FOR", qr/for|foreach/],
         ["WHILE", qr/while/],
         ["ELSIF", qr/elsif/],
@@ -222,6 +223,11 @@ line    :    /*label*/ cond
     |    /*label*/ sideff ';'
             {
                 printer(\@_, "line", "sideff", "';'");
+                return "$_[1]\n";
+            }
+    |    COMMENT
+            {
+                printer(\@_, "line", "COMMENT");
                 return "$_[1]\n";
             }
     ;
