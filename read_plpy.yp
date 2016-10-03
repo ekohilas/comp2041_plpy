@@ -1,0 +1,536 @@
+# A modified version of perly.y taken from perl's source
+#   list of all required functions
+#   print, printf, chomp, split, join, exit, push, pop, shift, scalar
+#   unshift, reverse, open, close, sort BLOCK LIST, keys, return,
+#   ^(\/[^/]*\/)|(s\/[^/]*\/[^/]*\/)
+
+%{
+sub getToken {
+    my @tokens = (
+        ["STRING", qr/"(?!\\"|").*"/],
+        ["PMFUNC", qr/split/],
+        ["FUNC", qr/print|printf|chomp|split|join|push|unshift|open/],
+        ["FUNC0", qr/print|printf|chomp|split|exit|pop|shift/],
+        ["FUNC1", qr/print|printf|chomp|split|exit|pop|shift|reverse|open|sort|keys/],
+        ["UNIOP", qr/exit|return|scalar|chomp|close|keys|pop|shift|values/],
+        ["LSTOP", qr/print|chomp|join|push|pop|shift|scalar|unshift|reverse|open|sort|keys/],
+        ["FOR", qr/for|foreach/],
+        ["WHILE", qr/while/],
+        ["ELSIF", qr/elsif/],
+        ["ELSE", qr/else/],
+        ["CONTINUE", qr/next/],
+        ["LOOPEX", qr/last/],
+        ["ANDOP", qr/and/],
+        ["NOTOP", qr/not/],
+        ["SUB", qr/sub/],
+        ["IF", qr/if/],
+        ["MY", qr/my/],
+        ["OROP", qr/or/],
+        ["DOTDOT", qr/\.\.\.?/],
+        ["EQOP", qr/==|!=|eq/],
+        ["ANDAND", qr/&&/],
+        ["MATCHOP", qr/=~/],
+        ["POWOP", qr/\*\*/],
+        ["POSTINC", qr/\+\+/],
+        ["POSTDEC", qr/--/],
+        ["DOLSHARP", qr/\$#/],
+        ["ASSIGNOP", qr/=|\.=/],
+        ["ADDOP", qr/[+-.]/],
+        ["RELOP", qr/>|<|<=|>=|lt|gt|le|ge/],
+        ["MULOP", qr/[\/%*]/],
+        ["OROR", qr/\|\|/],
+        [",", qr/,/],
+        ["!", qr/!/],
+        [")", qr/\)/],
+        ["(", qr/\(/],
+        ["{", qr/\{/],
+        ["}", qr/\}/],
+        [";", qr/;/],
+        ["[", qr/\[/],
+        ["]", qr/\]/],
+        ["&", qr/&/],
+        ["@", qr/@/],
+        ["%", qr/%/],
+        ["\$", qr/\$/],
+        ["WORD", qr/\w+/a]
+    );
+
+    $_[0]->YYData->{"DATA"} =~ s/^\s+//;
+    print $_[0]->YYData->{"DATA"}, "\n" ;
+    my @length;
+    #foreach my $item (@tokens){
+    #   my ($a, $b) = @$item;
+    #   print "$a, $b\n";
+#}
+    my $found = 0;
+    for (my $i; $i < scalar @tokens; $i++){
+        my $token = $tokens[$i][0];
+        my $re = $tokens[$i][1];
+        $length[$i] = 0;
+        if ($_[0]->YYData->{"DATA"} =~ /^${re}/){
+            $found = 1;
+            @length[$i] = length($&);
+            print "Found match $token: ($&), $length[$i]\n";
+        }
+        #print "$token, $re\n";
+    }
+
+    if ($found){
+        my $maxpos = 0; 
+        my $maxval = 0;
+        for (my $i = 0; $i < scalar @tokens; $i++){
+            if ($length[$i] > $maxval){
+                $maxpos = $i;
+                $maxval = $length[$i];
+            }
+        }
+#for (my $i=scalar @length -1; $i >= 0; $i--){
+#   if ($length[$i] => $maxval){
+#        $maxpos = $i;
+#        $maxval = $length[$i];
+#    }
+#}
+        #print "$tokens[$maxpos][0]\n";
+        my $token = $tokens[$maxpos][0];
+        my $re = $tokens[$maxpos][1];
+        $_[0]->YYData->{"DATA"} =~ s/^${re}//;
+        print "$token : $&\n";
+        return ($token, $&);
+    }
+    elsif (!$found && !length($_[0]->YYData->{"DATA"})) {
+        return ('', undef);
+    }
+    else {
+        print "unable to parse\n";
+        print $_[0]->YYData->{"DATA"}, "\n";
+        return ('', undef);
+    }
+}
+sub Lexer {
+    my ($type, $value) = getToken($_[0]);
+    print "removed token ($type, $value)\n";
+    return ($type, $value);
+    #return ('', undef);
+}
+%}
+
+%token '{'
+
+%token WORD PMFUNC STRING /*METHOD FUNCMETH THING PRIVATEREF*/
+/*%token FUNC0SUB UNIOPSUB LSTOPSUB*/
+/*%token LABEL*/
+%token /*FORMAT ANONSUB*/ SUB PACKAGE USE
+%token WHILE IF /*UNTIL UNLESS*/ ELSE ELSIF CONTINUE FOR
+%token LOOPEX DOTDOT
+%token FUNC0 FUNC1 FUNC UNIOP LSTOP
+%token RELOP EQOP MULOP ADDOP
+%token DOLSHARP /*DO HASHBRACK*/ NOAMP
+%token MY /*LOCAL MYSUB*/
+/*%token COLONATTR*/
+
+%nonassoc PREC_LOW
+%nonassoc LOOPEX
+
+%left OROP
+%left ANDOP
+%right NOTOP
+%nonassoc LSTOP /*LSTOPSUB*/
+%left ','
+%right ASSIGNOP
+/*%right '?' ':'*/
+%nonassoc DOTDOT
+%left OROR
+%left ANDAND
+%nonassoc EQOP
+%nonassoc RELOP
+%nonassoc UNIOP /*UNIOPSUB*/
+/* %left SHIFTOP */
+%left ADDOP
+%left MULOP
+%left MATCHOP
+%right '!' /*'~'*/ UMINUS /*REFGEN*/
+%right POWOP
+%nonassoc /*PREINC PREDEC*/ POSTINC POSTDEC
+/*%left ARROW*/
+%nonassoc ')'
+%left '('
+%left '[' '{'
+
+
+%% /* RULES */
+
+/* The whole program */
+prog    :    lineseq
+            {}
+    ;
+
+/* An ordinary block */
+block    :    '{' remember lineseq '}'
+            {}
+    ;
+
+remember:    /* NULL */    /* start a full lexical scope */
+            {}
+    ;
+
+mblock    :    '{' mremember lineseq '}'
+            {}
+    ;
+
+mremember:    /* NULL */    /* start a partial lexical scope */
+            {}
+    ;
+
+/* A collection of "lines" in the program */
+lineseq    :    /* NULL */
+            {}
+    |    lineseq decl
+            {}
+    |    lineseq line
+            {}
+    ;
+
+/* A "line" in the program */
+line    :    /*label*/ cond
+            {}
+    |    loop    /* loops add their own labels */
+    |    /*label*/ sideff ';'
+            {}
+    ;
+
+/* An expression which may have a side-effect */
+sideff    :    error
+            {}
+    |    expr
+            {}
+    |    expr IF expr
+            {}
+    |    expr WHILE expr
+            {}
+    |    expr FOR expr
+            {}
+    ;
+
+/* else and elsif blocks */
+else    :    /* NULL */
+            {}
+    |    ELSE mblock
+            {}
+    |    ELSIF '(' mexpr ')' mblock else
+            {}
+    ;
+
+/* Real conditional expressions */
+cond    :    IF '(' remember mexpr ')' mblock else
+            {}
+    ;
+
+/* Continue blocks */
+cont    :    /* NULL */
+            {}
+    |    CONTINUE block
+            {}
+    ;
+
+/* Loops: while, until, for, and a bare block */
+loop    :    /*label*/ WHILE '(' remember mtexpr ')' mblock cont
+            {}
+    |    /*label*/ FOR MY remember my_scalar '(' mexpr ')' mblock cont
+            {}
+    |    /*label*/ FOR scalar '(' remember mexpr ')' mblock cont
+            {}
+    |    /*label*/ FOR '(' remember mexpr ')' mblock cont
+            {}
+    |    /*label*/ FOR '(' remember mnexpr ';' mtexpr ';' mnexpr ')' mblock
+            /* basically fake up an initialize-while lineseq */
+            {}
+    |    /*label*/ 
+        block cont  /* a block is a loop that happens once */
+            {}
+    ;
+
+/* Normal expression */
+nexpr    :    /* NULL */
+            {}
+    |    sideff
+    ;
+
+/* Boolean expression */
+texpr    :    /* NULL means true */
+            {}
+    |    expr
+    ;
+
+/* Inverted boolean expression */
+/*
+iexpr    :    expr
+            {}
+    ;
+*/
+
+/* Expression with its own lexical scope */
+mexpr    :    expr
+            {}
+    ;
+
+mnexpr    :    nexpr
+            {}
+    ;
+
+mtexpr    :    texpr
+            {}
+    ;
+
+/* Some kind of declaration - does not take part in the parse tree */
+decl    :    format
+            {}
+    |    subrout
+            {}
+    |    package
+            {}
+    |    use
+            {}
+    ;
+
+/* Subroutine definition */
+subrout    :    SUB startsub subname /*proto subattrlist*/ subbody
+            {}
+    ;
+
+startsub:    /* NULL */    /* start a regular subroutine scope */
+            {}
+;
+
+/*
+startanonsub:    /* NULL //    /* start an anonymous subroutine scope //
+            {}
+    ;
+
+startformsub:    /* NULL //    /* start a format subroutine scope //
+            {}
+    ;
+*/
+
+
+/* Name of a subroutine - must be a bareword, could be special */
+subname    :    WORD    {}
+    ;
+
+/* Subroutine body - either null or a block */
+subbody    :    block    {}
+    |    ';'    {}
+    ;
+
+package :    PACKAGE WORD ';'
+            {}
+    |    PACKAGE ';'
+            {}
+    ;
+
+use    :    USE startsub
+            {}
+            WORD WORD listexpr ';'
+            {}
+    ;
+
+/* Ordinary expressions; logical combinations */
+expr    :    expr ANDOP expr
+            {}
+    |    expr OROP expr
+            {}
+    |    argexpr %prec PREC_LOW
+    ;
+
+/* Expressions are a list of terms joined by commas */
+argexpr    :    argexpr ','
+            {}
+    |    argexpr ',' term
+            {}
+    |    term %prec PREC_LOW
+    ;
+
+/* List operators */
+listop    :    LSTOP indirob argexpr /* map {...} @args or print $fh @args */
+            {}
+    |    FUNC '(' indirob expr ')'      /* print ($fh @args */
+            {}
+    |    LSTOP listexpr                       /* print @args */
+            {}
+    |    FUNC '(' listexprcom ')'             /* print (@args) */
+            {}
+    ;
+
+
+/* Some kind of subscripted expression */
+subscripted: scalar '[' expr ']'          /* $array[$element] */
+            {}
+    ;
+
+/* Binary operators between terms */
+termbinop    :    term ASSIGNOP term             /* $x = $y */
+            {}
+    |    term POWOP term                        /* $x ** $y */
+            {}
+    |    term MULOP term                        /* $x * $y, $x x $y */
+            {}
+    |    term ADDOP term                        /* $x + $y */
+            {}
+    |    term RELOP term                        /* $x > $y, etc. */
+            {}
+    |    term EQOP term                         /* $x == $y, $x eq $y */
+            {}
+    |    term DOTDOT term                       /* $x..$y, $x...$y */
+            {}
+    |    term ANDAND term                       /* $x && $y */
+            {}
+    |    term OROR term                         /* $x || $y */
+            {}
+    |    term MATCHOP term                      /* $x =~ /$y/ */
+            {}
+    ;
+
+/* Unary operators and terms */
+termunop : '-' term %prec UMINUS                       /* -$x */
+            {}
+    |    '+' term %prec UMINUS                  /* +$x */
+            {}
+    |    '!' term                               /* !$x */
+            {}
+    |    term POSTINC                           /* $x++ */
+            {}
+    |    term POSTDEC                           /* $x-- */
+            {}
+    ;
+
+term    :    termbinop
+    |    termunop
+    |    STRING
+    |    myattrterm    %prec UNIOP
+            {}
+    |    '(' expr ')'
+            {}
+    |    '(' ')'
+            {}
+    |    scalar    %prec '('
+            {}
+    |    hsh     %prec '('
+            {}
+    |    ary     %prec '('
+            {}
+    |    arylen     %prec '('                    /* $#x, $#{ something } */
+            {}
+    |       subscripted
+            {}
+    |    '(' expr ')' '[' expr ']'            /* list slice */
+            {}
+    |    '(' ')' '[' expr ']'                 /* empty list slice! */
+            {}
+    |    ary '[' expr ']'                     /* array slice */
+            {}
+    |    ary '{' expr ';' '}'                 /* @hash{@keys} */
+            {}
+    |    amper                                /* &foo; */
+            {}
+    |    amper '(' ')'                        /* &foo() */
+            {}
+    |    amper '(' expr ')'                   /* &foo(@args) */
+            {}
+    |    NOAMP WORD listexpr                  /* foo(@args) */
+            {}
+    |    LOOPEX  /* loop exiting command (goto, last, dump, etc) */
+            {}
+    |    NOTOP argexpr                        /* not $foo */
+            {}
+    |    UNIOP                                /* Unary op, $_ implied */
+            {}
+    |    UNIOP block                          /* eval { foo }, I *think* */
+            {}
+    |    UNIOP term                           /* Unary op */
+            {}
+    |    FUNC0                                /* Nullary operator */
+            {}
+    |    FUNC0 '(' ')'
+            {}
+    |    FUNC1 '(' ')'                        /* not () */
+            {}
+    |    FUNC1 '(' expr ')'                   /* not($foo) */
+            {}
+    |    PMFUNC '(' term ')'                  /* split (/foo/) */
+            {}
+    |    PMFUNC '(' term ',' term ')'         /* split (/foo/,$bar) */
+            {}
+    |    WORD
+    |    listop
+    ;
+
+/* "my" declarations, with optional attributes */
+myattrterm:    MY myterm myattrlist
+            {}
+    |    MY myterm
+            {}
+    ;
+
+/* Things that can be "my"'d */
+myterm    :    '(' expr ')'
+            {}
+    |    '(' ')'
+            {}
+    |    scalar    %prec '('
+            {}
+    |    hsh     %prec '('
+            {}
+    |    ary     %prec '('
+            {}
+    ;
+
+/* Basic list expressions */
+listexpr:    /* NULL */ %prec PREC_LOW
+            {}
+    |    argexpr    %prec PREC_LOW
+            {}
+    ;
+
+listexprcom:    /* NULL */
+            {}
+    |    expr
+            {}
+    |    expr ','
+            {}
+    ;
+
+/* A little bit of trickery to make "for my $foo (@bar)" actually be
+   lexical */
+my_scalar:    scalar
+            {}
+    ;
+
+amper    :    '&' indirob
+            {}
+    ;
+
+scalar    :    '$' indirob
+            {}
+    ;
+
+ary    :    '@' indirob
+            {}
+    ;
+
+hsh    :    '%' indirob
+            {}
+    ;
+
+arylen    :    DOLSHARP indirob
+            {}
+    ;
+
+/* Indirect objects */
+indirob    :    WORD
+            {}
+    |    scalar %prec PREC_LOW
+            {}
+    |    block
+            {}
+    ;
+
+%%

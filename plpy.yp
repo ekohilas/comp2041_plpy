@@ -7,7 +7,7 @@
 %{
 sub getToken {
     my @tokens = (
-        ["STRING", qr/"(?!\\"|").*"/],
+        ["STRING", qr/"(?:\\"|""|\\\\|[^"]|)*"/],
         ["PMFUNC", qr/split/],
         ["FUNC", qr/print|printf|chomp|split|join|push|unshift|open/],
         ["FUNC0", qr/print|printf|chomp|split|exit|pop|shift/],
