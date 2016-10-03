@@ -3,7 +3,7 @@ use strict;
 use warnings;
 
 #Recompile parser if old
-if ((-M "plpy.pm" or "inf") > -M "plpy.yp"){
+if ((-M "plpy.pm" || "inf") > -M "plpy.yp"){
     system("yapp plpy.yp");
 }
 
@@ -19,3 +19,4 @@ my $parser = new plpy;
 $parser->YYData->{"DATA"} = $code;
 
 my $output = $parser->YYParse(YYlex => \&plpy::Lexer);
+print $output || "no output\n";
