@@ -72,7 +72,7 @@ sub getToken {
     );
 
     $_[0]->YYData->{"DATA"} =~ s/^\s+//;
-    print "___Remaining___\n", $_[0]->YYData->{"DATA"}, "\n_______________\n" ;
+    print "___Remaining___\n", $_[0]->YYData->{"DATA"}, "\n";#_______________\n" ;
     my @length;
     #foreach my $item (@tokens){
     #   my ($a, $b) = @$item;
@@ -86,7 +86,7 @@ sub getToken {
         if ($_[0]->YYData->{"DATA"} =~ /^${re}/){
             $found = 1;
             @length[$i] = length($&);
-            print "Found match ($token): ($&), $length[$i]\n";
+            #print "Found match ($token): ($&), $length[$i]\n";
         }
         #print "$token, $re\n";
     }
@@ -131,6 +131,7 @@ sub Lexer {
 }
 
 sub printer{
+    print "\n";
     my @tokens = @{shift(@_)};
     my @words = @_;
     my $parser = shift(@tokens);
@@ -140,7 +141,7 @@ sub printer{
     
     print "$word_string\n";
     print "$token_string\n";
-    print "('", $parser->YYCurtok, "': '", $parser->YYCurval, "')\n";
+    #print "('", $parser->YYCurtok, "': '", $parser->YYCurval, "')\n";
     #print "YYExpect: ", join("\n", $_[0]->YYExpect), "\n";
 }
 
@@ -3261,7 +3262,7 @@ sub new {
 	[#Rule 1
 		 'prog', 1,
 sub
-#line 184 "plpy.yp"
+#line 185 "plpy.yp"
 {
                 printer(\@_, "prog", "lineseq");
                 return "$_[1]";
@@ -3270,43 +3271,43 @@ sub
 	[#Rule 2
 		 'block', 4,
 sub
-#line 192 "plpy.yp"
+#line 193 "plpy.yp"
 {}
 	],
 	[#Rule 3
 		 'remember', 0,
 sub
-#line 196 "plpy.yp"
+#line 197 "plpy.yp"
 {}
 	],
 	[#Rule 4
 		 'mblock', 4,
 sub
-#line 200 "plpy.yp"
+#line 201 "plpy.yp"
 {}
 	],
 	[#Rule 5
 		 'mremember', 0,
 sub
-#line 204 "plpy.yp"
+#line 205 "plpy.yp"
 {}
 	],
 	[#Rule 6
 		 'lineseq', 0,
 sub
-#line 209 "plpy.yp"
+#line 210 "plpy.yp"
 {}
 	],
 	[#Rule 7
 		 'lineseq', 2,
 sub
-#line 211 "plpy.yp"
+#line 212 "plpy.yp"
 {}
 	],
 	[#Rule 8
 		 'lineseq', 2,
 sub
-#line 213 "plpy.yp"
+#line 214 "plpy.yp"
 {
                 printer(\@_, "lineseq", "lineseq", "line");
                 return "$_[1]$_[2]";
@@ -3315,7 +3316,7 @@ sub
 	[#Rule 9
 		 'line', 1,
 sub
-#line 221 "plpy.yp"
+#line 222 "plpy.yp"
 {}
 	],
 	[#Rule 10
@@ -3324,7 +3325,7 @@ sub
 	[#Rule 11
 		 'line', 2,
 sub
-#line 224 "plpy.yp"
+#line 225 "plpy.yp"
 {
                 printer(\@_, "line", "sideff", "';'");
                 return "$_[1]\n";
@@ -3333,7 +3334,7 @@ sub
 	[#Rule 12
 		 'line', 1,
 sub
-#line 229 "plpy.yp"
+#line 230 "plpy.yp"
 {
                 printer(\@_, "line", "COMMENT");
                 return "$_[1]\n";
@@ -3342,13 +3343,13 @@ sub
 	[#Rule 13
 		 'sideff', 1,
 sub
-#line 237 "plpy.yp"
+#line 238 "plpy.yp"
 {}
 	],
 	[#Rule 14
 		 'sideff', 1,
 sub
-#line 239 "plpy.yp"
+#line 240 "plpy.yp"
 {
                 printer(\@_, "sideff", "expr");
                 return $_[1];
@@ -3357,97 +3358,97 @@ sub
 	[#Rule 15
 		 'sideff', 3,
 sub
-#line 245 "plpy.yp"
+#line 246 "plpy.yp"
 {}
 	],
 	[#Rule 16
 		 'sideff', 3,
 sub
-#line 247 "plpy.yp"
+#line 248 "plpy.yp"
 {}
 	],
 	[#Rule 17
 		 'sideff', 3,
 sub
-#line 249 "plpy.yp"
+#line 250 "plpy.yp"
 {}
 	],
 	[#Rule 18
 		 'else', 0,
 sub
-#line 254 "plpy.yp"
+#line 255 "plpy.yp"
 {}
 	],
 	[#Rule 19
 		 'else', 2,
 sub
-#line 256 "plpy.yp"
+#line 257 "plpy.yp"
 {}
 	],
 	[#Rule 20
 		 'else', 6,
 sub
-#line 258 "plpy.yp"
+#line 259 "plpy.yp"
 {}
 	],
 	[#Rule 21
 		 'cond', 7,
 sub
-#line 263 "plpy.yp"
+#line 264 "plpy.yp"
 {}
 	],
 	[#Rule 22
 		 'cont', 0,
 sub
-#line 268 "plpy.yp"
+#line 269 "plpy.yp"
 {}
 	],
 	[#Rule 23
 		 'cont', 2,
 sub
-#line 270 "plpy.yp"
+#line 271 "plpy.yp"
 {}
 	],
 	[#Rule 24
 		 'loop', 7,
 sub
-#line 275 "plpy.yp"
+#line 276 "plpy.yp"
 {}
 	],
 	[#Rule 25
 		 'loop', 9,
 sub
-#line 277 "plpy.yp"
+#line 278 "plpy.yp"
 {}
 	],
 	[#Rule 26
 		 'loop', 8,
 sub
-#line 279 "plpy.yp"
+#line 280 "plpy.yp"
 {}
 	],
 	[#Rule 27
 		 'loop', 7,
 sub
-#line 281 "plpy.yp"
+#line 282 "plpy.yp"
 {}
 	],
 	[#Rule 28
 		 'loop', 10,
 sub
-#line 284 "plpy.yp"
+#line 285 "plpy.yp"
 {}
 	],
 	[#Rule 29
 		 'loop', 2,
 sub
-#line 287 "plpy.yp"
+#line 288 "plpy.yp"
 {}
 	],
 	[#Rule 30
 		 'nexpr', 0,
 sub
-#line 292 "plpy.yp"
+#line 293 "plpy.yp"
 {}
 	],
 	[#Rule 31
@@ -3456,7 +3457,7 @@ sub
 	[#Rule 32
 		 'texpr', 0,
 sub
-#line 298 "plpy.yp"
+#line 299 "plpy.yp"
 {}
 	],
 	[#Rule 33
@@ -3465,109 +3466,109 @@ sub
 	[#Rule 34
 		 'mexpr', 1,
 sub
-#line 311 "plpy.yp"
+#line 312 "plpy.yp"
 {}
 	],
 	[#Rule 35
 		 'mnexpr', 1,
 sub
-#line 315 "plpy.yp"
+#line 316 "plpy.yp"
 {}
 	],
 	[#Rule 36
 		 'mtexpr', 1,
 sub
-#line 319 "plpy.yp"
+#line 320 "plpy.yp"
 {}
 	],
 	[#Rule 37
 		 'decl', 1,
 sub
-#line 324 "plpy.yp"
+#line 325 "plpy.yp"
 {}
 	],
 	[#Rule 38
 		 'decl', 1,
 sub
-#line 326 "plpy.yp"
+#line 327 "plpy.yp"
 {}
 	],
 	[#Rule 39
 		 'decl', 1,
 sub
-#line 328 "plpy.yp"
+#line 329 "plpy.yp"
 {}
 	],
 	[#Rule 40
 		 'decl', 1,
 sub
-#line 330 "plpy.yp"
+#line 331 "plpy.yp"
 {}
 	],
 	[#Rule 41
 		 'subrout', 4,
 sub
-#line 335 "plpy.yp"
+#line 336 "plpy.yp"
 {}
 	],
 	[#Rule 42
 		 'startsub', 0,
 sub
-#line 339 "plpy.yp"
+#line 340 "plpy.yp"
 {}
 	],
 	[#Rule 43
 		 'subname', 1,
 sub
-#line 343 "plpy.yp"
+#line 344 "plpy.yp"
 {}
 	],
 	[#Rule 44
 		 'subbody', 1,
 sub
-#line 347 "plpy.yp"
+#line 348 "plpy.yp"
 {}
 	],
 	[#Rule 45
 		 'subbody', 1,
 sub
-#line 348 "plpy.yp"
+#line 349 "plpy.yp"
 {}
 	],
 	[#Rule 46
 		 'package', 3,
 sub
-#line 352 "plpy.yp"
+#line 353 "plpy.yp"
 {}
 	],
 	[#Rule 47
 		 'package', 2,
 sub
-#line 354 "plpy.yp"
+#line 355 "plpy.yp"
 {}
 	],
 	[#Rule 48
 		 '@1-2', 0,
 sub
-#line 358 "plpy.yp"
+#line 359 "plpy.yp"
 {}
 	],
 	[#Rule 49
 		 'use', 7,
 sub
-#line 360 "plpy.yp"
+#line 361 "plpy.yp"
 {}
 	],
 	[#Rule 50
 		 'expr', 3,
 sub
-#line 365 "plpy.yp"
+#line 366 "plpy.yp"
 {}
 	],
 	[#Rule 51
 		 'expr', 3,
 sub
-#line 367 "plpy.yp"
+#line 368 "plpy.yp"
 {}
 	],
 	[#Rule 52
@@ -3576,19 +3577,25 @@ sub
 	[#Rule 53
 		 'argexpr', 2,
 sub
-#line 373 "plpy.yp"
-{}
+#line 374 "plpy.yp"
+{
+                printer (\@_, "argexpr", "','");
+                return "$_[1], ";
+            }
 	],
 	[#Rule 54
 		 'argexpr', 3,
 sub
-#line 375 "plpy.yp"
-{}
+#line 379 "plpy.yp"
+{
+                printer (\@_, "argexpr", "','", "term");
+                return "$_[1], $_[3]";
+            }
 	],
 	[#Rule 55
 		 'argexpr', 1,
 sub
-#line 377 "plpy.yp"
+#line 384 "plpy.yp"
 {
                 printer (\@_, "argexpr", "term");
                 return $_[1];
@@ -3597,97 +3604,106 @@ sub
 	[#Rule 56
 		 'subscripted', 4,
 sub
-#line 387 "plpy.yp"
+#line 394 "plpy.yp"
 {}
 	],
 	[#Rule 57
 		 'termbinop', 3,
 sub
-#line 392 "plpy.yp"
-{}
+#line 399 "plpy.yp"
+{
+                printer (\@_, "termbinop", "term", "ASSIGNOP", "term");
+                return "$_[1] $_[2] $_[3]";
+            }
 	],
 	[#Rule 58
-		 'termbinop', 3,
-sub
-#line 394 "plpy.yp"
-{}
-	],
-	[#Rule 59
-		 'termbinop', 3,
-sub
-#line 396 "plpy.yp"
-{}
-	],
-	[#Rule 60
-		 'termbinop', 3,
-sub
-#line 398 "plpy.yp"
-{}
-	],
-	[#Rule 61
-		 'termbinop', 3,
-sub
-#line 400 "plpy.yp"
-{}
-	],
-	[#Rule 62
-		 'termbinop', 3,
-sub
-#line 402 "plpy.yp"
-{}
-	],
-	[#Rule 63
 		 'termbinop', 3,
 sub
 #line 404 "plpy.yp"
 {}
 	],
-	[#Rule 64
+	[#Rule 59
 		 'termbinop', 3,
 sub
 #line 406 "plpy.yp"
+{
+                printer (\@_, "termbinop", "term", "MULOP", "term");
+                return "int($_[1]) $_[2] int($_[3])";
+            }
+	],
+	[#Rule 60
+		 'termbinop', 3,
+sub
+#line 411 "plpy.yp"
+{
+                printer (\@_, "termbinop", "term", "ADDOP", "term");
+                return "int($_[1]) $_[2] int($_[3])";
+            }
+	],
+	[#Rule 61
+		 'termbinop', 3,
+sub
+#line 416 "plpy.yp"
+{}
+	],
+	[#Rule 62
+		 'termbinop', 3,
+sub
+#line 418 "plpy.yp"
+{}
+	],
+	[#Rule 63
+		 'termbinop', 3,
+sub
+#line 420 "plpy.yp"
+{}
+	],
+	[#Rule 64
+		 'termbinop', 3,
+sub
+#line 422 "plpy.yp"
 {}
 	],
 	[#Rule 65
 		 'termbinop', 3,
 sub
-#line 408 "plpy.yp"
+#line 424 "plpy.yp"
 {}
 	],
 	[#Rule 66
 		 'termbinop', 3,
 sub
-#line 410 "plpy.yp"
+#line 426 "plpy.yp"
 {}
 	],
 	[#Rule 67
 		 'termunop', 2,
 sub
-#line 415 "plpy.yp"
+#line 431 "plpy.yp"
 {}
 	],
 	[#Rule 68
 		 'termunop', 2,
 sub
-#line 417 "plpy.yp"
+#line 433 "plpy.yp"
 {}
 	],
 	[#Rule 69
 		 'termunop', 2,
 sub
-#line 419 "plpy.yp"
+#line 435 "plpy.yp"
 {}
 	],
 	[#Rule 70
 		 'termunop', 2,
 sub
-#line 421 "plpy.yp"
+#line 437 "plpy.yp"
 {}
 	],
 	[#Rule 71
 		 'termunop', 2,
 sub
-#line 423 "plpy.yp"
+#line 439 "plpy.yp"
 {}
 	],
 	[#Rule 72
@@ -3699,7 +3715,7 @@ sub
 	[#Rule 74
 		 'term', 1,
 sub
-#line 429 "plpy.yp"
+#line 445 "plpy.yp"
 {
                 printer (\@_, "term", "STRING");
                 return $_[1];
@@ -3709,151 +3725,154 @@ sub
 	[#Rule 75
 		 'term', 1,
 sub
-#line 436 "plpy.yp"
+#line 452 "plpy.yp"
 {}
 	],
 	[#Rule 76
 		 'term', 3,
 sub
-#line 438 "plpy.yp"
+#line 454 "plpy.yp"
 {}
 	],
 	[#Rule 77
 		 'term', 2,
 sub
-#line 440 "plpy.yp"
+#line 456 "plpy.yp"
 {}
 	],
 	[#Rule 78
 		 'term', 1,
 sub
-#line 442 "plpy.yp"
-{}
+#line 458 "plpy.yp"
+{
+                printer (\@_, "term", "scalar");
+                return $_[1];
+            }
 	],
 	[#Rule 79
 		 'term', 1,
 sub
-#line 444 "plpy.yp"
+#line 463 "plpy.yp"
 {}
 	],
 	[#Rule 80
 		 'term', 1,
 sub
-#line 446 "plpy.yp"
+#line 465 "plpy.yp"
 {}
 	],
 	[#Rule 81
 		 'term', 1,
 sub
-#line 448 "plpy.yp"
+#line 467 "plpy.yp"
 {}
 	],
 	[#Rule 82
 		 'term', 1,
 sub
-#line 450 "plpy.yp"
+#line 469 "plpy.yp"
 {}
 	],
 	[#Rule 83
 		 'term', 6,
 sub
-#line 452 "plpy.yp"
+#line 471 "plpy.yp"
 {}
 	],
 	[#Rule 84
 		 'term', 5,
 sub
-#line 454 "plpy.yp"
+#line 473 "plpy.yp"
 {}
 	],
 	[#Rule 85
 		 'term', 4,
 sub
-#line 456 "plpy.yp"
+#line 475 "plpy.yp"
 {}
 	],
 	[#Rule 86
 		 'term', 5,
 sub
-#line 458 "plpy.yp"
+#line 477 "plpy.yp"
 {}
 	],
 	[#Rule 87
 		 'term', 1,
 sub
-#line 460 "plpy.yp"
+#line 479 "plpy.yp"
 {}
 	],
 	[#Rule 88
 		 'term', 3,
 sub
-#line 462 "plpy.yp"
+#line 481 "plpy.yp"
 {}
 	],
 	[#Rule 89
 		 'term', 4,
 sub
-#line 464 "plpy.yp"
+#line 483 "plpy.yp"
 {}
 	],
 	[#Rule 90
 		 'term', 3,
 sub
-#line 466 "plpy.yp"
+#line 485 "plpy.yp"
 {}
 	],
 	[#Rule 91
 		 'term', 1,
 sub
-#line 468 "plpy.yp"
+#line 487 "plpy.yp"
 {}
 	],
 	[#Rule 92
 		 'term', 2,
 sub
-#line 470 "plpy.yp"
+#line 489 "plpy.yp"
 {}
 	],
 	[#Rule 93
 		 'term', 1,
 sub
-#line 472 "plpy.yp"
+#line 491 "plpy.yp"
 {}
 	],
 	[#Rule 94
 		 'term', 2,
 sub
-#line 474 "plpy.yp"
+#line 493 "plpy.yp"
 {}
 	],
 	[#Rule 95
 		 'term', 2,
 sub
-#line 476 "plpy.yp"
+#line 495 "plpy.yp"
 {}
 	],
 	[#Rule 96
 		 'term', 3,
 sub
-#line 478 "plpy.yp"
+#line 497 "plpy.yp"
 {}
 	],
 	[#Rule 97
 		 'term', 4,
 sub
-#line 480 "plpy.yp"
+#line 499 "plpy.yp"
 {}
 	],
 	[#Rule 98
 		 'term', 4,
 sub
-#line 482 "plpy.yp"
+#line 501 "plpy.yp"
 {}
 	],
 	[#Rule 99
 		 'term', 6,
 sub
-#line 484 "plpy.yp"
+#line 503 "plpy.yp"
 {}
 	],
 	[#Rule 100
@@ -3862,19 +3881,21 @@ sub
 	[#Rule 101
 		 'term', 3,
 sub
-#line 489 "plpy.yp"
-{}
+#line 508 "plpy.yp"
+{
+                printer (\@_, "term", "LSTOP", "indirob", "argexpr");
+            }
 	],
 	[#Rule 102
 		 'term', 5,
 sub
-#line 491 "plpy.yp"
+#line 512 "plpy.yp"
 {}
 	],
 	[#Rule 103
 		 'term', 2,
 sub
-#line 493 "plpy.yp"
+#line 514 "plpy.yp"
 {
                 printer (\@_, "term", "LSTOP", "listexpr");
                 return "print($_[2])";
@@ -3884,61 +3905,61 @@ sub
 	[#Rule 104
 		 'term', 4,
 sub
-#line 499 "plpy.yp"
+#line 520 "plpy.yp"
 {}
 	],
 	[#Rule 105
 		 'myattrterm', 3,
 sub
-#line 504 "plpy.yp"
+#line 525 "plpy.yp"
 {}
 	],
 	[#Rule 106
 		 'myattrterm', 2,
 sub
-#line 506 "plpy.yp"
+#line 527 "plpy.yp"
 {}
 	],
 	[#Rule 107
 		 'myterm', 3,
 sub
-#line 511 "plpy.yp"
+#line 532 "plpy.yp"
 {}
 	],
 	[#Rule 108
 		 'myterm', 2,
 sub
-#line 513 "plpy.yp"
+#line 534 "plpy.yp"
 {}
 	],
 	[#Rule 109
 		 'myterm', 1,
 sub
-#line 515 "plpy.yp"
+#line 536 "plpy.yp"
 {}
 	],
 	[#Rule 110
 		 'myterm', 1,
 sub
-#line 517 "plpy.yp"
+#line 538 "plpy.yp"
 {}
 	],
 	[#Rule 111
 		 'myterm', 1,
 sub
-#line 519 "plpy.yp"
+#line 540 "plpy.yp"
 {}
 	],
 	[#Rule 112
 		 'listexpr', 0,
 sub
-#line 525 "plpy.yp"
+#line 546 "plpy.yp"
 {print "empty listexpr\n";}
 	],
 	[#Rule 113
 		 'listexpr', 1,
 sub
-#line 527 "plpy.yp"
+#line 548 "plpy.yp"
 {
                 printer (\@_, "listexpr", "argexpr");
                 return $_[1];
@@ -3947,73 +3968,79 @@ sub
 	[#Rule 114
 		 'listexprcom', 0,
 sub
-#line 535 "plpy.yp"
+#line 556 "plpy.yp"
 {}
 	],
 	[#Rule 115
 		 'listexprcom', 1,
 sub
-#line 537 "plpy.yp"
+#line 558 "plpy.yp"
 {}
 	],
 	[#Rule 116
 		 'listexprcom', 2,
 sub
-#line 539 "plpy.yp"
+#line 560 "plpy.yp"
 {}
 	],
 	[#Rule 117
 		 'my_scalar', 1,
 sub
-#line 545 "plpy.yp"
+#line 566 "plpy.yp"
 {}
 	],
 	[#Rule 118
 		 'amper', 2,
 sub
-#line 549 "plpy.yp"
+#line 570 "plpy.yp"
 {}
 	],
 	[#Rule 119
 		 'scalar', 2,
 sub
-#line 553 "plpy.yp"
-{}
+#line 574 "plpy.yp"
+{
+                printer (\@_, "scalar", "'\$'", "indirob"); 
+                return "$_[2]";
+            }
 	],
 	[#Rule 120
 		 'ary', 2,
 sub
-#line 557 "plpy.yp"
+#line 581 "plpy.yp"
 {}
 	],
 	[#Rule 121
 		 'hsh', 2,
 sub
-#line 561 "plpy.yp"
+#line 585 "plpy.yp"
 {}
 	],
 	[#Rule 122
 		 'arylen', 2,
 sub
-#line 565 "plpy.yp"
+#line 589 "plpy.yp"
 {}
 	],
 	[#Rule 123
 		 'indirob', 1,
 sub
-#line 570 "plpy.yp"
-{}
+#line 594 "plpy.yp"
+{
+                printer (\@_, "indirob", "WORD");
+                return $_[1];
+            }
 	],
 	[#Rule 124
 		 'indirob', 1,
 sub
-#line 572 "plpy.yp"
+#line 599 "plpy.yp"
 {}
 	],
 	[#Rule 125
 		 'indirob', 1,
 sub
-#line 574 "plpy.yp"
+#line 601 "plpy.yp"
 {}
 	]
 ],
@@ -4021,7 +4048,7 @@ sub
     bless($self,$class);
 }
 
-#line 577 "plpy.yp"
+#line 604 "plpy.yp"
 
 
 1;

@@ -23,5 +23,8 @@ my $output = $parser->YYParse(YYlex => \&plpy::Lexer);
 
 #remove new lines from print functions NOT COMPLETE
 $output =~ s/^#!.*/#!\/usr\/local\/bin\/python3.5 -u/;
-$output =~ s/(print\(".*)\\n"\)/\1")/g;
+$output =~ s/(print\(".*)\\n"\)/$1")/g;
+while ($output =~ /int\(\d+\)/){
+    $output =~ s/int\((\d+)\)/$1/g;
+}
 print "PROGRAM:\n", $output || "no output\n";

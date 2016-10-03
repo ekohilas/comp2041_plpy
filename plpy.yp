@@ -61,7 +61,7 @@ sub getToken {
     );
 
     $_[0]->YYData->{"DATA"} =~ s/^\s+//;
-    print "___Remaining___\n", $_[0]->YYData->{"DATA"}, "\n_______________\n" ;
+    print "___Remaining___\n", $_[0]->YYData->{"DATA"}, "\n";#_______________\n" ;
     my @length;
     #foreach my $item (@tokens){
     #   my ($a, $b) = @$item;
@@ -75,7 +75,7 @@ sub getToken {
         if ($_[0]->YYData->{"DATA"} =~ /^${re}/){
             $found = 1;
             @length[$i] = length($&);
-            print "Found match ($token): ($&), $length[$i]\n";
+            #print "Found match ($token): ($&), $length[$i]\n";
         }
         #print "$token, $re\n";
     }
@@ -120,6 +120,7 @@ sub Lexer {
 }
 
 sub printer{
+    print "\n";
     my @tokens = @{shift(@_)};
     my @words = @_;
     my $parser = shift(@tokens);
@@ -129,7 +130,7 @@ sub printer{
     
     print "$word_string\n";
     print "$token_string\n";
-    print "('", $parser->YYCurtok, "': '", $parser->YYCurval, "')\n";
+    #print "('", $parser->YYCurtok, "': '", $parser->YYCurval, "')\n";
     #print "YYExpect: ", join("\n", $_[0]->YYExpect), "\n";
 }
 %}
@@ -370,9 +371,15 @@ expr    :    expr ANDOP expr
 
 /* Expressions are a list of terms joined by commas */
 argexpr    :    argexpr ','
-            {}
+            {
+                printer (\@_, "argexpr", "','");
+                return "$_[1], ";
+            }
     |    argexpr ',' term
-            {}
+            {
+                printer (\@_, "argexpr", "','", "term");
+                return "$_[1], $_[3]";
+            }
     |    term %prec PREC_LOW
             {
                 printer (\@_, "argexpr", "term");
@@ -389,13 +396,22 @@ subscripted: scalar '[' expr ']'          /* $array[$element] */
 
 /* Binary operators between terms */
 termbinop    :    term ASSIGNOP term             /* $x = $y */
-            {}
+            {
+                printer (\@_, "termbinop", "term", "ASSIGNOP", "term");
+                return "$_[1] $_[2] $_[3]";
+            }
     |    term POWOP term                        /* $x ** $y */
             {}
     |    term MULOP term                        /* $x * $y, $x x $y */
-            {}
+            {
+                printer (\@_, "termbinop", "term", "MULOP", "term");
+                return "int($_[1]) $_[2] int($_[3])";
+            }
     |    term ADDOP term                        /* $x + $y */
-            {}
+            {
+                printer (\@_, "termbinop", "term", "ADDOP", "term");
+                return "int($_[1]) $_[2] int($_[3])";
+            }
     |    term RELOP term                        /* $x > $y, etc. */
             {}
     |    term EQOP term                         /* $x == $y, $x eq $y */
@@ -439,7 +455,10 @@ term    :    termbinop
     |    '(' ')'
             {}
     |    scalar    %prec '('
-            {}
+            {
+                printer (\@_, "term", "scalar");
+                return $_[1];
+            }
     |    hsh     %prec '('
             {}
     |    ary     %prec '('
@@ -486,7 +505,9 @@ term    :    termbinop
 
     /* list operators */
     |    LSTOP indirob argexpr /* map {...} @args or print $fh @args */
-            {}
+            {
+                printer (\@_, "term", "LSTOP", "indirob", "argexpr");
+            }
     |    FUNC '(' indirob expr ')'      /* print ($fh @args */
             {}
     |    LSTOP listexpr                       /* print @args */
@@ -550,7 +571,10 @@ amper    :    '&' indirob
     ;
 
 scalar    :    '$' indirob
-            {}
+            {
+                printer (\@_, "scalar", "'\$'", "indirob"); 
+                return "$_[2]";
+            }
     ;
 
 ary    :    '@' indirob
@@ -567,7 +591,10 @@ arylen    :    DOLSHARP indirob
 
 /* Indirect objects */
 indirob    :    WORD
-            {}
+            {
+                printer (\@_, "indirob", "WORD");
+                return $_[1];
+            }
     |    scalar %prec PREC_LOW
             {}
     |    block
