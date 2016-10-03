@@ -19,4 +19,4 @@ my $parser = new plpy;
 $parser->YYData->{"DATA"} = $code;
 
 my $output = $parser->YYParse(YYlex => \&plpy::Lexer);
-print $output || "no output\n";
+print "PROGRAM:\n", $output || "no output\n";
