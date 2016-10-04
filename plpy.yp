@@ -12,7 +12,8 @@ sub getToken {
     my $lop = "print|printf|split|join|push|unshift|reverse|open|sort";
     my @tokens = (
         # matches a string with double or escaped quotes 
-        ["STRING", qr/"(?:\\"|""|\\\\|[^"]|)*"/],
+        ["STRING", qr/"(?:\\"|""|\\\\|[^"])*"/],
+        ["STRING", qr/'.*(?<!\\)'/], #TEST THIS
         # matches matching functions split (/foo/, $bar)
         ["PMFUNC", qr/split(?=\s*\(\s*\/)/],
         #matches all functions with brackets
@@ -24,7 +25,6 @@ sub getToken {
         ["WHILE", qr/while/],
         ["ELSIF", qr/elsif/],
         ["ELSE", qr/else/],
-        #["CONTINUE", qr/next/],
         ["LOOPEX", qr/last|next/],
         ["ANDOP", qr/and/],
         ["NOTOP", qr/not/],
@@ -162,7 +162,7 @@ sub printer{
 /*%token FUNC0SUB UNIOPSUB LSTOPSUB*/
 /*%token LABEL*/
 %token /*FORMAT ANONSUB*/ SUB PACKAGE USE
-%token WHILE IF /*UNTIL UNLESS*/ ELSE ELSIF CONTINUE FOR
+%token WHILE IF /*UNTIL UNLESS*/ ELSE ELSIF FOR
 %token LOOPEX DOTDOT
 %token FUNC1 FUNC UNIOP LSTOP /*FUNC0*/
 %token RELOP EQOP MULOP ADDOP BITANDOP BITOROP SHIFTOP BITXOROP
@@ -320,33 +320,29 @@ cond    :    IF '(' remember mexpr ')' mblock else
             }
     ;
 
-/* Continue blocks */
-cont    :    /* NULL */
-            {}
-    |    CONTINUE block
-            {}
-    ;
-
 /* Loops: while, until, for, and a bare block */
-loop    :     WHILE '(' remember mtexpr ')' mblock cont
+loop    :     WHILE '(' remember mtexpr ')' mblock /*cont*/
             {
                  printer (\@_, qw(WHILE '(' remember mtexpr ')' mblock cont)); 
                  return "while $_[4]:$_[6]$_[7]";
             }
-    |     FOR MY remember my_scalar '(' mexpr ')' mblock cont
-            {}
-    |     FOR scalar '(' remember mexpr ')' mblock cont
-            {}
-    |     FOR '(' remember mexpr ')' mblock cont
+    |     FOR MY remember my_scalar '(' mexpr ')' mblock /*cont*/
+            {
+                printer (\@_, qw(loop FOR MY remember my_scalar '(' mexpr ')' mblock cont)); 
+                return "for $_[4] in $_[6]:$_[8]";
+            }
+    |     FOR scalar '(' remember mexpr ')' mblock /*cont*/
+            {
+                printer (\@_, qw(loop FOR scalar '(' mexpr ')' mblock cont)); 
+                return "for $_[2] in $_[5]:$_[7]";
+            }
+    |     FOR '(' remember mexpr ')' mblock /*cont*/
             {}
     |     FOR '(' remember mnexpr ';' mtexpr ';' mnexpr ')' mblock
             {
                 printer (\@_, qw(loop FOR '(' remember mnexpr ';' mtexpr ';' mnexpr ')' mblock)); 
+                return "$_[4]\nwhile $_[6]:$_[10]    $_[8]\n";
             }
-
-    |     
-        block cont  /* a block is a loop that happens once */
-            {}
     ;
 
 /* Normal expression */
@@ -547,9 +543,15 @@ termunop : '-' term %prec UMINUS                       /* -$x */
                 return "~$_[2]";
             }
     |    term POSTINC                           /* $x++ */
-            {}
+            {
+                printer (\@_, qw(termunop term POSTINC)); 
+                return "$_[1] += 1";
+            }
     |    term POSTDEC                           /* $x-- */
-            {}
+            {
+                printer (\@_, qw(termunop term POSTDEC)); 
+                return "$_[1] -= 1";
+            }
     ;
 
 term    :    termbinop
@@ -557,8 +559,8 @@ term    :    termbinop
     |    STRING 
             {
                 printer (\@_, "term", "STRING");
+                $_[1] =~ s/^"\$(\w+)"/$1/;
                 return $_[1];
-            
             }
 
     |    myattrterm    %prec UNIOP
@@ -628,8 +630,26 @@ term    :    termbinop
     |    LSTOP listexpr                       /* print @args */
             {
                 printer (\@_, "term", "LSTOP", "listexpr");
-                return "print($_[2])";
-            
+
+                if ($_[1] eq "print"){
+                    #if ending newline was removed
+                    # "hi\n" or "hi", "\n"
+                    if ($_[2] =~ s/^.*\K(?:,\s*"\\n"$)|(?:(?<!\\)\\n(?=\s*"$))//){ #"
+                    # finds all strings and then replaces
+                    # "$var" to var
+                    # yes, that's a regex in a regex.
+                        $_[2] =~ s["(?:\\"|""|\\\\|[^"])*"]{ 
+                                     $& =~ /"\$(.*)"/ ? $1 : $& 
+                                 }eg;
+                        return "print($_[2])";
+                    }
+                    else{
+                        $_[2] =~ s["(?:\\"|""|\\\\|[^"])*"]{ 
+                                     $& =~ /"\$(.*)"/ ? $1 : $& 
+                                 }eg;
+                        return "print($_[2], end='')";
+                    }
+                }
             }
     |    FUNC '(' listexprcom ')'             /* print (@args) */
             {}

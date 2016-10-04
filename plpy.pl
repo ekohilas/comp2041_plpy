@@ -20,13 +20,13 @@ my $code = do {
 my $parser = new plpy;
 $parser->YYData->{"DATA"} = $code;
 
-my $output = $parser->YYParse(YYlex => \&plpy::Lexer);
+my $output = $parser->YYParse(YYlex => \&plpy::Lexer) || "NULL";
 
-#remove new lines from print functions NOT COMPLETE
 $output =~ s/^#!.*/#!\/usr\/local\/bin\/python3.5 -u/;
-$output =~ s/(print\(".*)\\n"\)/$1")/g;
+#clean up strings in print statements
+#$output =~ s/(print\(".*)\\n"\)/$1")/g;
 while ($output =~ /int\(\d+\)/){
     $output =~ s/int\((\d+)\)/$1/g;
 }
 
-print $output || "NO OUTPUT\n";
+print $output;
