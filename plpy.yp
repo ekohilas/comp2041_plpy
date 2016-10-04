@@ -5,6 +5,8 @@
 #   ^(\/[^/]*\/)|(s\/[^/]*\/[^/]*\/)
 
 %{
+use Term::ANSIColor;
+
 sub getToken {
     my $uni = "chomp|exit|pop|shift|scalar|close|keys";
     my $lop = "print|printf|split|join|push|unshift|reverse|open|sort";
@@ -14,7 +16,6 @@ sub getToken {
         # matches matching functions split (/foo/, $bar)
         ["PMFUNC", qr/split(?=\s*\(\s*\/)/],
         #matches all functions with brackets
-        ["FUNC", qr/\w+(?=\s*\()/a],
         ["FUNC1", qr/(?:${uni})(?=\s*\()/],
         ["UNIOP", qr/(?:${uni})(?!\s*\()/],
         ["LSTOP", qr/(?:${lop})/],
@@ -23,8 +24,8 @@ sub getToken {
         ["WHILE", qr/while/],
         ["ELSIF", qr/elsif/],
         ["ELSE", qr/else/],
-        ["CONTINUE", qr/next/],
-        ["LOOPEX", qr/last/],
+        #["CONTINUE", qr/next/],
+        ["LOOPEX", qr/last|next/],
         ["ANDOP", qr/and/],
         ["NOTOP", qr/not/],
         ["SUB", qr/sub/],
@@ -41,9 +42,15 @@ sub getToken {
         ["DOLSHARP", qr/\$#/],
         ["ASSIGNOP", qr/=|\.=/],
         ["ADDOP", qr/[\+\.-]/],
-        ["RELOP", qr/>|<|<=|>=|lt|gt|le|ge/],
+        ["BITANDOP", qr/&/],
+        ["BITOROP", qr/\|/],
+        ["BITXOROP", qr/\^/],
+        ["SHIFTOP", qr/>>|<</],
+        ["RELOP", qr/<=|>=|lt|gt|le|ge/],
+        ["RELOP", qr/>|</],
         ["MULOP", qr/[\/%\*]/],
         ["OROR", qr/\|\|/],
+        ["~", qr/~/],
         [",", qr/,/],
         ["!", qr/!/],
         [")", qr/\)/],
@@ -53,15 +60,19 @@ sub getToken {
         [";", qr/;/],
         ["[", qr/\[/],
         ["]", qr/\]/],
-        ["&", qr/&/],
         ["@", qr/@/],
         ["%", qr/%/],
         ["\$", qr/\$/],
+        ["FUNC", qr/\w+(?=\s*\()/a],
         ["WORD", qr/\w+/a]
     );
 
     $_[0]->YYData->{"DATA"} =~ s/^\s+//;
-    print "___Remaining___\n", $_[0]->YYData->{"DATA"}, "\n";#_______________\n" ;
+    if (1){
+    print STDERR color('blue');
+    print STDERR "___Remaining___\n", $_[0]->YYData->{"DATA"};
+    print STDERR color('reset');
+    }
     my @length;
     #foreach my $item (@tokens){
     #   my ($a, $b) = @$item;
@@ -106,32 +117,42 @@ sub getToken {
         return ('', undef);
     }
     else {
-        print "unable to parse\n";
-        print $_[0]->YYData->{"DATA"}, "\n";
+        print STDERR "unable to parse\n";
+        print STDERR $_[0]->YYData->{"DATA"}, "\n";
         return ('', undef);
     }
 }
 
 sub Lexer {
     my ($type, $value) = getToken($_[0]);
-    print "Removed: ( '$type' : '$value' )\n";
+    if (1){
+    print STDERR color('red');
+    print STDERR "Removed: (", color('reset'), "'$type': '$value'",
+    color('red'), ")\n";
+    print STDERR color('reset');
+    }
     return ($type, $value);
     #return ('', undef);
 }
 
 sub printer{
-    print "\n";
     my @tokens = @{shift(@_)};
     my @words = @_;
     my $parser = shift(@tokens);
-    my $word_string = join("->", @words);
-    my $token_string = "$words[0]"."->";
-    $token_string .= join("->", @tokens);
+    my $word_string = shift(@words)." => ";
+    $word_string .= join(" -> ", @words);
+    my $token_string = "$words[0]"." => ";
+    $token_string .= join(" -> ", @tokens);
     
-    print "$word_string\n";
-    print "$token_string\n";
+    if (1){
+    print STDERR color('green');
+    print STDERR "$word_string\n";
+    print STDERR "$token_string\n";
+    print STDERR "\n";
+    print STDERR color('reset');
     #print "('", $parser->YYCurtok, "': '", $parser->YYCurval, "')\n";
     #print "YYExpect: ", join("\n", $_[0]->YYExpect), "\n";
+    }
 }
 %}
 
@@ -144,7 +165,7 @@ sub printer{
 %token WHILE IF /*UNTIL UNLESS*/ ELSE ELSIF CONTINUE FOR
 %token LOOPEX DOTDOT
 %token FUNC1 FUNC UNIOP LSTOP /*FUNC0*/
-%token RELOP EQOP MULOP ADDOP
+%token RELOP EQOP MULOP ADDOP BITANDOP BITOROP SHIFTOP BITXOROP
 %token DOLSHARP /*DO HASHBRACK*/ NOAMP
 %token MY /*LOCAL MYSUB*/
 /*%token COLONATTR*/
@@ -162,14 +183,17 @@ sub printer{
 %nonassoc DOTDOT
 %left OROR
 %left ANDAND
+%left BITOROP
+%left BITANDOP
+%left BITXOROP
 %nonassoc EQOP
 %nonassoc RELOP
 %nonassoc UNIOP /*UNIOPSUB*/
-/* %left SHIFTOP */
+%left SHIFTOP 
 %left ADDOP
 %left MULOP
 %left MATCHOP
-%right '!' /*'~'*/ UMINUS /*REFGEN*/
+%right '!' '~' UMINUS /*REFGEN*/
 %right POWOP
 %nonassoc /*PREINC PREDEC*/ POSTINC POSTDEC
 /*%left ARROW*/
@@ -190,26 +214,32 @@ prog    :    lineseq
 
 /* An ordinary block */
 block    :    '{' remember lineseq '}'
-            {}
+            {
+                printer(\@_, qw( block { lineseq } )); 
+                return "\n    $_[3]\n";
+            }
     ;
 
 remember:    /* NULL */    /* start a full lexical scope */
-            {}
     ;
 
 mblock    :    '{' mremember lineseq '}'
-            {}
+            {
+                printer(\@_, qw( mblock { lineseq } )); 
+                return "\n    $_[3]\n";
+            }
     ;
 
 mremember:    /* NULL */    /* start a partial lexical scope */
-            {}
     ;
 
 /* A collection of "lines" in the program */
 lineseq    :    /* NULL */
-            {}
     |    lineseq decl
-            {}
+            {
+                printer(\@_, qw( lineseq lineseq decl )); 
+                return "$_[1]$_[2]";
+            }
     |    lineseq line
             {
                 printer(\@_, "lineseq", "lineseq", "line");
@@ -218,10 +248,19 @@ lineseq    :    /* NULL */
     ;
 
 /* A "line" in the program */
-line    :    /*label*/ cond
-            {}
+line    :     cond
+            {
+                printer(\@_, qw( line cond )); 
+                return $_[1];
+            }
+
     |    loop    /* loops add their own labels */
-    |    /*label*/ sideff ';'
+            {
+                printer(\@_, qw( line loop )); 
+                return $_[1];
+            }
+    
+    |     sideff ';'
             {
                 printer(\@_, "line", "sideff", "';'");
                 return "$_[1]\n";
@@ -234,34 +273,51 @@ line    :    /*label*/ cond
     ;
 
 /* An expression which may have a side-effect */
-sideff    :    error
-            {}
-    |    expr
+sideff    : expr
+
             {
                 printer(\@_, "sideff", "expr");
                 return $_[1];
             }
             
     |    expr IF expr
-            {}
+            {
+                printer(\@_, qw( sideff expr IF expr ));
+                return "$_[1] if $_[3]";
+            }
     |    expr WHILE expr
-            {}
+            {
+                printer(\@_, qw( sideff expr WHILE expr ));
+                return "$_[1] while $_[3]";
+            }
     |    expr FOR expr
-            {}
+            {
+                printer (\@_, qw(sideff expr FOR expr));
+                return "$_[1] for $_[3]";
+            }
     ;
 
 /* else and elsif blocks */
 else    :    /* NULL */
-            {}
     |    ELSE mblock
-            {}
+            {
+                printer (\@_, qw( else ELSE mblock ));
+                return "else: $_[2]";
+            }
     |    ELSIF '(' mexpr ')' mblock else
-            {}
+            {
+                printer (\@_, qw( else ELSIF '(' mexpr ')' mblock else)); 
+                return "elif $_[3]:$_[5]$_[6]";
+            }
     ;
 
 /* Real conditional expressions */
 cond    :    IF '(' remember mexpr ')' mblock else
-            {}
+            {
+                printer (\@_, qw( IF '(' remember mexpr ')' mblock else));
+                return "if $_[4]:$_[6]$_[7]";
+                
+            }
     ;
 
 /* Continue blocks */
@@ -272,18 +328,23 @@ cont    :    /* NULL */
     ;
 
 /* Loops: while, until, for, and a bare block */
-loop    :    /*label*/ WHILE '(' remember mtexpr ')' mblock cont
+loop    :     WHILE '(' remember mtexpr ')' mblock cont
+            {
+                 printer (\@_, qw(WHILE '(' remember mtexpr ')' mblock cont)); 
+                 return "while $_[4]:$_[6]$_[7]";
+            }
+    |     FOR MY remember my_scalar '(' mexpr ')' mblock cont
             {}
-    |    /*label*/ FOR MY remember my_scalar '(' mexpr ')' mblock cont
+    |     FOR scalar '(' remember mexpr ')' mblock cont
             {}
-    |    /*label*/ FOR scalar '(' remember mexpr ')' mblock cont
+    |     FOR '(' remember mexpr ')' mblock cont
             {}
-    |    /*label*/ FOR '(' remember mexpr ')' mblock cont
-            {}
-    |    /*label*/ FOR '(' remember mnexpr ';' mtexpr ';' mnexpr ')' mblock
-            /* basically fake up an initialize-while lineseq */
-            {}
-    |    /*label*/ 
+    |     FOR '(' remember mnexpr ';' mtexpr ';' mnexpr ')' mblock
+            {
+                printer (\@_, qw(loop FOR '(' remember mnexpr ';' mtexpr ';' mnexpr ')' mblock)); 
+            }
+
+    |     
         block cont  /* a block is a loop that happens once */
             {}
     ;
@@ -300,24 +361,18 @@ texpr    :    /* NULL means true */
     |    expr
     ;
 
-/* Inverted boolean expression */
-/*
-iexpr    :    expr
-            {}
-    ;
-*/
-
 /* Expression with its own lexical scope */
 mexpr    :    expr
-            {}
+            {
+                printer (\@_, qw(mexpr expr) ); 
+                return $_[1];
+            }
     ;
 
 mnexpr    :    nexpr
-            {}
     ;
 
 mtexpr    :    texpr
-            {}
     ;
 
 /* Some kind of declaration - does not take part in the parse tree */
@@ -363,9 +418,15 @@ use    :    USE startsub
 
 /* Ordinary expressions; logical combinations */
 expr    :    expr ANDOP expr
-            {}
+            {
+                printer (\@_, qw(expr expr ANDOP expr)); 
+                return "$_[1] and $_[3]";
+            }
     |    expr OROP expr
-            {}
+            {
+                printer (\@_, qw(expr expr OROP expr)); 
+                return "$_[1] or $_[3]";
+            }
     |    argexpr %prec PREC_LOW
     ;
 
@@ -398,10 +459,14 @@ subscripted: scalar '[' expr ']'          /* $array[$element] */
 termbinop    :    term ASSIGNOP term             /* $x = $y */
             {
                 printer (\@_, "termbinop", "term", "ASSIGNOP", "term");
+                if ($_[2] eq '.=') {$_[2] = '+='}
                 return "$_[1] $_[2] $_[3]";
             }
     |    term POWOP term                        /* $x ** $y */
-            {}
+            {
+                printer (\@_, "termbinop", "term", "POWOP", "term");
+                return "int($_[1]) $_[2] int($_[3])";
+            }
     |    term MULOP term                        /* $x * $y, $x x $y */
             {
                 printer (\@_, "termbinop", "term", "MULOP", "term");
@@ -412,16 +477,56 @@ termbinop    :    term ASSIGNOP term             /* $x = $y */
                 printer (\@_, "termbinop", "term", "ADDOP", "term");
                 return "int($_[1]) $_[2] int($_[3])";
             }
+    |   term SHIFTOP term                      /* $x >> $y, $x << $y */
+            {
+                printer (\@_, qw(term SHIFTOP term)); 
+                return "$_[1] $_[2] $_[3]";
+            }
     |    term RELOP term                        /* $x > $y, etc. */
-            {}
+            {
+                printer (\@_, qw(termbinop term EQOP term)); 
+                my %relop = (
+                    "gt" => ">",
+                    "ge" => ">=",
+                    "le" => "<=",
+                    "lt" => "<"
+                );
+                $_[2] = exists $relop{$_[2]} ? $relop{$_[2]} : $_[2];
+                return "$_[1] $_[2] $_[3]";
+            }
     |    term EQOP term                         /* $x == $y, $x eq $y */
-            {}
+            {
+                printer (\@_, qw(termbinop term EQOP term)); 
+                if ($_[2] eq 'eq') {$_[2] = '=='}
+                return "$_[1] $_[2] $_[3]";
+            }
+    |   term BITANDOP term                     /* $x & $y */
+            {
+                printer (\@_, qw(termbinop term BITANDOP term)); 
+                return "$_[1] & $_[2]";
+            }
+    |   term BITOROP term                      /* $x | $y */
+            {
+                printer (\@_, qw(termbinop term BITOROP term)); 
+                return "$_[1] | $_[2]";
+            }
+    |   term BITXOROP term                      /* $x | $y */
+            {
+                printer (\@_, qw(termbinop term BITXOROP term)); 
+                return "$_[1] ^ $_[2]";
+            }
     |    term DOTDOT term                       /* $x..$y, $x...$y */
             {}
     |    term ANDAND term                       /* $x && $y */
-            {}
+            {
+                printer (\@_, qw(termbinop term ANDAND term)); 
+                return "$_[1] and $_[3]";
+            }
     |    term OROR term                         /* $x || $y */
-            {}
+            {
+                printer (\@_, qw(termbinop term OROR term)); 
+                return "$_[1] or $_[3]";
+            }
     |    term MATCHOP term                      /* $x =~ /$y/ */
             {}
     ;
@@ -432,7 +537,15 @@ termunop : '-' term %prec UMINUS                       /* -$x */
     |    '+' term %prec UMINUS                  /* +$x */
             {}
     |    '!' term                               /* !$x */
-            {}
+            {
+                printer (\@_, qw(termunop '!' term)); 
+                return "not $_[2]";
+            }
+    |   '~' term                               /* ~$x */
+            {
+                printer (\@_, qw(termunop '~' term)); 
+                return "~$_[2]";
+            }
     |    term POSTINC                           /* $x++ */
             {}
     |    term POSTDEC                           /* $x-- */
@@ -484,9 +597,11 @@ term    :    termbinop
     |    NOAMP WORD listexpr                  /* foo(@args) */
             {}
     |    LOOPEX  /* loop exiting command (goto, last, dump, etc) */
-            {}
     |    NOTOP argexpr                        /* not $foo */
-            {}
+            {
+                printer (\@_, qw(term NOTOP argexpr)); 
+                return "not $_[2]";
+            }
     |    UNIOP                                /* Unary op, $_ implied */
             {}
     |    UNIOP block                          /* eval { foo }, I *think* */
