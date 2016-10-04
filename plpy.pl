@@ -19,7 +19,7 @@ my $code = do {
 #$code =~ s/^#![^\n]*//;
 my $parser = new plpy;
 $parser->YYData->{"DATA"} = $code;
-
+$parser->YYData->{"DEBUG"} = 0;
 my $output = $parser->YYParse(YYlex => \&plpy::Lexer) || "NULL";
 
 $output =~ s/^#!.*/#!\/usr\/local\/bin\/python3.5 -u/;

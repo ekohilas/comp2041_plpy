@@ -13,7 +13,8 @@ sub getToken {
     my @tokens = (
         # matches a string with double or escaped quotes 
         ["STRING", qr/"(?:\\"|""|\\\\|[^"])*"/],
-        ["STRING", qr/'.*(?<!\\)'/], #TEST THIS
+        # matches until first ', avoiding \'
+        ["STRING", qr/'.*?(?<!\\)'/],
         # matches matching functions split (/foo/, $bar)
         ["PMFUNC", qr/split(?=\s*\(\s*\/)/],
         #matches all functions with brackets
@@ -68,7 +69,7 @@ sub getToken {
     );
 
     $_[0]->YYData->{"DATA"} =~ s/^\s+//;
-    if (1){
+    if ($_[0]->YYData->{"DEBUG"}){
     print STDERR color('blue');
     print STDERR "___Remaining___\n", $_[0]->YYData->{"DATA"};
     print STDERR color('reset');
@@ -124,8 +125,9 @@ sub getToken {
 }
 
 sub Lexer {
+    $_[0]->YYData->{"DEBUG"} = 1;
     my ($type, $value) = getToken($_[0]);
-    if (1){
+    if ($_[0]->YYData->{"DEBUG"}){
     print STDERR color('red');
     print STDERR "Removed: (", color('reset'), "'$type': '$value'",
     color('red'), ")\n";
@@ -144,7 +146,7 @@ sub printer{
     my $token_string = "$words[0]"." => ";
     $token_string .= join(" -> ", @tokens);
     
-    if (1){
+    if ($parser->YYData->{"DEBUG"}){
     print STDERR color('green');
     print STDERR "$word_string\n";
     print STDERR "$token_string\n";
@@ -161,7 +163,7 @@ sub printer{
 %token WORD PMFUNC STRING /*METHOD FUNCMETH THING PRIVATEREF*/
 /*%token FUNC0SUB UNIOPSUB LSTOPSUB*/
 /*%token LABEL*/
-%token /*FORMAT ANONSUB*/ SUB PACKAGE USE
+%token /*FORMAT ANONSUB PACKAGE USE*/ SUB 
 %token WHILE IF /*UNTIL UNLESS*/ ELSE ELSIF FOR
 %token LOOPEX DOTDOT
 %token FUNC1 FUNC UNIOP LSTOP /*FUNC0*/
@@ -341,7 +343,7 @@ loop    :     WHILE '(' remember mtexpr ')' mblock /*cont*/
     |     FOR '(' remember mnexpr ';' mtexpr ';' mnexpr ')' mblock
             {
                 printer (\@_, qw(loop FOR '(' remember mnexpr ';' mtexpr ';' mnexpr ')' mblock)); 
-                return "$_[4]\nwhile $_[6]:$_[10]    $_[8]\n";
+                return "$_[4]\nwhile $_[6]:$_[10] hi   $_[8]\n";
             }
     ;
 
@@ -372,13 +374,7 @@ mtexpr    :    texpr
     ;
 
 /* Some kind of declaration - does not take part in the parse tree */
-decl    :    format
-            {}
-    |    subrout
-            {}
-    |    package
-            {}
-    |    use
+decl    :   subrout
             {}
     ;
 
@@ -400,17 +396,6 @@ subbody    :    block    {}
     |    ';'    {}
     ;
 
-package :    PACKAGE WORD ';'
-            {}
-    |    PACKAGE ';'
-            {}
-    ;
-
-use    :    USE startsub
-            {}
-            WORD WORD listexpr ';'
-            {}
-    ;
 
 /* Ordinary expressions; logical combinations */
 expr    :    expr ANDOP expr
@@ -456,7 +441,7 @@ termbinop    :    term ASSIGNOP term             /* $x = $y */
             {
                 printer (\@_, "termbinop", "term", "ASSIGNOP", "term");
                 if ($_[2] eq '.=') {$_[2] = '+='}
-                return "$_[1] $_[2] $_[3]";
+                return "    $_[1] $_[2] $_[3]";
             }
     |    term POWOP term                        /* $x ** $y */
             {
@@ -597,7 +582,9 @@ term    :    termbinop
     |    amper '(' expr ')'                   /* &foo(@args) */
             {}
     |    NOAMP WORD listexpr                  /* foo(@args) */
-            {}
+            {
+                printer (\@_, qw(term NOAMP WORD listexpr)); 
+            }
     |    LOOPEX  /* loop exiting command (goto, last, dump, etc) */
     |    NOTOP argexpr                        /* not $foo */
             {
