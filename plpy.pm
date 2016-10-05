@@ -4079,7 +4079,7 @@ sub
 sub
 #line 508 "plpy.yp"
 {
-                return "list(range($_[1], $_[3]))";
+                return "list(range($_[1], $_[3] + 1))";
             }
 	],
 	[#Rule 57
@@ -4184,7 +4184,7 @@ sub
 #line 565 "plpy.yp"
 {
                 $_[0]->YYData->{"IMPORTS"}{"import sys"} = 1; 
-                $_[0]->YYData->{"IMPORTS"}{"sys.argv = sys.argv[1:]"} = 1; 
+                $_[0]->YYData->{"PRELUDE"}{"sys.argv = sys.argv[1:]"} = 1; 
                 return "sys.argv";
             }
 	],
@@ -4588,7 +4588,7 @@ sub
 #line 802 "plpy.yp"
 {
                 $_[0]->YYData->{"IMPORTS"}{"import sys"} = 1; 
-                $_[0]->YYData->{"IMPORTS"}{"sys.argv = sys.argv[1:]"} = 1; 
+                $_[0]->YYData->{"PRELUDE"}{"sys.argv = sys.argv[1:]"} = 1; 
                 return "sys.argv";
             }
 	],

@@ -506,7 +506,7 @@ termbinop    :    term ASSIGNOP term             /* $x = $y */
             }
     |    term DOTDOT term                       /* $x..$y, $x...$y */
             {
-                return "list(range($_[1], $_[3]))";
+                return "list(range($_[1], $_[3] + 1))";
             }
     |    term ANDAND term                       /* $x && $y */
             {
@@ -564,7 +564,7 @@ term    :    termbinop
     |    ARGV 
             {
                 $_[0]->YYData->{"IMPORTS"}{"import sys"} = 1; 
-                $_[0]->YYData->{"IMPORTS"}{"sys.argv = sys.argv[1:]"} = 1; 
+                $_[0]->YYData->{"PRELUDE"}{"sys.argv = sys.argv[1:]"} = 1; 
                 return "sys.argv";
             }
     |    STRING 
@@ -801,7 +801,7 @@ indirob    :    WORD
     |    ARGV
             {
                 $_[0]->YYData->{"IMPORTS"}{"import sys"} = 1; 
-                $_[0]->YYData->{"IMPORTS"}{"sys.argv = sys.argv[1:]"} = 1; 
+                $_[0]->YYData->{"PRELUDE"}{"sys.argv = sys.argv[1:]"} = 1; 
                 return "sys.argv";
             }
     |    scalar %prec PREC_LOW

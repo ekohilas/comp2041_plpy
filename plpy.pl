@@ -4,9 +4,7 @@ use warnings;
 use Term::ANSIColor;
 
 #Recompile parser if old
-if (-e "plpy.pm" && ((-M "plpy.pm" || "inf") > -M "plpy.yp")){
-    system("yapp plpy.yp")
-}
+#if ((-M "plpy.pm" || "inf") > -M "plpy.yp"){system("yapp plpy.yp")}
 
 require plpy;
 plpy->import();
@@ -46,6 +44,7 @@ print "$hashbang\n";
 if ($parser->YYData->{"IMPORTS"}){
     print "$_\n" for keys $parser->YYData->{"IMPORTS"};
 }
+
 #print prelude
 if ($parser->YYData->{"PRELUDE"}){
     print "$_\n" for keys $parser->YYData->{"PRELUDE"};
