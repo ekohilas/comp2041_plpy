@@ -410,6 +410,10 @@ expr    :    expr ANDOP expr
                 return "$_[1] or $_[3]";
             }
     |    argexpr %prec PREC_LOW
+            {
+                printer(\@_, qw(expr argexpr));
+                return $_[1];
+            }
     ;
 
 /* Expressions are a list of terms joined by commas */
@@ -627,13 +631,21 @@ term    :    termbinop
                 return "not $_[2]";
             }
     |    UNIOP                                /* Unary op, $_ implied */
-            {}
+            {
+                print STDERR "($_[1])";
+                printer (\@_, qw(term UNIOP)); 
+            }
     |    UNIOP block                          /* eval { foo }, I *think* */
-            {}
+            {
+                print STDERR "($_[1], $_[2])";
+                printer (\@_, qw(term UNIOP block)); 
+            }
     |    UNIOP term                           /* Unary op */
             {
-                if ($_[0] eq "chomp"){
-                   return "$_[2].strip()" 
+                printer (\@_, qw(term UNIOP term)); 
+                print STDERR "($_[1], $_[2])";
+                if ($_[1] eq "chomp"){
+                   return "$_[2] = $_[2].strip()";
                 }
             }
     |    FUNC1 '(' ')'                        /* not () */

@@ -4,7 +4,7 @@ use warnings;
 use Term::ANSIColor;
 
 #Recompile parser if old
-if ((-M "plpy.pm" || "inf") > -M "plpy.yp"){
+if ((-M "plpy.pm" || 1) > -M "plpy.yp"){
     system("yapp plpy.yp");
 }
 
@@ -30,12 +30,16 @@ my $output = $parser->YYParse(YYlex => \&plpy::Lexer) || "NULL\n";
 
 # POST PARSE
 #replace the hashbang
-$output =~ s/^#!.*/#!\/usr\/local\/bin\/python3.5 -u/;
+my $hashbang = "#!/usr/local/bin/python3.5 -u";
+$output =~ s/^#!.*//;
 
 #remove redundant int casts
 while ($output =~ /int\(\d+\)/){
     $output =~ s/int\((\d+)\)/$1/g;
 }
+
+#print hashbang
+print "$hashbang\n";
 
 #print imports
 if ($parser->YYData->{"IMPORTS"}){
