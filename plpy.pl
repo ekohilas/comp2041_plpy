@@ -4,10 +4,7 @@ use warnings;
 use Term::ANSIColor;
 
 #Recompile parser if old
-if (-e "plpy.pm" && ((-M "plpy.pm" || "inf") > -M "plpy.yp")){
-    system("yapp plpy.yp");
-}
-sleep 1;
+if ((-M "plpy.pm" || "inf") > -M "plpy.yp"){system("yapp plpy.yp")}
 
 require plpy;
 plpy->import();
