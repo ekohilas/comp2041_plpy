@@ -4,8 +4,7 @@ use warnings;
 use Term::ANSIColor;
 
 #Recompile parser if old
-if (-e "plpy.pm" && 
-    ((-M "plpy.pm" || "inf") > -M "plpy.yp")){
+if (-e "plpy.pm" && ((-M "plpy.pm" || "inf") > -M "plpy.yp")){
     system("yapp plpy.yp")
 }
 
