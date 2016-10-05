@@ -564,6 +564,7 @@ term    :    termbinop
     |    ARGV 
             {
                 $_[0]->YYData->{"IMPORTS"}{"import sys"} = 1; 
+                $_[0]->YYData->{"IMPORTS"}{"sys.argv = sys.argv[1:]"} = 1; 
                 return "sys.argv";
             }
     |    STRING 
@@ -800,6 +801,7 @@ indirob    :    WORD
     |    ARGV
             {
                 $_[0]->YYData->{"IMPORTS"}{"import sys"} = 1; 
+                $_[0]->YYData->{"IMPORTS"}{"sys.argv = sys.argv[1:]"} = 1; 
                 return "sys.argv";
             }
     |    scalar %prec PREC_LOW
