@@ -11,28 +11,33 @@ if ((-M "plpy.pm" || "inf") > -M "plpy.yp"){
 require plpy;
 plpy->import();
 
-my $code = do {
+my $input = do {
     local $/ = undef;
     <>;
 };
 
-#$code =~ s/^#![^\n]*//;
+# PRE PARSE
+# change context of STDIN
+$input =~ s/@\w+\s*=\s*\K<STDIN>/<\@STDIN>/;
+
 my $parser = new plpy;
-$parser->YYData->{"DATA"} = $code;
-$parser->YYData->{"DEBUG"} = 0;
 
-=pod
-$parser->YYData->{"INDENT_NUM"} = 0;
-$parser->YYData->{"INDENT_TYPE"} = ' ' x 4;
-$parser->YYData->{"INDENT"} = $parser->YYData->{"INDENT_TYPE"} x $parser->YYData->{"INDENT_NUM"};
-#print '{', $parser->YYData->{"INDENT"}, "}\n";
-=cut
+$parser->YYData->{"DATA"} = $input;
+$parser->YYData->{"DEBUG"} = 1;
+$parser->YYData->{"IMPORTS"} = ();
 
-my $output = $parser->YYParse(YYlex => \&plpy::Lexer) || "NULL";
+my $output = $parser->YYParse(YYlex => \&plpy::Lexer) || "NULL\n";
 
+# POST PARSE
+#replace the hashbang
 $output =~ s/^#!.*/#!\/usr\/local\/bin\/python3.5 -u/;
+
+#remove redundant int casts
 while ($output =~ /int\(\d+\)/){
     $output =~ s/int\((\d+)\)/$1/g;
 }
+
+#print imports
+#print "$_\n" for keys $parser->YYData->{"IMPORTS"} || "";
 
 print $output;

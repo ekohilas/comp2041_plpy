@@ -8,16 +8,16 @@
 use Term::ANSIColor;
 
 sub Lexer {
-    $_[0]->YYData->{"DEBUG"} = 0;
     my ($type, $value) = getToken($_[0]);
+
     if ($_[0]->YYData->{"DEBUG"}){
-    print STDERR color('red');
-    print STDERR "Removed: (", color('reset'), "'$type': '$value'",
-    color('red'), ")\n";
-    print STDERR color('reset');
+        print STDERR color('red');
+        print STDERR "Removed: (", color('reset'), "'$type': '$value'",
+        color('red'), ")\n";
+        print STDERR color('reset');
     }
+
     return ($type, $value);
-    #return ('', undef);
 }
 
 sub getToken {
@@ -34,8 +34,11 @@ sub getToken {
         ["FUNC1", qr/(?:${uni})(?=\s*\()/],
         ["UNIOP", qr/(?:${uni})(?!\s*\()/],
         ["LSTOP", qr/(?:${lop})/],
+        ["STDIN", qr/<STDIN>/],
+        ["STDINARR", qr/<\@STDIN>/],
         ["COMMENT", qr/\#.*/],
-        ["FOR", qr/for|foreach/],
+        ["FOR", qr/foreach/],
+        ["FOR", qr/for/],
         ["WHILE", qr/while/],
         ["ELSIF", qr/elsif/],
         ["ELSE", qr/else/],
@@ -46,7 +49,7 @@ sub getToken {
         ["IF", qr/if/],
         ["MY", qr/my/],
         ["OROP", qr/or/],
-        ["DOTDOT", qr/\.\.\.?/],
+        ["DOTDOT", qr/\.\./],
         ["EQOP", qr/==|!=|eq|<=>/],
         ["ANDAND", qr/&&/],
         ["MATCHOP", qr/=~/],
@@ -77,21 +80,20 @@ sub getToken {
         ["@", qr/@/],
         ["%", qr/%/],
         ["\$", qr/\$/],
-        ["FUNC", qr/\w+(?=\s*\()/a],
-        ["WORD", qr/\w+/a]
+        ["WORD", qr/\w+/a], #look at later
+        ["FUNC", qr/\w+(?=\s*\()/a]
     );
 
     $_[0]->YYData->{"DATA"} =~ s/^\s+//;
+    $_[0]->YYData->{"DATA"} =~ s/(?!})^.*?\K;?\s*}/;}/;
+
     if ($_[0]->YYData->{"DEBUG"}){
-    print STDERR color('blue');
-    print STDERR "___Remaining___\n", $_[0]->YYData->{"DATA"};
-    print STDERR color('reset');
+        print STDERR color('blue');
+        print STDERR "___Remaining___\n", $_[0]->YYData->{"DATA"};
+        print STDERR color('reset');
     }
+
     my @length;
-    #foreach my $item (@tokens){
-    #   my ($a, $b) = @$item;
-    #   print "$a, $b\n";
-#}
     my $found = 0;
     for (my $i; $i < scalar @tokens; $i++){
         my $token = $tokens[$i][0];
@@ -114,12 +116,6 @@ sub getToken {
                 $maxval = $length[$i];
             }
         }
-#for (my $i=scalar @length -1; $i >= 0; $i--){
-#   if ($length[$i] => $maxval){
-#        $maxpos = $i;
-#        $maxval = $length[$i];
-#    }
-#}
         #print "$tokens[$maxpos][0]\n";
         my $token = $tokens[$maxpos][0];
         my $re = $tokens[$maxpos][1];
@@ -131,7 +127,7 @@ sub getToken {
         return ('', undef);
     }
     else {
-        print STDERR "unable to parse\n";
+        print STDERR "No Match Found\n";
         print STDERR $_[0]->YYData->{"DATA"}, "\n";
         return ('', undef);
     }
@@ -147,14 +143,14 @@ sub printer{
     $token_string .= join(" -> ", @tokens);
     
     if ($parser->YYData->{"DEBUG"}){
-    print STDERR color('green');
-    print STDERR $parser->YYData->{"INDENT_NUM"}, "\n";
-    print STDERR "$word_string\n";
-    print STDERR "$token_string\n";
-    print STDERR "\n";
-    print STDERR color('reset');
-    #print "('", $parser->YYCurtok, "': '", $parser->YYCurval, "')\n";
-    #print "YYExpect: ", join("\n", $_[0]->YYExpect), "\n";
+        print STDERR color('green');
+        print STDERR $parser->YYData->{"INDENT_NUM"}, "\n";
+        print STDERR "$word_string\n";
+        print STDERR "$token_string\n";
+        print STDERR "\n";
+        #print STDERR "('", $parser->YYCurtok, "': '", $parser->YYCurval, "')\n";
+        #print STDERR "YYExpect:\n", join("\n", $parser->YYExpect), "\n";
+        print STDERR color('reset');
     }
 }
 %}
@@ -171,6 +167,7 @@ sub printer{
 %token RELOP EQOP MULOP ADDOP BITANDOP BITOROP SHIFTOP BITXOROP
 %token DOLSHARP /*DO HASHBRACK*/ NOAMP
 %token MY /*LOCAL MYSUB*/
+%token STDIN STDINARR
 /*%token COLONATTR*/
 
 %nonassoc PREC_LOW
@@ -308,7 +305,7 @@ else    :    /* NULL */
     |    ELSE mblock
             {
                 printer (\@_, qw( else ELSE mblock ));
-                return "else: $_[2]";
+                return "else:$_[2]";
             }
     |    ELSIF '(' mexpr ')' mblock else
             {
@@ -504,7 +501,9 @@ termbinop    :    term ASSIGNOP term             /* $x = $y */
                 return "$_[1] ^ $_[2]";
             }
     |    term DOTDOT term                       /* $x..$y, $x...$y */
-            {}
+            {
+                return "list(range($_[1], $_[3]))";
+            }
     |    term ANDAND term                       /* $x && $y */
             {
                 printer (\@_, qw(termbinop term ANDAND term)); 
@@ -548,6 +547,16 @@ termunop : '-' term %prec UMINUS                       /* -$x */
 
 term    :    termbinop
     |    termunop
+    |    STDIN
+            {
+                $_[0]->YYData->{"IMPORTS"}{"import sys"} = 1; 
+                return "sys.stdin.readline()";
+            }
+    |    STDINARR
+            {
+                $_[0]->YYData->{"IMPORTS"}{"import sys"} = 1; 
+                return "sys.stdin.readlines()";
+            }
     |    STRING 
             {
                 printer (\@_, "term", "STRING");
@@ -593,6 +602,15 @@ term    :    termbinop
                 printer (\@_, qw(term NOAMP WORD listexpr)); 
             }
     |    LOOPEX  /* loop exiting command (goto, last, dump, etc) */
+            {
+                if ($_[1] eq "last"){
+                    return "break";
+                }
+                elsif ($_[1] eq "next"){
+                    return "continue";
+                }
+
+            }
     |    NOTOP argexpr                        /* not $foo */
             {
                 printer (\@_, qw(term NOTOP argexpr)); 
@@ -603,15 +621,27 @@ term    :    termbinop
     |    UNIOP block                          /* eval { foo }, I *think* */
             {}
     |    UNIOP term                           /* Unary op */
-            {}
+            {
+                if ($_[0] eq "chomp"){
+                   return "$_[2].strip()" 
+                }
+            }
     |    FUNC1 '(' ')'                        /* not () */
             {}
     |    FUNC1 '(' expr ')'                   /* not($foo) */
-            {}
+            {
+                if ($_[0] eq "chomp"){
+                   return "$_[2].strip()" 
+                }
+            }
     |    PMFUNC '(' term ')'                  /* split (/foo/) */
             {}
     |    PMFUNC '(' term ',' term ')'         /* split (/foo/,$bar) */
-            {}
+            {
+                $_[3] =~ s/\/(.*)\//$1/;
+                $_[3] =~ s/\\([\{\}\[\]\(\)\^\$\.\|\*\+\?\\])/$1/g;
+                return "split($_[3], $_[5])";
+            }
     |    WORD
 
     /* list operators */
@@ -643,6 +673,9 @@ term    :    termbinop
                                  }eg;
                         return "print($_[2], end='')";
                     }
+                }
+                elsif ($_[1] eq "split") {
+                    return "split($_[2])";
                 }
             }
     |    FUNC '(' listexprcom ')'             /* print (@args) */
