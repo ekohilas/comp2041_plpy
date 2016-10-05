@@ -634,10 +634,12 @@ term    :    termbinop
     |    UNIOP                                /* Unary op, $_ implied */
             {
                 printer (\@_, qw(term UNIOP)); 
+                if ($_[1] eq "exit"){
+                   return "exit()";
+                }
             }
     |    UNIOP block                          /* eval { foo }, I *think* */
             {
-                printer (\@_, qw(term UNIOP block)); 
             }
     |    UNIOP term                           /* Unary op */
             {
@@ -647,11 +649,18 @@ term    :    termbinop
                 }
             }
     |    FUNC1 '(' ')'                        /* not () */
-            {}
+            {
+                if ($_[1] eq "exit"){
+                   return "exit()";
+                }
+            }
     |    FUNC1 '(' expr ')'                   /* not($foo) */
             {
-                if ($_[0] eq "chomp"){
-                   return "$_[2].strip()" 
+                if ($_[1] eq "chomp"){
+                   return "$_[3].strip()";
+                }
+                elsif ($_[1] eq "exit"){
+                   return "exit($_[3])";
                 }
             }
     |    PMFUNC '(' term ')'                  /* split (/foo/) */
@@ -711,6 +720,25 @@ term    :    termbinop
                     my @list = split(', ', $_[3]);
                     my $delim = shift @list;
                     return "$delim.join(@list)";
+                }
+                elsif ($_[1] eq "print"){
+                    #if ending newline was removed
+                    # "hi\n" or "hi", "\n"
+                    if ($_[3] =~ s/^.*\K(?:,\s*"\\n"$)|(?:(?<!\\)\\n(?=\s*"$))//){ #"
+                    # finds all strings and then replaces
+                    # "$var" to var
+                    # yes, that's a regex in a regex.
+                        $_[3] =~ s["(?:\\"|""|\\\\|[^"])*"]{ 
+                                     $& =~ /"\$(.*)"/ ? $1 : $& 
+                                 }eg;
+                        return "print($_[3])";
+                    }
+                    else{
+                        $_[3] =~ s["(?:\\"|""|\\\\|[^"])*"]{ 
+                                     $& =~ /"\$(.*)"/ ? $1 : $& 
+                                 }eg;
+                        return "print($_[3], end='')";
+                    }
                 }
             }
     ;
