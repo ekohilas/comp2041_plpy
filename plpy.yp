@@ -37,6 +37,7 @@ sub getToken {
         ["LSTOP", qr/(?:${lop})/],
         ["STDIN", qr/<STDIN>/],
         ["STDINARR", qr/<\@STDIN>/],
+        ["ARGV", qr/ARGV/],
         ["COMMENT", qr/\#.*/],
         ["FOR", qr/foreach/],
         ["FOR", qr/for/],
@@ -166,7 +167,7 @@ sub printer{
 %token RELOP EQOP MULOP ADDOP BITANDOP BITOROP SHIFTOP BITXOROP
 %token DOLSHARP /*DO HASHBRACK*/ NOAMP
 %token MY /*LOCAL MYSUB*/
-%token STDIN STDINARR
+%token STDIN STDINARR ARGV
 /*%token COLONATTR*/
 
 %nonassoc PREC_LOW
@@ -555,6 +556,11 @@ term    :    termbinop
             {
                 $_[0]->YYData->{"IMPORTS"}{"import sys"} = 1; 
                 return "sys.stdin.readlines()";
+            }
+    |    ARGV 
+            {
+                $_[0]->YYData->{"IMPORTS"}{"import sys"} = 1; 
+                return "sys.argv";
             }
     |    STRING 
             {
