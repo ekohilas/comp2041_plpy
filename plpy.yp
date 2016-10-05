@@ -34,7 +34,7 @@ sub getToken {
         ["MY", qr/my/],
         ["OROP", qr/or/],
         ["DOTDOT", qr/\.\.\.?/],
-        ["EQOP", qr/==|!=|eq/],
+        ["EQOP", qr/==|!=|eq|<=>/],
         ["ANDAND", qr/&&/],
         ["MATCHOP", qr/=~/],
         ["POWOP", qr/\*\*/],
@@ -148,6 +148,7 @@ sub printer{
     
     if ($parser->YYData->{"DEBUG"}){
     print STDERR color('green');
+    print STDERR $parser->YYData->{"INDENT_NUM"}, "\n";
     print STDERR "$word_string\n";
     print STDERR "$token_string\n";
     print STDERR "\n";
@@ -185,9 +186,8 @@ sub printer{
 %nonassoc DOTDOT
 %left OROR
 %left ANDAND
-%left BITOROP
+%left BITOROP BITXOROP
 %left BITANDOP
-%left BITXOROP
 %nonassoc EQOP
 %nonassoc RELOP
 %nonassoc UNIOP /*UNIOPSUB*/
@@ -218,7 +218,9 @@ prog    :    lineseq
 block    :    '{' remember lineseq '}'
             {
                 printer(\@_, qw( block { lineseq } )); 
-                return "\n    $_[3]\n";
+                #adds indentation
+                $_[3] =~ s/^/    /gm;   #"/
+                return "\n$_[3]\n";
             }
     ;
 
@@ -228,7 +230,9 @@ remember:    /* NULL */    /* start a full lexical scope */
 mblock    :    '{' mremember lineseq '}'
             {
                 printer(\@_, qw( mblock { lineseq } )); 
-                return "\n    $_[3]\n";
+                #adds indentation
+                $_[3] =~ s/^/    /gm;    #"/
+                return "\n$_[3]\n";
             }
     ;
 
@@ -285,7 +289,7 @@ sideff    : expr
     |    expr IF expr
             {
                 printer(\@_, qw( sideff expr IF expr ));
-                return "$_[1] if $_[3]";
+                return "if $_[3]: $_[1]";
             }
     |    expr WHILE expr
             {
@@ -441,7 +445,7 @@ termbinop    :    term ASSIGNOP term             /* $x = $y */
             {
                 printer (\@_, "termbinop", "term", "ASSIGNOP", "term");
                 if ($_[2] eq '.=') {$_[2] = '+='}
-                return "    $_[1] $_[2] $_[3]";
+                return "$_[1] $_[2] $_[3]";
             }
     |    term POWOP term                        /* $x ** $y */
             {
@@ -479,6 +483,9 @@ termbinop    :    term ASSIGNOP term             /* $x = $y */
             {
                 printer (\@_, qw(termbinop term EQOP term)); 
                 if ($_[2] eq 'eq') {$_[2] = '=='}
+                if ($_[2] eq '<=>') {
+                    return "((a > b) - (a < b))";
+                }
                 return "$_[1] $_[2] $_[3]";
             }
     |   term BITANDOP term                     /* $x & $y */
