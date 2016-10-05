@@ -17,7 +17,7 @@ my $input = do {
 };
 
 # PRE PARSE
-# change context of STDIN
+# Change STDIN based on context
 $input =~ s/@\w+\s*=\s*\K<STDIN>/<\@STDIN>/;
 
 my $parser = new plpy;
@@ -38,6 +38,8 @@ while ($output =~ /int\(\d+\)/){
 }
 
 #print imports
-#print "$_\n" for keys $parser->YYData->{"IMPORTS"} || "";
+if ($parser->YYData->{"IMPORTS"}){
+    print "$_\n" for keys $parser->YYData->{"IMPORTS"};
+}
 
 print $output;

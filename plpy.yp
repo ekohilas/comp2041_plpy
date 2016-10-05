@@ -33,6 +33,7 @@ sub getToken {
         #matches all functions with brackets
         ["FUNC1", qr/(?:${uni})(?=\s*\()/],
         ["UNIOP", qr/(?:${uni})(?!\s*\()/],
+        ["FUNC", qr/(?:${lop})(?=\s*\()/],
         ["LSTOP", qr/(?:${lop})/],
         ["STDIN", qr/<STDIN>/],
         ["STDINARR", qr/<\@STDIN>/],
@@ -81,7 +82,6 @@ sub getToken {
         ["%", qr/%/],
         ["\$", qr/\$/],
         ["WORD", qr/\w+/a], #look at later
-        ["FUNC", qr/\w+(?=\s*\()/a]
     );
 
     $_[0]->YYData->{"DATA"} =~ s/^\s+//;
@@ -144,7 +144,6 @@ sub printer{
     
     if ($parser->YYData->{"DEBUG"}){
         print STDERR color('green');
-        print STDERR $parser->YYData->{"INDENT_NUM"}, "\n";
         print STDERR "$word_string\n";
         print STDERR "$token_string\n";
         print STDERR "\n";
@@ -567,7 +566,9 @@ term    :    termbinop
     |    myattrterm    %prec UNIOP
             {}
     |    '(' expr ')'
-            {}
+            {
+                return $_[2];    
+            }
     |    '(' ')'
             {}
     |    scalar    %prec '('
@@ -578,7 +579,10 @@ term    :    termbinop
     |    hsh     %prec '('
             {}
     |    ary     %prec '('
-            {}
+            {
+                printer (\@_, qw(term ary)); 
+                return $_[1];
+            }
     |    arylen     %prec '('                    /* $#x, $#{ something } */
             {}
     |       subscripted
@@ -677,9 +681,23 @@ term    :    termbinop
                 elsif ($_[1] eq "split") {
                     return "split($_[2])";
                 }
+                elsif ($_[1] eq "join") {
+                    printer (\@_, "term", "LSTOP", "listexpr");
+                    my @list = split(', ', $_[2]);
+                    my $delim = shift @list;
+                    return "'$delim'.join(@list)";
+                }
             }
     |    FUNC '(' listexprcom ')'             /* print (@args) */
-            {}
+            {
+                if ($_[1] eq "join") {
+                    print STDERR "($_[3])";
+                    printer (\@_, "term", "LSTOP", "listexpr");
+                    my @list = split(', ', $_[3]);
+                    my $delim = shift @list;
+                    return "$delim.join(@list)";
+                }
+            }
     ;
 
 /* "my" declarations, with optional attributes */
@@ -715,11 +733,16 @@ listexpr:    /* NULL */ %prec PREC_LOW
 
 /*list of expressions separated by commas*/
 listexprcom:    /* NULL */
-            {}
     |    expr
-            {}
+            {
+                printer (\@_, "listexprcom", "expr");
+                return "$_[1]";
+            }
     |    expr ','
-            {}
+            {
+                printer (\@_, "listexprcom", "expr", "','");
+                return "$_[1], ";
+            }
     ;
 
 /* A little bit of trickery to make "for my $foo (@bar)" actually be
@@ -740,7 +763,10 @@ scalar    :    '$' indirob
     ;
 
 ary    :    '@' indirob
-            {}
+            {
+                printer (\@_, "scalar", "'\@'", "indirob"); 
+                return $_[2];
+            }
     ;
 
 hsh    :    '%' indirob
