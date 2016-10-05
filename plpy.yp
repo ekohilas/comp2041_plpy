@@ -706,7 +706,6 @@ term    :    termbinop
     |    FUNC '(' listexprcom ')'             /* print (@args) */
             {
                 if ($_[1] eq "join") {
-                    print STDERR "($_[3])";
                     printer (\@_, "term", "LSTOP", "listexpr");
                     my @list = split(', ', $_[3]);
                     my $delim = shift @list;

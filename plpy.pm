@@ -4445,7 +4445,6 @@ sub
 #line 707 "plpy.yp"
 {
                 if ($_[1] eq "join") {
-                    print STDERR "($_[3])";
                     printer (\@_, "term", "LSTOP", "listexpr");
                     my @list = split(', ', $_[3]);
                     my $delim = shift @list;
@@ -4456,55 +4455,55 @@ sub
 	[#Rule 102
 		 'myattrterm', 3,
 sub
-#line 720 "plpy.yp"
+#line 719 "plpy.yp"
 {}
 	],
 	[#Rule 103
 		 'myattrterm', 2,
 sub
-#line 722 "plpy.yp"
+#line 721 "plpy.yp"
 {}
 	],
 	[#Rule 104
 		 'myterm', 3,
 sub
-#line 727 "plpy.yp"
+#line 726 "plpy.yp"
 {}
 	],
 	[#Rule 105
 		 'myterm', 2,
 sub
-#line 729 "plpy.yp"
+#line 728 "plpy.yp"
 {}
 	],
 	[#Rule 106
 		 'myterm', 1,
 sub
-#line 731 "plpy.yp"
+#line 730 "plpy.yp"
 {}
 	],
 	[#Rule 107
 		 'myterm', 1,
 sub
-#line 733 "plpy.yp"
+#line 732 "plpy.yp"
 {}
 	],
 	[#Rule 108
 		 'myterm', 1,
 sub
-#line 735 "plpy.yp"
+#line 734 "plpy.yp"
 {}
 	],
 	[#Rule 109
 		 'listexpr', 0,
 sub
-#line 741 "plpy.yp"
+#line 740 "plpy.yp"
 {print "empty listexpr\n";}
 	],
 	[#Rule 110
 		 'listexpr', 1,
 sub
-#line 743 "plpy.yp"
+#line 742 "plpy.yp"
 {
                 printer (\@_, "listexpr", "argexpr");
                 return $_[1];
@@ -4516,7 +4515,7 @@ sub
 	[#Rule 112
 		 'listexprcom', 1,
 sub
-#line 752 "plpy.yp"
+#line 751 "plpy.yp"
 {
                 printer (\@_, "listexprcom", "expr");
                 return "$_[1]";
@@ -4525,7 +4524,7 @@ sub
 	[#Rule 113
 		 'listexprcom', 2,
 sub
-#line 757 "plpy.yp"
+#line 756 "plpy.yp"
 {
                 printer (\@_, "listexprcom", "expr", "','");
                 return "$_[1], ";
@@ -4534,19 +4533,19 @@ sub
 	[#Rule 114
 		 'my_scalar', 1,
 sub
-#line 766 "plpy.yp"
+#line 765 "plpy.yp"
 {}
 	],
 	[#Rule 115
 		 'amper', 2,
 sub
-#line 770 "plpy.yp"
+#line 769 "plpy.yp"
 {}
 	],
 	[#Rule 116
 		 'scalar', 2,
 sub
-#line 774 "plpy.yp"
+#line 773 "plpy.yp"
 {
                 printer (\@_, "scalar", "'\$'", "indirob"); 
                 return "$_[2]";
@@ -4555,7 +4554,7 @@ sub
 	[#Rule 117
 		 'ary', 2,
 sub
-#line 781 "plpy.yp"
+#line 780 "plpy.yp"
 {
                 printer (\@_, "scalar", "'\@'", "indirob"); 
                 return $_[2];
@@ -4564,19 +4563,19 @@ sub
 	[#Rule 118
 		 'hsh', 2,
 sub
-#line 788 "plpy.yp"
+#line 787 "plpy.yp"
 {}
 	],
 	[#Rule 119
 		 'arylen', 2,
 sub
-#line 792 "plpy.yp"
+#line 791 "plpy.yp"
 {}
 	],
 	[#Rule 120
 		 'indirob', 1,
 sub
-#line 797 "plpy.yp"
+#line 796 "plpy.yp"
 {
                 printer (\@_, "indirob", "WORD");
                 return $_[1];
@@ -4585,7 +4584,7 @@ sub
 	[#Rule 121
 		 'indirob', 1,
 sub
-#line 802 "plpy.yp"
+#line 801 "plpy.yp"
 {
                 $_[0]->YYData->{"IMPORTS"}{"import sys"} = 1; 
                 return "sys.argv";
@@ -4594,13 +4593,13 @@ sub
 	[#Rule 122
 		 'indirob', 1,
 sub
-#line 807 "plpy.yp"
+#line 806 "plpy.yp"
 {}
 	],
 	[#Rule 123
 		 'indirob', 1,
 sub
-#line 809 "plpy.yp"
+#line 808 "plpy.yp"
 {}
 	]
 ],
@@ -4608,7 +4607,7 @@ sub
     bless($self,$class);
 }
 
-#line 812 "plpy.yp"
+#line 811 "plpy.yp"
 
 
 1;
