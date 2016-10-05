@@ -3,6 +3,7 @@
 #   print, printf, chomp, split, join, exit, push, pop, shift, scalar
 #   unshift, reverse, open, close, sort BLOCK LIST, keys, return,
 #   ^(\/[^/]*\/)|(s\/[^/]*\/[^/]*\/)
+#   s\/((?:[^\/\\]|\\\/|\\\\)*)\/((?:[^\/\\]|\\\/|\\\\)*)\/([msixpodualngcer]?)
 
 %{
 use Term::ANSIColor;
@@ -25,11 +26,14 @@ sub getToken {
     my $lop = "print|printf|split|join|push|unshift|reverse|open|sort";
     my @tokens = (
         # matches a string with double or escaped quotes 
-        ["STRING", qr/"(?:\\"|""|\\\\|[^"])*"/],
+        #["STRING", qr/"(?:\\"|""|\\\\|[^"])*"/],
+        ["STRING", qr/^"(?:[^"\\]|\\.|"")*"/],
         # matches until first ', avoiding \'
         ["STRING", qr/'.*?(?<!\\)'/],
         # matches matching functions split (/foo/, $bar)
         ["PMFUNC", qr/split(?=\s*\(\s*\/)/],
+        ["RESUB", qr/s\/(?:(?:[^\/\\]|\\\/|\\\\)*\/){2}[msixpodualngcer]?/],
+        ["REMATCH", qr/m?\/(?:[^\/\\]|\\\/|\\\\)*\/[imnsxadlup]?/],
         #matches all functions with brackets
         ["FUNC1", qr/(?:${uni})(?=\s*\()/],
         ["UNIOP", qr/(?:${uni})(?!\s*\()/],
@@ -681,7 +685,8 @@ term    :    termbinop
     |    PMFUNC '(' term ',' term ')'         /* split (/foo/,$bar) */
             {
                 $_[3] =~ s/\/(.*)\//$1/;
-                $_[3] =~ s/\\([\{\}\[\]\(\)\^\$\.\|\*\+\?\\])/$1/g;
+                #$_[3] =~ s/\\([\{\}\[\]\(\)\^\$\.\|\*\+\?\\])/$1/g;
+                $_[3] =~ s/\\([\Q{}[]()^$.|*+?\\E])/$1/g;
                 return "split($_[3], $_[5])";
             }
     |    WORD
