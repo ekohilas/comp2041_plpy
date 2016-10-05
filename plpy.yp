@@ -798,6 +798,11 @@ indirob    :    WORD
                 printer (\@_, "indirob", "WORD");
                 return $_[1];
             }
+    |    ARGV
+            {
+                $_[0]->YYData->{"IMPORTS"}{"import sys"} = 1; 
+                return "sys.argv";
+            }
     |    scalar %prec PREC_LOW
             {}
     |    block
