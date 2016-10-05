@@ -37,6 +37,7 @@ sub getToken {
         ["LSTOP", qr/(?:${lop})/],
         ["STDIN", qr/<STDIN>/],
         ["STDINARR", qr/<\@STDIN>/],
+        ["FSTDIN", qr/<>/],
         ["ARGV", qr/ARGV/],
         ["COMMENT", qr/\#.*/],
         ["FOR", qr/foreach/],
@@ -167,7 +168,7 @@ sub printer{
 %token RELOP EQOP MULOP ADDOP BITANDOP BITOROP SHIFTOP BITXOROP
 %token DOLSHARP /*DO HASHBRACK*/ NOAMP
 %token MY /*LOCAL MYSUB*/
-%token STDIN STDINARR ARGV
+%token STDIN STDINARR ARGV FSTDIN
 /*%token COLONATTR*/
 
 %nonassoc PREC_LOW
@@ -340,7 +341,9 @@ loop    :     WHILE '(' remember mtexpr ')' mblock /*cont*/
                 return "for $_[2] in $_[5]:$_[7]";
             }
     |     FOR '(' remember mexpr ')' mblock /*cont*/
-            {}
+            {
+                return "for _ in $_[4]:$_[6]";
+            }
     |     FOR '(' remember mnexpr ';' mtexpr ';' mnexpr ')' mblock
             {
                 printer (\@_, qw(loop FOR '(' remember mnexpr ';' mtexpr ';' mnexpr ')' mblock)); 
@@ -442,7 +445,7 @@ subscripted: scalar '[' expr ']'          /* $array[$element] */
     ;
 
 /* Binary operators between terms */
-termbinop    :    term ASSIGNOP term             /* $x = $y */
+termbinop    :    term ASSIGNOP term             /* $x =, .= $y */
             {
                 printer (\@_, "termbinop", "term", "ASSIGNOP", "term");
                 if ($_[2] eq '.=') {$_[2] = '+='}
@@ -451,17 +454,22 @@ termbinop    :    term ASSIGNOP term             /* $x = $y */
     |    term POWOP term                        /* $x ** $y */
             {
                 printer (\@_, "termbinop", "term", "POWOP", "term");
-                return "int($_[1]) $_[2] int($_[3])";
+                return "eval(str($_[1])) $_[2] eval(str($_[3]))";
             }
-    |    term MULOP term                        /* $x * $y, $x x $y */
+    |    term MULOP term                        /* $x * $y*/
             {
                 printer (\@_, "termbinop", "term", "MULOP", "term");
-                return "int($_[1]) $_[2] int($_[3])";
+                return "eval(str($_[1])) $_[2] eval(str($_[3]))";
             }
-    |    term ADDOP term                        /* $x + $y */
+    |    term ADDOP term                        /* $x [+-.] $y */
             {
                 printer (\@_, "termbinop", "term", "ADDOP", "term");
-                return "int($_[1]) $_[2] int($_[3])";
+                if ($_[2] eq '.'){
+                    return "$_[1] + $_[2]";
+                }
+                else{
+                    return "eval(str($_[1])) $_[2] eval(str($_[3]))";
+                }
             }
     |   term SHIFTOP term                      /* $x >> $y, $x << $y */
             {
@@ -560,6 +568,11 @@ term    :    termbinop
             {
                 $_[0]->YYData->{"IMPORTS"}{"import sys"} = 1; 
                 return "sys.stdin.readlines()";
+            }
+    |    FSTDIN
+            {
+                $_[0]->YYData->{"IMPORTS"}{"import fileinput"} = 1; 
+                return "fileinput.input()";
             }
     |    ARGV 
             {
