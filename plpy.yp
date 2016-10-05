@@ -7,6 +7,19 @@
 %{
 use Term::ANSIColor;
 
+sub Lexer {
+    $_[0]->YYData->{"DEBUG"} = 0;
+    my ($type, $value) = getToken($_[0]);
+    if ($_[0]->YYData->{"DEBUG"}){
+    print STDERR color('red');
+    print STDERR "Removed: (", color('reset'), "'$type': '$value'",
+    color('red'), ")\n";
+    print STDERR color('reset');
+    }
+    return ($type, $value);
+    #return ('', undef);
+}
+
 sub getToken {
     my $uni = "chomp|exit|pop|shift|scalar|close|keys";
     my $lop = "print|printf|split|join|push|unshift|reverse|open|sort";
@@ -122,19 +135,6 @@ sub getToken {
         print STDERR $_[0]->YYData->{"DATA"}, "\n";
         return ('', undef);
     }
-}
-
-sub Lexer {
-    $_[0]->YYData->{"DEBUG"} = 1;
-    my ($type, $value) = getToken($_[0]);
-    if ($_[0]->YYData->{"DEBUG"}){
-    print STDERR color('red');
-    print STDERR "Removed: (", color('reset'), "'$type': '$value'",
-    color('red'), ")\n";
-    print STDERR color('reset');
-    }
-    return ($type, $value);
-    #return ('', undef);
 }
 
 sub printer{
