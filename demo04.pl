@@ -1,2 +1,10 @@
 #!/usr/bin/perl -w
-# put your demo script here
+# shows handling of string addition
+$first = "Andrew";
+$last = "Taylor";
+print $first." ".$last."\n";
+$rocks = "";
+for (0..10){
+    $rocks.= "rocks"
+}
+print $rocks;

@@ -1,4 +1,6 @@
 #!/usr/bin/perl -w
-print "Hello World\n";
-print 'My name', "is:\n", "Evan!\n"; 
-print ("I like...\n", 'Apples!', "\n"); 
+$var = "including %";
+print "I can handle strings\n";
+print 'Single quote', "and multiple\n", "newlines\n"; 
+print ("aswell as arguments", 'or different format', "\n"); 
+print "$var", "$var and no new lines";

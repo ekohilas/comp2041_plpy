@@ -1,2 +1,4 @@
 #!/usr/bin/perl -w
-# put your test script here
+$inter = "yes";
+$normal = "yes";
+print "$inter \$not ""double"" \\$normal \\\$not ";

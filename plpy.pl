@@ -4,7 +4,7 @@ use warnings;
 use Term::ANSIColor;
 
 #Recompile parser if old
-#if ((-M "plpy.pm" || "inf") > -M "plpy.yp"){system("yapp plpy.yp")}
+if ((-M "plpy.pm" || "inf") > -M "plpy.yp"){system("yapp plpy.yp")}
 
 require plpy;
 plpy->import();
@@ -22,6 +22,8 @@ $input =~ s/@\w+\s*=\s*\K<STDIN>/<\@STDIN>/;
 $input =~ s{(?<!\\)(?:\\\\)*\K\$([1-9&])}{
             $& =~ /\$(\d)/ ? "\$__$1__" : "\$__0__";
         }ge;
+
+#$input =~ s/^@\s*\(w+)\s*;$/$1 = [];/mg;
 
 my $parser = new plpy;
 

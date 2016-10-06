@@ -23,7 +23,7 @@ sub Lexer {
 
 sub getToken {
     my $uni = "chomp|exit|pop|shift|scalar|close|keys";
-    my $lop = "print|printf|join|split|push|unshift|reverse|open|sort";
+    my $lop = "printf|print|join|split|push|unshift|reverse|open|sort";
     my @tokens = (
         # matches a string with double or escaped quotes 
         #["STRING", qr/"(?:\\"|""|\\\\|[^"])*"/],
@@ -32,8 +32,8 @@ sub getToken {
         ["STRING", qr/'.*?(?<!\\)'/],
         # matches matching functions split (/foo/, $bar)
         ["PMFUNC", qr/split(?=\s*\(\s*\/)/],
-        ["RESUB", qr/s\/(?:(?<!\\)(?:\\\\)*.*?\/){2}[msixpodualngcer]?/],
-        ["REMATCH", qr/m?\/(?<!\\)(?:\\\\)*.*?\/[imnsxadlup]?/],
+        ["RESUB", qr/s\/(?:(?<!\\)(?:\\\\)*.*\/){2}[msixpodualngcer]?/],
+        ["REMATCH", qr/m?\/(?<!\\)(?:\\\\)*.*\/[imnsxadlup]?/],
         #matches all functions with brackets
         ["FUNC1", qr/(?:${uni})(?=\s*\()/],
         ["UNIOP", qr/(?:${uni})(?!\s*\()/],
@@ -42,12 +42,11 @@ sub getToken {
         ["FHANDLE", qr/<.*?>/],
         ["ARGV", qr/ARGV/],
         ["COMMENT", qr/\#.*/],
-        ["FOR", qr/foreach/],
-        ["FOR", qr/for/],
+        ["FOR", qr/foreach|for/],
         ["WHILE", qr/while/],
         ["ELSIF", qr/elsif/],
         ["ELSE", qr/else/],
-        ["LOOPEX", qr/last|next/],
+        ["LOOPEX", qr/(last|next)(?=\s*;)/],
         ["ANDOP", qr/and/],
         ["NOTOP", qr/not/],
         ["SUB", qr/sub/],
@@ -359,7 +358,7 @@ loop    :     WHILE '(' remember mtexpr ')' mblock /*cont*/
     |     FOR '(' remember mnexpr ';' mtexpr ';' mnexpr ')' mblock
             {
                 printer (\@_, qw(loop FOR '(' remember mnexpr ';' mtexpr ';' mnexpr ')' mblock)); 
-                return "$_[4]\nwhile $_[6]:$_[10] hi   $_[8]\n";
+                return "$_[4]\nwhile $_[6]:$_[10]$_[8]\n";
             }
     ;
 
@@ -457,6 +456,19 @@ subscripted: scalar '[' expr ']'          /* $array[$element] */
             {
                 return "$_[1]$_[2]$_[3]$_[4]"; 
             }
+    | subscripted '[' expr ']'          /* $array[$element] */
+            {
+                return "$_[1]$_[2]$_[3]$_[4]"; 
+            }
+    | scalar '{' expr ';' '}'
+            {
+                $_[0]->YYData->{"PRELUDE"}{"$_[1] = {}"} = 1; 
+                return "$_[1]\[$_[3]\]"; 
+            }
+    | subscripted '{' expr ';' '}'
+            {
+                return "$_[1]\[$_[3]\]"; 
+            }
     ;
 
 /* Binary operators between terms */
@@ -480,7 +492,7 @@ termbinop    :    term ASSIGNOP term             /* $x =, .= $y */
             {
                 printer (\@_, "termbinop", "term", "ADDOP", "term");
                 if ($_[2] eq '.'){
-                    return "$_[1] + $_[2]";
+                    return "$_[1] + $_[3]";
                 }
                 else{
                     return "eval(str($_[1])) $_[2] eval(str($_[3]))";
@@ -545,7 +557,7 @@ termbinop    :    term ASSIGNOP term             /* $x =, .= $y */
             {
                 $_[0]->YYData->{"IMPORTS"}{"import re"} = 1; 
                 if ($_[3] =~ /^s/){
-                    $_[3] =~ /s\/((?<!\\)(?:\\\\)*.*?)\/((?<!\\)(?:\\\\)*.*?)\/([msixpodualngcer]?)/;
+                    $_[3] =~ /s\/((?<!\\)(?:\\\\)*.*)\/((?<!\\)(?:\\\\)*.*?)\/([msixpodualngcer]?)/;
                     my $re = $1;
                     my $repl = $2;
                     my $flags = $3;
@@ -565,7 +577,7 @@ termbinop    :    term ASSIGNOP term             /* $x =, .= $y */
                     }
                 }
                 else{
-                    $_[3] =~ /s\/((?<!\\)(?:\\\\)*.*?)\/([imnsxadlup]?)/;
+                    $_[3] =~ /\/((?<!\\)(?:\\\\)*.*)\/([imnsxadlup]?)/;
                     my $re = $1;
                     my $flags = $2;
 
@@ -791,12 +803,16 @@ term    :    termbinop
                     my @list;
                     my ($string, @args) = split(/"(?:\\"|""|\\\\|[^"])*"\K,\s*/, $_[2]);
 
-                    my @matches = $string =~ /(?<!\\)(?:\\\\)*\K\$\w+|%[csduoxefgXEGi]/g;
+                    my $re = qr/(?<!\\)(?:\\\\)*\K\$\w+(?:\[(?<!\\)(?:\\\\)*\$\w+\])?/;
+
+                    $string =~ s/(\$\w+){(.*?);?}/$1\[$2\]/g;
+                    my @matches = $string =~ /${re}|%[csduoxefgXEGi]/g;
                     foreach my $match (@matches){
                         if ($match =~ /\$\w+/){
-                            $string =~ s/(?<!\\)(?:\\\\)*\K\$\w+/%s/;
+                            $string =~ s/${re}/%s/;
                             my $var = $&;
-                            $var =~ s/^[\$\@]//;
+                            $var =~ s/(?<!\\)(?:\\\\)*\$(\w+)/$1/g;
+                            $var =~ s/^ARGV/sys.argv/;
                             push(@list, $var);
                         }
                         elsif ($match =~ /%[csduoxefgXEGi]/){
@@ -805,11 +821,12 @@ term    :    termbinop
                     }
 
                     # remove final newline
+                    my $list = join(', ', @list);
                     if ($string =~ s/^.*\K(?:,\s*"\\n"$)|(?:(?<!\\)\\n(?=\s*"$))//){ #"
-                        return "print($string % (", join(', ', @list), "))";
+                        return "print($string % ($list))";
                     }
                     else{
-                        return "print($string % (", join(', ', @list), "), end='')";
+                        return "print($string % ($list), end='')";
                     }
                 }
                 elsif ($_[1] eq "print"){
@@ -821,13 +838,15 @@ term    :    termbinop
 
                     my @printf; 
                     foreach my $string ( split(/"(?:\\"|""|\\\\|[^"])*"\K,\s*/, $_[2])){
-                        if ($string =~ /(?<!\\)(?:\\\\)*\K\$\w+/){
+                        $string =~ s/(\$\w+){(.*?);?}/$1\[$2\]/g;
+                        my $re = qr/(?<!\\)(?:\\\\)*\K\$\w+(\[(?<!\\)(?:\\\\)*\$\w+\])?/;
+                        if ($string =~ /${re}/){
                             my @list;
-                            my @matches = $string =~ /(?<!\\)(?:\\\\)*\K\$\w+/g;
+                            my @matches = $string =~ /${re}/g;
                             foreach my $match (@matches){
-                                $string =~ s/(?<!\\)(?:\\\\)*\K\$\w+/%s/;
+                                $string =~ s/${re}/%s/;
                                 my $var = $&;
-                                $var =~ s/^[\$\@]//;
+                                $var =~ s/(?<!\\)(?:\\\\)*\$(\w+)/$1/g;
                                 $var =~ s/^ARGV/sys.argv/;
                                 push(@list, $var);
                             }
@@ -871,10 +890,20 @@ term    :    termbinop
                 }
                 elsif ($_[1] eq "open") {
                     my @list = split(', ', $_[2]);
-                    #TODO
                     my $handle = shift @list;
-                    my $mode = shift @list;
-                    #return "$handle = open($array.insert(0, @list)";
+                    my $file = shift @list;
+                    $file =~ s/^"(<|>>|>)//; #"
+                    my $mode;
+                    if ($1 eq '<'){
+                        $mode = 'r';
+                    }
+                    elsif ($1 eq '>>'){
+                        $mode = 'r';
+                    }
+                    elsif ($1 eq '>'){
+                        $mode = 'r';
+                    }
+                    return "$handle = open(\"$file, \'$mode\')";
                 }
                 elsif ($_[1] eq "sort") {
                     my @list = split(', ', $_[2]);
@@ -888,14 +917,18 @@ term    :    termbinop
             {
                 if ($_[1] eq "printf"){
                     my @list;
-                    my ($string, @args) = split(/"(?:\\"|""|\\\\|[^"])*"\K,\s*/, $_[2]);
+                    my ($string, @args) =
+                    split(/"(?:\\"|""|\\\\|[^"])*"\K,\s*/, $_[3]);
 
-                    my @matches = $string =~ /(?<!\\)(?:\\\\)*\K\$\w+|%[csduoxefgXEGi]/g;
+                    my $re = qr/(?<!\\)(?:\\\\)*\K\$\w+(\[(?<!\\)(?:\\\\)*\$\w+\])?/;
+                    my @matches = $string =~ /${re}|%[csduoxefgXEGi]/g;
+                    $string =~ s/(\$\w+){(.*?);?}/$1\[$2\]/g;
                     foreach my $match (@matches){
                         if ($match =~ /\$\w+/){
-                            $string =~ s/(?<!\\)(?:\\\\)*\K\$\w+/%s/;
+                            $string =~ s/${re}/%s/;
                             my $var = $&;
-                            $var =~ s/^[\$\@]//;
+                            $var =~ s/(?<!\\)(?:\\\\)*\$(\w+)/$1/g;
+                            $var =~ s/^ARGV/sys.argv/;
                             push(@list, $var);
                         }
                         elsif ($match =~ /%[csduoxefgXEGi]/){
@@ -903,32 +936,32 @@ term    :    termbinop
                         }
                     }
 
-                    # remove final newline
-                    if ($string =~ s/^.*\K(?:,\s*"\\n"$)|(?:(?<!\\)\\n(?=\s*"$))//) #"
-                    {
-                        return "print($string % (", join(', ', @list), "))";
+                    my $list = join(', ', @list);
+                    if ($string =~ s/^.*\K(?:,\s*"\\n"$)|(?:(?<!\\)\\n(?=\s*"$))//){ #"
+                        return "print($string % ($list))";
                     }
                     else{
-                        return "print($string % (", join(', ', @list), "), end='')";
+                        return "print($string % ($list), end='')";
                     }
                 }
                 elsif ($_[1] eq "print"){
 
                     my $new_line = 0;
-                    if ($_[2] =~ s/^.*\K(?:,\s*"\\n"$)|(?:(?<!\\)\\n(?=\s*"$))//) #"
-                    {
-                        $new_line = 1; 
+                    if ($_[3] =~ s/^.*\K(?:,\s*"\\n"$)|(?:(?<!\\)\\n(?=\s*"$))//){
+                        $new_line = 1; #"
                     }
 
                     my @printf; 
-                    foreach my $string ( split(/"(?:\\"|""|\\\\|[^"])*"\K,\s*/, $_[2])){
-                        if ($string =~ /(?<!\\)(?:\\\\)*\K\$\w+/){
+                    foreach my $string ( split(/"(?:\\"|""|\\\\|[^"])*"\K,\s*/, $_[3])){
+                        $string =~ s/(\$\w+){(.*?);?}/$1\[$2\]/g;
+                        my $re = qr/(?<!\\)(?:\\\\)*\K\$\w+(\[(?<!\\)(?:\\\\)*\$\w+\])?/;
+                        if ($string =~ /${re}/){
                             my @list;
-                            my @matches = $string =~ /(?<!\\)(?:\\\\)*\K\$\w+/g;
+                            my @matches = $string =~ /${re}/g;
                             foreach my $match (@matches){
-                                $string =~ s/(?<!\\)(?:\\\\)*\K\$\w+/%s/;
+                                $string =~ s/${re}/%s/;
                                 my $var = $&;
-                                $var =~ s/^[\$\@]//;
+                                $var =~ s/(?<!\\)(?:\\\\)*\$(\w+)/$1/g;
                                 $var =~ s/^ARGV/sys.argv/;
                                 push(@list, $var);
                             }
@@ -947,12 +980,6 @@ term    :    termbinop
                     else{
                         return "print($final, end='')";
                     }
-                }
-                elsif ($_[1] eq "join") {
-                    printer (\@_, "term", "LSTOP", "listexpr");
-                    my @list = split(', ', $_[3]);
-                    my $delim = shift @list;
-                    return "$delim.join(@list)";
                 }
             }
     ;
@@ -1024,7 +1051,9 @@ ary    :    '@' indirob
             }
     ;
 
-hsh :    '%' indirob {return $_[2];} 
+hsh :    '%' indirob {
+            return $_[2];
+            } 
     ;
 
 arylen    :    DOLSHARP indirob {return "len($_[2]) - 1";}
