@@ -21,7 +21,7 @@ $input =~ s/@\w+\s*=\s*\K<STDIN>/<\@STDIN>/;
 my $parser = new plpy;
 
 $parser->YYData->{"DATA"} = $input;
-$parser->YYData->{"DEBUG"} = 0;
+$parser->YYData->{"DEBUG"} = 1;
 $parser->YYData->{"IMPORTS"} = ();
 $parser->YYData->{"PRELUDE"} = ();
 

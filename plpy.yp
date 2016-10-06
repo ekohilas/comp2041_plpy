@@ -23,7 +23,7 @@ sub Lexer {
 
 sub getToken {
     my $uni = "chomp|exit|pop|shift|scalar|close|keys";
-    my $lop = "print|printf|split|join|push|unshift|reverse|open|sort";
+    my $lop = "print|printf|join|split|push|unshift|reverse|open|sort";
     my @tokens = (
         # matches a string with double or escaped quotes 
         #["STRING", qr/"(?:\\"|""|\\\\|[^"])*"/],
@@ -32,16 +32,14 @@ sub getToken {
         ["STRING", qr/'.*?(?<!\\)'/],
         # matches matching functions split (/foo/, $bar)
         ["PMFUNC", qr/split(?=\s*\(\s*\/)/],
-        ["RESUB", qr/s\/(?:(?:[^\/\\]|\\\/|\\\\)*\/){2}[msixpodualngcer]?/],
-        ["REMATCH", qr/m?\/(?:[^\/\\]|\\\/|\\\\)*\/[imnsxadlup]?/],
+        ["RESUB", qr/s\/(?:(?:[^\/\\]|\\.|\\\\)*\/){2}[msixpodualngcer]?/],
+        ["REMATCH", qr/m?\/(?:[^\/\\]|\\.|\\\\)*\/[imnsxadlup]?/],
         #matches all functions with brackets
         ["FUNC1", qr/(?:${uni})(?=\s*\()/],
         ["UNIOP", qr/(?:${uni})(?!\s*\()/],
         ["FUNC", qr/(?:${lop})(?=\s*\()/],
-        ["LSTOP", qr/(?:${lop})/],
-        ["STDIN", qr/<STDIN>/],
-        ["STDINARR", qr/<\@STDIN>/],
-        ["FSTDIN", qr/<>/],
+        ["LSTOP", qr/(?:${lop})(?!\s*\()/],
+        ["FHANDLE", qr/<.*?>/],
         ["ARGV", qr/ARGV/],
         ["COMMENT", qr/\#.*/],
         ["FOR", qr/foreach/],
@@ -172,7 +170,8 @@ sub printer{
 %token RELOP EQOP MULOP ADDOP BITANDOP BITOROP SHIFTOP BITXOROP
 %token DOLSHARP /*DO HASHBRACK*/ NOAMP
 %token MY /*LOCAL MYSUB*/
-%token STDIN STDINARR ARGV FSTDIN
+%token REMATCH RESUB 
+%token FHANDLE ARGV 
 /*%token COLONATTR*/
 
 %nonassoc PREC_LOW
@@ -239,6 +238,13 @@ mblock    :    '{' mremember lineseq '}'
     ;
 
 mremember:    /* NULL */    /* start a partial lexical scope */
+    ;
+
+indexblock    :    '{' sideff '}'
+            {
+                printer(\@_, qw( indexblock { sideff } )); 
+                return "[$_[3]]";
+            }
     ;
 
 /* A collection of "lines" in the program */
@@ -388,7 +394,8 @@ decl    :   subrout
 
 /* Subroutine definition */
 subrout    :    SUB startsub subname /*proto subattrlist*/ subbody
-            {}
+            {
+            }
     ;
 
 startsub:    /* NULL */    /* start a regular subroutine scope */
@@ -445,7 +452,9 @@ argexpr    :    argexpr ','
 
 /* Some kind of subscripted expression */
 subscripted: scalar '[' expr ']'          /* $array[$element] */
-            {}
+            {
+                return "$_[1]$_[2]$_[3]$_[4]"; 
+            }
     ;
 
 /* Binary operators between terms */
@@ -530,15 +539,23 @@ termbinop    :    term ASSIGNOP term             /* $x =, .= $y */
                 printer (\@_, qw(termbinop term OROR term)); 
                 return "$_[1] or $_[3]";
             }
-    |    term MATCHOP term                      /* $x =~ /$y/ */
-            {}
+    |    term MATCHOP term         /*or term?           /* $x =~ s/$y/ */
+            {
+                $_[0]->YYData->{"IMPORTS"}{"import re"} = 1; 
+                $_[3] =~ /s\/((?:[^\/\\]|\\\/|\\\\)*)\/((?:[^\/\\]|\\\/|\\\\)*)\/([msixpodualngcer]?)/;
+                return "$_[1] = re.sub(r'$1', $_[1])";
+            }
     ;
 
 /* Unary operators and terms */
 termunop : '-' term %prec UMINUS                       /* -$x */
-            {}
+            {
+                return "-$_[2]"; 
+            }
     |    '+' term %prec UMINUS                  /* +$x */
-            {}
+            {
+                return $_[2]; 
+            }
     |    '!' term                               /* !$x */
             {
                 printer (\@_, qw(termunop '!' term)); 
@@ -563,20 +580,28 @@ termunop : '-' term %prec UMINUS                       /* -$x */
 
 term    :    termbinop
     |    termunop
-    |    STDIN
+    |    FHANDLE
+    |    REMATCH
+    |    RESUB
             {
-                $_[0]->YYData->{"IMPORTS"}{"import sys"} = 1; 
-                return "sys.stdin.readline()";
-            }
-    |    STDINARR
-            {
-                $_[0]->YYData->{"IMPORTS"}{"import sys"} = 1; 
-                return "sys.stdin.readlines()";
-            }
-    |    FSTDIN
-            {
-                $_[0]->YYData->{"IMPORTS"}{"import fileinput"} = 1; 
-                return "fileinput.input()";
+                if ($_[1] eq "<STDIN>"){
+                    $_[0]->YYData->{"IMPORTS"}{"import sys"} = 1; 
+                    return "sys.stdin.readline()";
+                }
+                elsif ($_[1] eq "<\@STDIN>"){
+                    $_[0]->YYData->{"IMPORTS"}{"import sys"} = 1; 
+                    return "sys.stdin.readlines()";
+
+                }
+                elsif ($_[1] eq "<>"){
+                    $_[0]->YYData->{"IMPORTS"}{"import fileinput"} = 1; 
+                    return "fileinput.input()";
+                }
+                else{
+                    $_[1] =~ s/<(.*?)>/$1/;
+                    return $_[1];
+                }
+                
             }
     |    ARGV 
             {
@@ -612,17 +637,11 @@ term    :    termbinop
                 return $_[1];
             }
     |    arylen     %prec '('                    /* $#x, $#{ something } */
-            {}
     |       subscripted
-            {}
-    |    '(' expr ')' '[' expr ']'            /* list slice */
-            {}
-    |    '(' ')' '[' expr ']'                 /* empty list slice! */
-            {}
     |    ary '[' expr ']'                     /* array slice */
-            {}
-    |    ary '{' expr ';' '}'                 /* @hash{@keys} */
-            {}
+            {
+                return "$_[1]$_[2]$_[3]$_[4]"; 
+            }
     |    amper                                /* &foo; */
             {}
     |    amper '(' ')'                        /* &foo() */
@@ -656,14 +675,26 @@ term    :    termbinop
                 }
             }
     |    UNIOP block                          /* eval { foo }, I *think* */
-            {
-            }
+            {}
     |    UNIOP term                           /* Unary op */
             {
                 printer (\@_, qw(term UNIOP term)); 
                 if ($_[1] eq "chomp"){
                    return "$_[2] = $_[2].strip()";
                 }
+                elsif ($_[1] eq "pop"){
+                    return "$_[2].pop()";
+                }
+                elsif ($_[1] eq "shift"){
+                    return "$_[2].pop(0)";
+                }
+                elsif ($_[1] eq "close"){
+                    return "$_[2].close()";
+                }
+                elsif ($_[1] eq "keys"){
+                    return "$_[2].keys()";
+                }
+                
             }
     |    FUNC1 '(' ')'                        /* not () */
             {
@@ -673,11 +704,23 @@ term    :    termbinop
             }
     |    FUNC1 '(' expr ')'                   /* not($foo) */
             {
-                if ($_[1] eq "chomp"){
-                   return "$_[3].strip()";
-                }
-                elsif ($_[1] eq "exit"){
+                if ($_[1] eq "exit"){
                    return "exit($_[3])";
+                }
+                elsif ($_[1] eq "chomp"){
+                   return "$_[3] = $_[3].strip()";
+                }
+                elsif ($_[1] eq "pop"){
+                    return "$_[3].pop()";
+                }
+                elsif ($_[1] eq "shift"){
+                    return "$_[3].pop(0)";
+                }
+                elsif ($_[1] eq "close"){
+                    return "$_[3].close()";
+                }
+                elsif ($_[1] eq "keys"){
+                    return "$_[3].keys()";
                 }
             }
     |    PMFUNC '(' term ')'                  /* split (/foo/) */
@@ -694,15 +737,43 @@ term    :    termbinop
     /* list operators */
     |    LSTOP indirob argexpr /* map {...} @args or print $fh @args */
             {
+                #sort goes here
                 printer (\@_, "term", "LSTOP", "indirob", "argexpr");
             }
     |    FUNC '(' indirob expr ')'      /* print ($fh @args */
-            {}
+            {
+                #sort goes here
+            }
     |    LSTOP listexpr                       /* print @args */
             {
                 printer (\@_, "term", "LSTOP", "listexpr");
 
-                if ($_[1] eq "print"){
+                if ($_[1] eq "printf"){
+                    my @list;
+                    my ($string, @args) = split(', ', $_[2]);
+
+                    my @matches = $string =~ /(?<!\\)(?:\\\\)*\K\$\w+|%[csduoxefgXEGi]/g;
+                    foreach my $match (@matches){
+                        if ($match =~ /\$\w+/){
+                            $string =~ s/(?<!\\)(?:\\\\)*\K\$\w+/%s/;
+                            my $var = $&;
+                            $var =~ s/^[\$\@]//;
+                            push(@list, $var);
+                        }
+                        elsif ($match =~ /%[csduoxefgXEGi]/){
+                            push(@list, shift(@args));
+                        }
+                    }
+
+                    # remove final newline
+                    if ($string =~ s/^.*\K(?:,\s*"\\n"$)|(?:(?<!\\)\\n(?=\s*"$))//){ #"
+                        return "print($string % (", join(', ', @list), "))";
+                    }
+                    else{
+                        return "print($string % (", join(', ', @list), "), end='')";
+                    }
+                }
+                elsif ($_[1] eq "print"){
                     #if ending newline was removed
                     # "hi\n" or "hi", "\n"
                     if ($_[2] =~ s/^.*\K(?:,\s*"\\n"$)|(?:(?<!\\)\\n(?=\s*"$))//){ #"
@@ -730,10 +801,62 @@ term    :    termbinop
                     my $delim = shift @list;
                     return "'$delim'.join(@list)";
                 }
+                elsif ($_[1] eq "push") {
+                    my @list = split(', ', $_[2]);
+                    my $array = shift @list;
+                    return "$array.append(@list)";
+                }
+                elsif ($_[1] eq "unshift") {
+                    my @list = split(', ', $_[2]);
+                    my $array = shift @list;
+                    return "$array.insert(0, @list)";
+                }
+                elsif ($_[1] eq "reverse") {
+                    return "reversed($_[2])";
+                }
+                elsif ($_[1] eq "open") {
+                    my @list = split(', ', $_[2]);
+                    #TODO
+                    my $handle = shift @list;
+                    my $mode = shift @list;
+                    #return "$handle = open($array.insert(0, @list)";
+                }
+                elsif ($_[1] eq "sort") {
+                    my @list = split(', ', $_[2]);
+                    #TODO
+                    my $handle = shift @list;
+                    my $mode = shift @list;
+                    #return "$handle = open($array.insert(0, @list)";
+                }
             }
     |    FUNC '(' listexprcom ')'             /* print (@args) */
             {
-                if ($_[1] eq "join") {
+                if ($_[1] eq "printf"){
+                    my @list;
+                    my ($string, @args) = split(', ', $_[2]);
+
+                    my @matches = $string =~ /(?<!\\)(?:\\\\)*\K\$\w+|%[csduoxefgXEGi]/g;
+                    foreach my $match (@matches){
+                        if ($match =~ /\$\w+/){
+                            $string =~ s/(?<!\\)(?:\\\\)*\K\$\w+/%s/;
+                            my $var = $&;
+                            $var =~ s/^[\$\@]//;
+                            push(@list, $var);
+                        }
+                        elsif ($match =~ /%[csduoxefgXEGi]/){
+                            push(@list, shift(@args));
+                        }
+                    }
+
+                    # remove final newline
+                    if ($string =~ s/^.*\K(?:,\s*"\\n"$)|(?:(?<!\\)\\n(?=\s*"$))//){ #"
+                        return "print($string % (", join(', ', @list), "))";
+                    }
+                    else{
+                        return "print($string % (", join(', ', @list), "), end='')";
+                    }
+                }
+                elsif ($_[1] eq "join") {
                     printer (\@_, "term", "LSTOP", "listexpr");
                     my @list = split(', ', $_[3]);
                     my $delim = shift @list;
@@ -762,23 +885,22 @@ term    :    termbinop
     ;
 
 /* "my" declarations, with optional attributes */
-myattrterm:    MY myterm myattrlist
-            {}
-    |    MY myterm
-            {}
+myattrterm:    
+        MY myterm
+            {
+                return $_[2];
+            }
     ;
 
 /* Things that can be "my"'d */
 myterm    :    '(' expr ')'
-            {}
+                {
+                    return $_[2];
+                }
     |    '(' ')'
-            {}
     |    scalar    %prec '('
-            {}
     |    hsh     %prec '('
-            {}
     |    ary     %prec '('
-            {}
     ;
 
 /* Basic list expressions */
@@ -809,7 +931,6 @@ listexprcom:    /* NULL */
 /* A little bit of trickery to make "for my $foo (@bar)" actually be
    lexical */
 my_scalar:    scalar
-            {}
     ;
 
 amper    :    '&' indirob
@@ -831,11 +952,15 @@ ary    :    '@' indirob
     ;
 
 hsh    :    '%' indirob
-            {}
+            {
+                return "$_[2]";
+            } 
     ;
 
 arylen    :    DOLSHARP indirob
-            {}
+            {
+                return "len($_[2])";
+            }
     ;
 
 /* Indirect objects */
@@ -851,9 +976,7 @@ indirob    :    WORD
                 return "sys.argv";
             }
     |    scalar %prec PREC_LOW
-            {}
-    |    block
-            {}
+    |    indexblock
     ;
 
 %%

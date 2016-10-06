@@ -1,2 +1,4 @@
 #!/usr/bin/perl -w
-# put your demo script here
+print "Hello World\n";
+print 'My name', "is:\n", "Evan!\n"; 
+print ("I like...\n", 'Apples!', "\n"); 
