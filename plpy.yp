@@ -891,7 +891,7 @@ term    :    termbinop
             {
                 if ($_[1] eq "printf"){
                     my @list;
-                    my ($string, @args) = split(', ', $_[2]);
+                    my ($string, @args) = split(/"(?:\\"|""|\\\\|[^"])*"\K,\s*/, $_[2]);
 
                     my @matches = $string =~ /(?<!\\)(?:\\\\)*\K\$\w+|%[csduoxefgXEGi]/g;
                     foreach my $match (@matches){
@@ -914,30 +914,45 @@ term    :    termbinop
                         return "print($string % (", join(', ', @list), "), end='')";
                     }
                 }
+                elsif ($_[1] eq "print"){
+
+                    my $new_line = 0;
+                    if ($_[2] =~ s/^.*\K(?:,\s*"\\n"$)|(?:(?<!\\)\\n(?=\s*"$))//){
+                        $new_line = 1; #"
+                    }
+
+                    my @printf; 
+                    foreach my $string ( split(/"(?:\\"|""|\\\\|[^"])*"\K,\s*/, $_[2])){
+                        if ($string =~ /(?<!\\)(?:\\\\)*\K\$\w+/){
+                            my @list;
+                            my @matches = $string =~ /(?<!\\)(?:\\\\)*\K\$\w+/g;
+                            foreach my $match (@matches){
+                                $string =~ s/(?<!\\)(?:\\\\)*\K\$\w+/%s/;
+                                my $var = $&;
+                                $var =~ s/^[\$\@]//;
+                                $var =~ s/^ARGV/sys.argv/;
+                                push(@list, $var);
+                            }
+                            push(@printf, "$string % (".join(', ', @list).")" );
+                        }
+                        else{
+                            push(@printf, $string);
+                        }
+                    }
+
+                    my $final = join(', ', @printf);
+                    # remove final newline
+                    if ($new_line){
+                        return "print($final)";
+                    }
+                    else{
+                        return "print($final, end='')";
+                    }
                 elsif ($_[1] eq "join") {
                     printer (\@_, "term", "LSTOP", "listexpr");
                     my @list = split(', ', $_[3]);
                     my $delim = shift @list;
                     return "$delim.join(@list)";
-                }
-                elsif ($_[1] eq "print"){
-                    #if ending newline was removed
-                    # "hi\n" or "hi", "\n"
-                    if ($_[3] =~ s/^.*\K(?:,\s*"\\n"$)|(?:(?<!\\)\\n(?=\s*"$))//){ #"
-                    # finds all strings and then replaces
-                    # "$var" to var
-                    # yes, that's a regex in a regex.
-                        $_[3] =~ s["(?:\\"|""|\\\\|[^"])*"]{ 
-                                     $& =~ /"\$(.*)"/ ? $1 : $& 
-                                 }eg;
-                        return "print($_[3])";
-                    }
-                    else{
-                        $_[3] =~ s["(?:\\"|""|\\\\|[^"])*"]{ 
-                                     $& =~ /"\$(.*)"/ ? $1 : $& 
-                                 }eg;
-                        return "print($_[3], end='')";
-                    }
                 }
             }
     ;
