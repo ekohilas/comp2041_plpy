@@ -18,10 +18,15 @@ my $input = do {
 # Change STDIN based on context
 $input =~ s/@\w+\s*=\s*\K<STDIN>/<\@STDIN>/;
 
+# Change backrefernces for later searching
+$input =~ s[(?<!\\)(?:\\\\)*\K\$([1-9&])]{
+            $& =~ /\$\d/ ? "\$__$1__" : "\$__0__";
+        }ge;
+
 my $parser = new plpy;
 
 $parser->YYData->{"DATA"} = $input;
-$parser->YYData->{"DEBUG"} = 1;
+$parser->YYData->{"DEBUG"} = 0;
 $parser->YYData->{"IMPORTS"} = ();
 $parser->YYData->{"PRELUDE"} = ();
 
@@ -32,11 +37,15 @@ my $output = $parser->YYParse(YYlex => \&plpy::Lexer) || "NULL\n";
 my $hashbang = "#!/usr/local/bin/python3.5 -u";
 $output =~ s/^#!.*//;
 
+# replace temp back references with matches 
+$output =~ s/(?<!\\)(?:\\\\)*\K__([0-9])__/__MATCH__.group($1)/g;
+
 #remove redundant int casts
-while ($output =~ /int\(\d+\)/){
+while ($output =~ /int\((\d+)\)/){
     $output =~ s/int\((\d+)\)/$1/g;
 }
 
+# OUTPUT
 #print hashbang
 print "$hashbang\n";
 

@@ -338,7 +338,12 @@ cond    :    IF '(' remember mexpr ')' mblock else
 loop    :     WHILE '(' remember mtexpr ')' mblock /*cont*/
             {
                  printer (\@_, qw(WHILE '(' remember mtexpr ')' mblock cont)); 
-                 return "while $_[4]:$_[6]$_[7]";
+                 if ($_[4] =~ /(\w+)\s*=\s*(.*)\s*/){
+                    return "for $1 in $2:$_[6]$_[7]";
+                 }
+                 else{
+                    return "while $_[4]:$_[6]$_[7]";
+                 }
             }
     |     FOR MY remember my_scalar '(' mexpr ')' mblock /*cont*/
             {
@@ -542,8 +547,45 @@ termbinop    :    term ASSIGNOP term             /* $x =, .= $y */
     |    term MATCHOP term         /*or term?           /* $x =~ s/$y/ */
             {
                 $_[0]->YYData->{"IMPORTS"}{"import re"} = 1; 
-                $_[3] =~ /s\/((?:[^\/\\]|\\\/|\\\\)*)\/((?:[^\/\\]|\\\/|\\\\)*)\/([msixpodualngcer]?)/;
-                return "$_[1] = re.sub(r'$1', $_[1])";
+                if ($_[3] =~ /^s/){
+                    $_[3] =~ /s\/((?:[^\/\\]|\\\/|\\\\)*)\/((?:[^\/\\]|\\\/|\\\\)*)\/([msixpodualngcer]?)/;
+                    my $re = $1;
+                    my $repl = $2;
+                    my $flags = $3;
+
+                    my @flags;
+                    if ($flags =~ /i/){push(@flags, "re.I")}
+                    if ($flags =~ /m/){push(@flags, "re.M")}
+                    if ($flags =~ /s/){push(@flags, "re.S")}
+                    $flags = join('| ', @flags);
+
+                    $repl =~ s/(?<!\\)(?:\\\\)*\K\\(\d)/\\$1/;
+                    if ($flags){
+                        return "$_[1] = re.sub(r'$re', '$repl', $_[1], $flags)";
+                    }
+                    else{
+                        return "$_[1] = re.sub(r'$re', '$repl', $_[1])";
+                    }
+                }
+                else{
+                    $_[3] =~ /s\/((?:[^\/\\]|\\\/|\\\\)*)\/([imnsxadlup]?)/;
+                    my $re = $1;
+                    my $flags = $2;
+
+                    my @flags;
+                    if ($flags =~ /i/){push(@flags, "re.I")}
+                    if ($flags =~ /m/){push(@flags, "re.M")}
+                    if ($flags =~ /s/){push(@flags, "re.S")}
+                    $flags = join('| ', @flags);
+
+                    if ($flags){
+                        return "__MATCH__ = re.search(r'$re', $_[1], $flags)";
+                    }
+                    else{
+                        return "__MATCH__ = re.search(r'$re', $_[1])";
+                    }
+                    
+                }
             }
     ;
 
@@ -581,8 +623,6 @@ termunop : '-' term %prec UMINUS                       /* -$x */
 term    :    termbinop
     |    termunop
     |    FHANDLE
-    |    REMATCH
-    |    RESUB
             {
                 if ($_[1] eq "<STDIN>"){
                     $_[0]->YYData->{"IMPORTS"}{"import sys"} = 1; 
@@ -603,6 +643,8 @@ term    :    termbinop
                 }
                 
             }
+    |    REMATCH
+    |    RESUB
     |    ARGV 
             {
                 $_[0]->YYData->{"IMPORTS"}{"import sys"} = 1; 
@@ -781,13 +823,23 @@ term    :    termbinop
                     # "$var" to var
                     # yes, that's a regex in a regex.
                         $_[2] =~ s["(?:\\"|""|\\\\|[^"])*"]{ 
-                                     $& =~ /"\$(.*)"/ ? $1 : $& 
+                                    my $match = $&;
+                                    $match =~ s/"(.*)"/$1/;
+                                    $match =~ s/(?<!\\)(?:\\\\)*\K\$ARGV/sys.argv/g;
+                                    #removes $ from variables
+                                    $match =~ s/(?<!\\)(?:\\\\)*\K\$(\w+)/$1/g;
+                                    $match;
                                  }eg;
                         return "print($_[2])";
                     }
                     else{
                         $_[2] =~ s["(?:\\"|""|\\\\|[^"])*"]{ 
-                                     $& =~ /"\$(.*)"/ ? $1 : $& 
+                                    my $match = $&;
+                                    $match =~ s/"(.*)"/$1/;
+                                    $match =~ s/(?<!\\)(?:\\\\)*\K\$ARGV/sys.argv/g;
+                                    #removes $ from variables
+                                    $match =~ s/(?<!\\)(?:\\\\)*\K\$(\w+)/$1/g;
+                                    $match;
                                  }eg;
                         return "print($_[2], end='')";
                     }
@@ -951,7 +1003,7 @@ ary    :    '@' indirob
             }
     ;
 
-hsh    :    '%' indirob
+hsh :    '%' indirob
             {
                 return "$_[2]";
             } 
@@ -959,7 +1011,7 @@ hsh    :    '%' indirob
 
 arylen    :    DOLSHARP indirob
             {
-                return "len($_[2])";
+                return "len($_[2]) - 1";
             }
     ;
 
