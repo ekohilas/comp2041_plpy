@@ -32,8 +32,8 @@ sub getToken {
         ["STRING", qr/'.*?(?<!\\)'/],
         # matches matching functions split (/foo/, $bar)
         ["PMFUNC", qr/split(?=\s*\(\s*\/)/],
-        ["RESUB", qr/s\/(?:(?:[^\/\\]|\\.|\\\\)*\/){2}[msixpodualngcer]?/],
-        ["REMATCH", qr/m?\/(?:[^\/\\]|\\.|\\\\)*\/[imnsxadlup]?/],
+        ["RESUB", qr/s\/(?:(?<!\\)(?:\\\\)*.*?\/){2}[msixpodualngcer]?/],
+        ["REMATCH", qr/m?\/(?<!\\)(?:\\\\)*.*?\/[imnsxadlup]?/],
         #matches all functions with brackets
         ["FUNC1", qr/(?:${uni})(?=\s*\()/],
         ["UNIOP", qr/(?:${uni})(?!\s*\()/],
@@ -141,9 +141,10 @@ sub printer{
     my @tokens = @{shift(@_)};
     my @words = @_;
     my $parser = shift(@tokens);
-    my $word_string = shift(@words)." => ";
+    my $first_word = shift(@words);
+    my $word_string = $first_word." => ";
     $word_string .= join(" -> ", @words);
-    my $token_string = "$words[0]"." => ";
+    my $token_string = "$first_word"." => ";
     $token_string .= join(" -> ", @tokens);
     
     if ($parser->YYData->{"DEBUG"}){
@@ -240,12 +241,14 @@ mblock    :    '{' mremember lineseq '}'
 mremember:    /* NULL */    /* start a partial lexical scope */
     ;
 
+/*
 indexblock    :    '{' sideff '}'
             {
                 printer(\@_, qw( indexblock { sideff } )); 
                 return "[$_[3]]";
             }
     ;
+    */
 
 /* A collection of "lines" in the program */
 lineseq    :    /* NULL */
@@ -293,21 +296,15 @@ sideff    : expr
                 printer(\@_, "sideff", "expr");
                 return $_[1];
             }
-            
-    |    expr IF expr
-            {
-                printer(\@_, qw( sideff expr IF expr ));
-                return "if $_[3]: $_[1]";
-            }
     |    expr WHILE expr
             {
                 printer(\@_, qw( sideff expr WHILE expr ));
-                return "$_[1] while $_[3]";
+                return "while $_[3]: $_[1]";
             }
     |    expr FOR expr
             {
                 printer (\@_, qw(sideff expr FOR expr));
-                return "$_[1] for $_[3]";
+                return "for $_[3]: $_[1]";
             }
     ;
 
@@ -548,7 +545,7 @@ termbinop    :    term ASSIGNOP term             /* $x =, .= $y */
             {
                 $_[0]->YYData->{"IMPORTS"}{"import re"} = 1; 
                 if ($_[3] =~ /^s/){
-                    $_[3] =~ /s\/((?:[^\/\\]|\\\/|\\\\)*)\/((?:[^\/\\]|\\\/|\\\\)*)\/([msixpodualngcer]?)/;
+                    $_[3] =~ /s\/((?<!\\)(?:\\\\)*.*?)\/((?<!\\)(?:\\\\)*.*?)\/([msixpodualngcer]?)/;
                     my $re = $1;
                     my $repl = $2;
                     my $flags = $3;
@@ -568,7 +565,7 @@ termbinop    :    term ASSIGNOP term             /* $x =, .= $y */
                     }
                 }
                 else{
-                    $_[3] =~ /s\/((?:[^\/\\]|\\\/|\\\\)*)\/([imnsxadlup]?)/;
+                    $_[3] =~ /s\/((?<!\\)(?:\\\\)*.*?)\/([imnsxadlup]?)/;
                     my $re = $1;
                     my $flags = $2;
 
@@ -907,7 +904,8 @@ term    :    termbinop
                     }
 
                     # remove final newline
-                    if ($string =~ s/^.*\K(?:,\s*"\\n"$)|(?:(?<!\\)\\n(?=\s*"$))//){ #"
+                    if ($string =~ s/^.*\K(?:,\s*"\\n"$)|(?:(?<!\\)\\n(?=\s*"$))//) #"
+                    {
                         return "print($string % (", join(', ', @list), "))";
                     }
                     else{
@@ -917,8 +915,9 @@ term    :    termbinop
                 elsif ($_[1] eq "print"){
 
                     my $new_line = 0;
-                    if ($_[2] =~ s/^.*\K(?:,\s*"\\n"$)|(?:(?<!\\)\\n(?=\s*"$))//){
-                        $new_line = 1; #"
+                    if ($_[2] =~ s/^.*\K(?:,\s*"\\n"$)|(?:(?<!\\)\\n(?=\s*"$))//) #"
+                    {
+                        $new_line = 1; 
                     }
 
                     my @printf; 
@@ -948,6 +947,7 @@ term    :    termbinop
                     else{
                         return "print($final, end='')";
                     }
+                }
                 elsif ($_[1] eq "join") {
                     printer (\@_, "term", "LSTOP", "listexpr");
                     my @list = split(', ', $_[3]);
@@ -1003,11 +1003,11 @@ listexprcom:    /* NULL */
 
 /* A little bit of trickery to make "for my $foo (@bar)" actually be
    lexical */
+
 my_scalar:    scalar
     ;
 
 amper    :    '&' indirob
-            {}
     ;
 
 scalar    :    '$' indirob
@@ -1024,16 +1024,10 @@ ary    :    '@' indirob
             }
     ;
 
-hsh :    '%' indirob
-            {
-                return "$_[2]";
-            } 
+hsh :    '%' indirob {return $_[2];} 
     ;
 
-arylen    :    DOLSHARP indirob
-            {
-                return "len($_[2]) - 1";
-            }
+arylen    :    DOLSHARP indirob {return "len($_[2]) - 1";}
     ;
 
 /* Indirect objects */
@@ -1049,7 +1043,8 @@ indirob    :    WORD
                 return "sys.argv";
             }
     |    scalar %prec PREC_LOW
-    |    indexblock
+    |    block
+            {printer (\@_, qw(indirob indexblock));}
     ;
 
 %%

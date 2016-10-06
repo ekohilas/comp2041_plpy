@@ -4,7 +4,7 @@ use warnings;
 use Term::ANSIColor;
 
 #Recompile parser if old
-if ((-M "plpy.pm" || "inf") > -M "plpy.yp"){system("yapp plpy.yp")}
+#if ((-M "plpy.pm" || "inf") > -M "plpy.yp"){system("yapp plpy.yp")}
 
 require plpy;
 plpy->import();
@@ -19,8 +19,8 @@ my $input = do {
 $input =~ s/@\w+\s*=\s*\K<STDIN>/<\@STDIN>/;
 
 # Change backrefernces for later searching
-$input =~ s[(?<!\\)(?:\\\\)*\K\$([1-9&])]{
-            $& =~ /\$\d/ ? "\$__$1__" : "\$__0__";
+$input =~ s{(?<!\\)(?:\\\\)*\K\$([1-9&])}{
+            $& =~ /\$(\d)/ ? "\$__$1__" : "\$__0__";
         }ge;
 
 my $parser = new plpy;
@@ -40,10 +40,19 @@ $output =~ s/^#!.*//;
 # replace temp back references with matches 
 $output =~ s/(?<!\\)(?:\\\\)*\K__([0-9])__/__MATCH__.group($1)/g;
 
-#remove redundant int casts
-while ($output =~ /int\((\d+)\)/){
-    $output =~ s/int\((\d+)\)/$1/g;
+# taken from Donny's Asssignment
+#remove redundant casting
+while ($output =~ /eval\(str\((-?\d+(?:\.\d+)?)\)\)/){
+    $output =~ s/eval\(str\((-?\d+(?:\.\d+)?)\)\)/$1/g;
 }
+#remove trailing spaces
+$output =~ s/\s+$//gm; 
+
+#replace 3 or more blank lines with 1
+$output =~ s/\n{3,}/\n\n/g;
+
+#shink trailing newlines to 1
+$output =~ s/\n*$/\n/;
 
 # OUTPUT
 #print hashbang
