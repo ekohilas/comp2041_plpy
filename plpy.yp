@@ -823,17 +823,15 @@ term    :    termbinop
                     }
 
                     my @printf; 
-                    foreach my $format ( split(/"(?:\\"|""|\\\\|[^"])*"\K,\s*/, $_[2])){
+                    foreach my $string ( split(/"(?:\\"|""|\\\\|[^"])*"\K,\s*/, $_[2])){
                         my @list;
-                        my @matches = $format =~ /(?<!\\)(?:\\\\)*\K\$\w+/g;
+                        my @matches = $string =~ /(?<!\\)(?:\\\\)*\K\$\w+/g;
                         foreach my $match (@matches){
-                            if ($match =~ /\$\w+/){
-                                $string =~ s/(?<!\\)(?:\\\\)*\K\$\w+/%s/;
-                                my $var = $&;
-                                $var =~ s/^[\$\@]//;
-                                $var =~ s/^ARGV/sys.argv/;
-                                push(@list, $var);
-                            }
+                            $string =~ s/(?<!\\)(?:\\\\)*\K\$\w+/%s/;
+                            my $var = $&;
+                            $var =~ s/^[\$\@]//;
+                            $var =~ s/^ARGV/sys.argv/;
+                            push(@list, $var);
                         }
                         push(@printf, "$string % (".join(', ', @list).")" );
                     }
