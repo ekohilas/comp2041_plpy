@@ -792,7 +792,7 @@ term    :    termbinop
 
                 if ($_[1] eq "printf"){
                     my @list;
-                    my ($string, @args) = split(', ', $_[2]);
+                    my ($string, @args) = split(/"(?:\\"|""|\\\\|[^"])*"\K,\s*/, $_[2]);
 
                     my @matches = $string =~ /(?<!\\)(?:\\\\)*\K\$\w+|%[csduoxefgXEGi]/g;
                     foreach my $match (@matches){
@@ -816,6 +816,38 @@ term    :    termbinop
                     }
                 }
                 elsif ($_[1] eq "print"){
+
+                    my $new_line = 0;
+                    if ($_[2] =~ s/^.*\K(?:,\s*"\\n"$)|(?:(?<!\\)\\n(?=\s*"$))//){
+                        $new_line = 1; #"
+                    }
+
+                    my @printf; 
+                    foreach my $format ( split(/"(?:\\"|""|\\\\|[^"])*"\K,\s*/, $_[2])){
+                        my @list;
+                        my @matches = $format =~ /(?<!\\)(?:\\\\)*\K\$\w+/g;
+                        foreach my $match (@matches){
+                            if ($match =~ /\$\w+/){
+                                $string =~ s/(?<!\\)(?:\\\\)*\K\$\w+/%s/;
+                                my $var = $&;
+                                $var =~ s/^[\$\@]//;
+                                $var =~ s/^ARGV/sys.argv/;
+                                push(@list, $var);
+                            }
+                        }
+                        push(@printf, "$string % (".join(', ', @list).")" );
+                    }
+
+                    my $final = join(', ', @printf);
+                    # remove final newline
+                    if ($new_line){
+                        return "print($final)";
+                    }
+                    else{
+                        return "print($final, end='')";
+                    }
+    
+
                     #if ending newline was removed
                     # "hi\n" or "hi", "\n"
                     if ($_[2] =~ s/^.*\K(?:,\s*"\\n"$)|(?:(?<!\\)\\n(?=\s*"$))//){ #"
@@ -824,12 +856,12 @@ term    :    termbinop
                     # yes, that's a regex in a regex.
                         $_[2] =~ s["(?:\\"|""|\\\\|[^"])*"]{ 
                                     my $match = $&;
-                                    $match =~ s/"(.*)"/$1/;
+                                    $match =~ s/"\$(.*)"/$1/;
+                                    $match;
+                                 }eg;
                                     $match =~ s/(?<!\\)(?:\\\\)*\K\$ARGV/sys.argv/g;
                                     #removes $ from variables
                                     $match =~ s/(?<!\\)(?:\\\\)*\K\$(\w+)/$1/g;
-                                    $match;
-                                 }eg;
                         return "print($_[2])";
                     }
                     else{

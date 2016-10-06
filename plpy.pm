@@ -4445,7 +4445,7 @@ sub
 
                 if ($_[1] eq "printf"){
                     my @list;
-                    my ($string, @args) = split(', ', $_[2]);
+                    my ($string, @args) = split(/"(?:\\"|""|\\\\|[^"])*"\K,\s*/, $_[2]);
 
                     my @matches = $string =~ /(?<!\\)(?:\\\\)*\K\$\w+|%[csduoxefgXEGi]/g;
                     foreach my $match (@matches){
@@ -4469,6 +4469,38 @@ sub
                     }
                 }
                 elsif ($_[1] eq "print"){
+
+                    my $new_line = 0;
+                    if ($_[2] =~ s/^.*\K(?:,\s*"\\n"$)|(?:(?<!\\)\\n(?=\s*"$))//){
+                        $new_line = 1; #"
+                    }
+
+                    my @printf; 
+                    foreach my $format ( split(/"(?:\\"|""|\\\\|[^"])*"\K,\s*/, $_[2])){
+                        my @list;
+                        my @matches = $string =~ /(?<!\\)(?:\\\\)*\K\$\w+/g;
+                        foreach my $match (@matches){
+                            if ($match =~ /\$\w+/){
+                                $string =~ s/(?<!\\)(?:\\\\)*\K\$\w+/%s/;
+                                my $var = $&;
+                                $var =~ s/^[\$\@]//;
+                                $var =~ s/^ARGV/sys.argv/;
+                                push(@list, $var);
+                            }
+                        }
+                        push(@printf, "$string % (".join(', ', @list).")" );
+                    }
+
+                    my $final = join(', ', @printf);
+                    # remove final newline
+                    if ($new_line){
+                        return "print($final)";
+                    }
+                    else{
+                        return "print($final, end='')";
+                    }
+    
+
                     #if ending newline was removed
                     # "hi\n" or "hi", "\n"
                     if ($_[2] =~ s/^.*\K(?:,\s*"\\n"$)|(?:(?<!\\)\\n(?=\s*"$))//){ #"
@@ -4477,12 +4509,12 @@ sub
                     # yes, that's a regex in a regex.
                         $_[2] =~ s["(?:\\"|""|\\\\|[^"])*"]{ 
                                     my $match = $&;
-                                    $match =~ s/"(.*)"/$1/;
+                                    $match =~ s/"\$(.*)"/$1/;
+                                    $match;
+                                 }eg;
                                     $match =~ s/(?<!\\)(?:\\\\)*\K\$ARGV/sys.argv/g;
                                     #removes $ from variables
                                     $match =~ s/(?<!\\)(?:\\\\)*\K\$(\w+)/$1/g;
-                                    $match;
-                                 }eg;
                         return "print($_[2])";
                     }
                     else{
@@ -4538,7 +4570,7 @@ sub
 	[#Rule 100
 		 'term', 4,
 sub
-#line 885 "plpy.yp"
+#line 917 "plpy.yp"
 {
                 if ($_[1] eq "printf"){
                     my @list;
@@ -4595,7 +4627,7 @@ sub
 	[#Rule 101
 		 'myattrterm', 2,
 sub
-#line 942 "plpy.yp"
+#line 974 "plpy.yp"
 {
                 return $_[2];
             }
@@ -4603,7 +4635,7 @@ sub
 	[#Rule 102
 		 'myterm', 3,
 sub
-#line 949 "plpy.yp"
+#line 981 "plpy.yp"
 {
                     return $_[2];
                 }
@@ -4623,13 +4655,13 @@ sub
 	[#Rule 107
 		 'listexpr', 0,
 sub
-#line 961 "plpy.yp"
+#line 993 "plpy.yp"
 {print "empty listexpr\n";}
 	],
 	[#Rule 108
 		 'listexpr', 1,
 sub
-#line 963 "plpy.yp"
+#line 995 "plpy.yp"
 {
                 printer (\@_, "listexpr", "argexpr");
                 return $_[1];
@@ -4641,7 +4673,7 @@ sub
 	[#Rule 110
 		 'listexprcom', 1,
 sub
-#line 972 "plpy.yp"
+#line 1004 "plpy.yp"
 {
                 printer (\@_, "listexprcom", "expr");
                 return "$_[1]";
@@ -4650,7 +4682,7 @@ sub
 	[#Rule 111
 		 'listexprcom', 2,
 sub
-#line 977 "plpy.yp"
+#line 1009 "plpy.yp"
 {
                 printer (\@_, "listexprcom", "expr", "','");
                 return "$_[1], ";
@@ -4662,13 +4694,13 @@ sub
 	[#Rule 113
 		 'amper', 2,
 sub
-#line 989 "plpy.yp"
+#line 1021 "plpy.yp"
 {}
 	],
 	[#Rule 114
 		 'scalar', 2,
 sub
-#line 993 "plpy.yp"
+#line 1025 "plpy.yp"
 {
                 printer (\@_, "scalar", "'\$'", "indirob"); 
                 return "$_[2]";
@@ -4677,7 +4709,7 @@ sub
 	[#Rule 115
 		 'ary', 2,
 sub
-#line 1000 "plpy.yp"
+#line 1032 "plpy.yp"
 {
                 printer (\@_, "scalar", "'\@'", "indirob"); 
                 return $_[2];
@@ -4686,7 +4718,7 @@ sub
 	[#Rule 116
 		 'hsh', 2,
 sub
-#line 1007 "plpy.yp"
+#line 1039 "plpy.yp"
 {
                 return "$_[2]";
             }
@@ -4694,7 +4726,7 @@ sub
 	[#Rule 117
 		 'arylen', 2,
 sub
-#line 1013 "plpy.yp"
+#line 1045 "plpy.yp"
 {
                 return "len($_[2]) - 1";
             }
@@ -4702,7 +4734,7 @@ sub
 	[#Rule 118
 		 'indirob', 1,
 sub
-#line 1020 "plpy.yp"
+#line 1052 "plpy.yp"
 {
                 printer (\@_, "indirob", "WORD");
                 return $_[1];
@@ -4711,7 +4743,7 @@ sub
 	[#Rule 119
 		 'indirob', 1,
 sub
-#line 1025 "plpy.yp"
+#line 1057 "plpy.yp"
 {
                 $_[0]->YYData->{"IMPORTS"}{"import sys"} = 1; 
                 $_[0]->YYData->{"PRELUDE"}{"sys.argv = sys.argv[1:]"} = 1; 
@@ -4729,7 +4761,7 @@ sub
     bless($self,$class);
 }
 
-#line 1034 "plpy.yp"
+#line 1066 "plpy.yp"
 
 
 1;
