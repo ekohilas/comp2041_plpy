@@ -793,6 +793,8 @@ term    :    termbinop
             }
     |    FUNC '(' indirob expr ')'      /* print ($fh @args */
             {
+                
+                printer (\@_, "term", "FUNC", "indirob", "argexpr");
                 #sort goes here
             }
     |    LSTOP listexpr                       /* print @args */
@@ -835,9 +837,10 @@ term    :    termbinop
                     if ($_[2] =~ s/^.*\K(?:,\s*"\\n"$)|(?:(?<!\\)\\n(?=\s*"$))//){
                         $new_line = 1; #"
                     }
-
+                    print STDERR ">>$_[2]";
                     my @printf; 
-                    foreach my $string ( split(/"(?:\\"|""|\\\\|[^"])*"\K,\s*/, $_[2])){
+                    #foreach my $string ( split(/"(?:\\"|""|\\\\|[^"])*"\K,\s*/, $_[2])){
+                    foreach my $string ( split(', ', $_[2])){
                         $string =~ s/(\$\w+){(.*?);?}/$1\[$2\]/g;
                         my $re = qr/(?<!\\)(?:\\\\)*\K\$\w+(\[(?<!\\)(?:\\\\)*\$\w+\])?/;
                         if ($string =~ /${re}/){
@@ -915,6 +918,7 @@ term    :    termbinop
             }
     |    FUNC '(' listexprcom ')'             /* print (@args) */
             {
+                    printer (\@_, "term", "FUNC", "listexprcom");
                 if ($_[1] eq "printf"){
                     my @list;
                     my ($string, @args) =
@@ -980,6 +984,11 @@ term    :    termbinop
                     else{
                         return "print($final, end='')";
                     }
+                }
+                elsif ($_[1] eq "join") {
+                    my @list = split(', ', $_[3]);
+                    my $delim = shift @list;
+                    return "'$delim'.join(@list)";
                 }
             }
     ;
