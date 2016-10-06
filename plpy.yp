@@ -824,16 +824,21 @@ term    :    termbinop
 
                     my @printf; 
                     foreach my $string ( split(/"(?:\\"|""|\\\\|[^"])*"\K,\s*/, $_[2])){
-                        my @list;
-                        my @matches = $string =~ /(?<!\\)(?:\\\\)*\K\$\w+/g;
-                        foreach my $match (@matches){
-                            $string =~ s/(?<!\\)(?:\\\\)*\K\$\w+/%s/;
-                            my $var = $&;
-                            $var =~ s/^[\$\@]//;
-                            $var =~ s/^ARGV/sys.argv/;
-                            push(@list, $var);
+                        if ($string =~ /(?<!\\)(?:\\\\)*\K\$\w+/){
+                            my @list;
+                            my @matches = $string =~ /(?<!\\)(?:\\\\)*\K\$\w+/g;
+                            foreach my $match (@matches){
+                                $string =~ s/(?<!\\)(?:\\\\)*\K\$\w+/%s/;
+                                my $var = $&;
+                                $var =~ s/^[\$\@]//;
+                                $var =~ s/^ARGV/sys.argv/;
+                                push(@list, $var);
+                            }
+                            push(@printf, "$string % (".join(', ', @list).")" );
                         }
-                        push(@printf, "$string % (".join(', ', @list).")" );
+                        else{
+                            push(@printf, $string);
+                        }
                     }
 
                     my $final = join(', ', @printf);
@@ -843,35 +848,6 @@ term    :    termbinop
                     }
                     else{
                         return "print($final, end='')";
-                    }
-    
-
-                    #if ending newline was removed
-                    # "hi\n" or "hi", "\n"
-                    if ($_[2] =~ s/^.*\K(?:,\s*"\\n"$)|(?:(?<!\\)\\n(?=\s*"$))//){ #"
-                    # finds all strings and then replaces
-                    # "$var" to var
-                    # yes, that's a regex in a regex.
-                        $_[2] =~ s["(?:\\"|""|\\\\|[^"])*"]{ 
-                                    my $match = $&;
-                                    $match =~ s/"\$(.*)"/$1/;
-                                    $match;
-                                 }eg;
-                                    $match =~ s/(?<!\\)(?:\\\\)*\K\$ARGV/sys.argv/g;
-                                    #removes $ from variables
-                                    $match =~ s/(?<!\\)(?:\\\\)*\K\$(\w+)/$1/g;
-                        return "print($_[2])";
-                    }
-                    else{
-                        $_[2] =~ s["(?:\\"|""|\\\\|[^"])*"]{ 
-                                    my $match = $&;
-                                    $match =~ s/"(.*)"/$1/;
-                                    $match =~ s/(?<!\\)(?:\\\\)*\K\$ARGV/sys.argv/g;
-                                    #removes $ from variables
-                                    $match =~ s/(?<!\\)(?:\\\\)*\K\$(\w+)/$1/g;
-                                    $match;
-                                 }eg;
-                        return "print($_[2], end='')";
                     }
                 }
                 elsif ($_[1] eq "split") {
