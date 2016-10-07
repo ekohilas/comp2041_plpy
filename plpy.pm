@@ -4508,13 +4508,15 @@ sub
 sub
 #line 795 "plpy.yp"
 {
+                
+                printer (\@_, "term", "FUNC", "indirob", "argexpr");
                 #sort goes here
             }
 	],
 	[#Rule 100
 		 'term', 2,
 sub
-#line 799 "plpy.yp"
+#line 801 "plpy.yp"
 {
                 printer (\@_, "term", "LSTOP", "listexpr");
 
@@ -4554,9 +4556,9 @@ sub
                     if ($_[2] =~ s/^.*\K(?:,\s*"\\n"$)|(?:(?<!\\)\\n(?=\s*"$))//){
                         $new_line = 1; #"
                     }
-
                     my @printf; 
-                    foreach my $string ( split(/"(?:\\"|""|\\\\|[^"])*"\K,\s*/, $_[2])){
+                    #foreach my $string ( split(/"(?:\\"|""|\\\\|[^"])*"\K,\s*/, $_[2])){
+                    foreach my $string ( split(', ', $_[2])){
                         $string =~ s/(\$\w+){(.*?);?}/$1\[$2\]/g;
                         my $re = qr/(?<!\\)(?:\\\\)*\K\$\w+(\[(?<!\\)(?:\\\\)*\$\w+\])?/;
                         if ($string =~ /${re}/){
@@ -4632,12 +4634,14 @@ sub
                     #return "$handle = open($array.insert(0, @list)";
                 }
             }
+            }
 	],
 	[#Rule 101
 		 'term', 4,
 sub
-#line 917 "plpy.yp"
+#line 920 "plpy.yp"
 {
+                    printer (\@_, "term", "FUNC", "listexprcom");
                 if ($_[1] eq "printf"){
                     my @list;
                     my ($string, @args) =
@@ -4704,12 +4708,17 @@ sub
                         return "print($final, end='')";
                     }
                 }
+                elsif ($_[1] eq "join") {
+                    my @list = split(', ', $_[3]);
+                    my $delim = shift @list;
+                    return "'$delim'.join(@list)";
+                }
             }
 	],
 	[#Rule 102
 		 'myattrterm', 2,
 sub
-#line 990 "plpy.yp"
+#line 999 "plpy.yp"
 {
                 return $_[2];
             }
@@ -4717,7 +4726,7 @@ sub
 	[#Rule 103
 		 'myterm', 3,
 sub
-#line 997 "plpy.yp"
+#line 1006 "plpy.yp"
 {
                     return $_[2];
                 }
@@ -4737,13 +4746,13 @@ sub
 	[#Rule 108
 		 'listexpr', 0,
 sub
-#line 1009 "plpy.yp"
+#line 1018 "plpy.yp"
 {print "empty listexpr\n";}
 	],
 	[#Rule 109
 		 'listexpr', 1,
 sub
-#line 1011 "plpy.yp"
+#line 1020 "plpy.yp"
 {
                 printer (\@_, "listexpr", "argexpr");
                 return $_[1];
@@ -4755,7 +4764,7 @@ sub
 	[#Rule 111
 		 'listexprcom', 1,
 sub
-#line 1020 "plpy.yp"
+#line 1029 "plpy.yp"
 {
                 printer (\@_, "listexprcom", "expr");
                 return "$_[1]";
@@ -4764,7 +4773,7 @@ sub
 	[#Rule 112
 		 'listexprcom', 2,
 sub
-#line 1025 "plpy.yp"
+#line 1034 "plpy.yp"
 {
                 printer (\@_, "listexprcom", "expr", "','");
                 return "$_[1], ";
@@ -4779,7 +4788,7 @@ sub
 	[#Rule 115
 		 'scalar', 2,
 sub
-#line 1041 "plpy.yp"
+#line 1050 "plpy.yp"
 {
                 printer (\@_, "scalar", "'\$'", "indirob"); 
                 return "$_[2]";
@@ -4788,7 +4797,7 @@ sub
 	[#Rule 116
 		 'ary', 2,
 sub
-#line 1048 "plpy.yp"
+#line 1057 "plpy.yp"
 {
                 printer (\@_, "scalar", "'\@'", "indirob"); 
                 return $_[2];
@@ -4797,7 +4806,7 @@ sub
 	[#Rule 117
 		 'hsh', 2,
 sub
-#line 1054 "plpy.yp"
+#line 1063 "plpy.yp"
 {
             return $_[2];
             }
@@ -4805,13 +4814,13 @@ sub
 	[#Rule 118
 		 'arylen', 2,
 sub
-#line 1059 "plpy.yp"
+#line 1068 "plpy.yp"
 {return "len($_[2]) - 1";}
 	],
 	[#Rule 119
 		 'indirob', 1,
 sub
-#line 1064 "plpy.yp"
+#line 1073 "plpy.yp"
 {
                 printer (\@_, "indirob", "WORD");
                 return $_[1];
@@ -4820,7 +4829,7 @@ sub
 	[#Rule 120
 		 'indirob', 1,
 sub
-#line 1069 "plpy.yp"
+#line 1078 "plpy.yp"
 {
                 $_[0]->YYData->{"IMPORTS"}{"import sys"} = 1; 
                 $_[0]->YYData->{"PRELUDE"}{"sys.argv = sys.argv[1:]"} = 1; 
@@ -4833,7 +4842,7 @@ sub
 	[#Rule 122
 		 'indirob', 1,
 sub
-#line 1076 "plpy.yp"
+#line 1085 "plpy.yp"
 {printer (\@_, qw(indirob indexblock));}
 	]
 ],
@@ -4841,7 +4850,7 @@ sub
     bless($self,$class);
 }
 
-#line 1079 "plpy.yp"
+#line 1088 "plpy.yp"
 
 
 1;

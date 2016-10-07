@@ -837,7 +837,6 @@ term    :    termbinop
                     if ($_[2] =~ s/^.*\K(?:,\s*"\\n"$)|(?:(?<!\\)\\n(?=\s*"$))//){
                         $new_line = 1; #"
                     }
-                    print STDERR ">>$_[2]";
                     my @printf; 
                     #foreach my $string ( split(/"(?:\\"|""|\\\\|[^"])*"\K,\s*/, $_[2])){
                     foreach my $string ( split(', ', $_[2])){

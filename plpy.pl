@@ -28,7 +28,7 @@ $input =~ s{(?<!\\)(?:\\\\)*\K\$([1-9&])}{
 my $parser = new plpy;
 
 $parser->YYData->{"DATA"} = $input;
-$parser->YYData->{"DEBUG"} = 1;
+$parser->YYData->{"DEBUG"} = 0;
 $parser->YYData->{"IMPORTS"} = ();
 $parser->YYData->{"PRELUDE"} = ();
 
