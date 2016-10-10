@@ -208,270 +208,200 @@ sub printer{
 %% /* RULES */
 
 /* The whole program */
-prog    :    lineseq
-            {
-                printer(\@_, "prog", "lineseq");
-                return "$_[1]";
-            }
-    ;
+prog        :   lineseq
+            ;
 
 /* An ordinary block */
-block    :    '{' remember lineseq '}'
-            {
-                printer(\@_, qw( block { lineseq } )); 
-                #adds indentation
-                $_[3] =~ s/^/    /gm;   #"/
-                return "\n$_[3]\n";
-            }
-    ;
-
-remember:    /* NULL */    /* start a full lexical scope */
-    ;
-
-mblock    :    '{' mremember lineseq '}'
-            {
-                printer(\@_, qw( mblock { lineseq } )); 
-                #adds indentation
-                $_[3] =~ s/^/    /gm;    #"/
-                return "\n$_[3]\n";
-            }
-    ;
-
-mremember:    /* NULL */    /* start a partial lexical scope */
-    ;
-
-/*
-indexblock    :    '{' sideff '}'
-            {
-                printer(\@_, qw( indexblock { sideff } )); 
-                return "[$_[3]]";
-            }
-    ;
-    */
+block       :   '{' lineseq '}'
+                    {
+                        printer(\@_, qw( block '{' lineseq '}' )); 
+                        #adds indentation
+                        $_[3] =~ s/^/    /gm;   #"/
+                        return "\n$_[3]\n";
+                    }
+            ;
 
 /* A collection of "lines" in the program */
-lineseq    :    /* NULL */
-    |    lineseq decl
-            {
-                printer(\@_, qw( lineseq lineseq decl )); 
-                return "$_[1]$_[2]";
-            }
-    |    lineseq line
-            {
-                printer(\@_, "lineseq", "lineseq", "line");
-                return "$_[1]$_[2]";
-            }
-    ;
+lineseq     :    /* NULL */
+            |    lineseq decl
+                    {
+                        printer(\@_, qw( lineseq lineseq decl )); 
+                        return "$_[1]$_[2]";
+                    }
+            |    lineseq line
+                    {
+                        printer(\@_, "lineseq", "lineseq", "line");
+                        return "$_[1]$_[2]";
+                    }
+            ;
 
 /* A "line" in the program */
-line    :     cond
-            {
-                printer(\@_, qw( line cond )); 
-                return $_[1];
-            }
-
-    |    loop    /* loops add their own labels */
-            {
-                printer(\@_, qw( line loop )); 
-                return $_[1];
-            }
-    
-    |     sideff ';'
-            {
-                printer(\@_, "line", "sideff", "';'");
-                return "$_[1]\n";
-            }
-    |    COMMENT
-            {
-                printer(\@_, "line", "COMMENT");
-                return "$_[1]\n";
-            }
-    ;
+line        :   cond
+            |   loop    /* loops add their own labels */
+            |   sideff ';'
+            |   COMMENT 
+                    {
+                        printer(\@_, "line", "COMMENT")
+                    }
+            ;
 
 /* An expression which may have a side-effect */
-sideff    : expr
-
-            {
-                printer(\@_, "sideff", "expr");
-                return $_[1];
-            }
-    |    expr WHILE expr
-            {
-                printer(\@_, qw( sideff expr WHILE expr ));
-                return "while $_[3]: $_[1]";
-            }
-    |    expr FOR expr
-            {
-                printer (\@_, qw(sideff expr FOR expr));
-                return "for $_[3]: $_[1]";
-            }
-    ;
+sideff      :   expr
+                {
+                    printer(\@_, "sideff", "expr");
+                    return $_[1];
+                }
+            |   expr WHILE expr
+                {
+                    printer(\@_, qw( sideff expr WHILE expr ));
+                    return "while $_[3]: $_[1]";
+                }
+            |   expr FOR expr
+                {
+                    printer (\@_, qw(sideff expr FOR expr));
+                    return "for $_[3]: $_[1]";
+                }
+            ;
 
 /* else and elsif blocks */
-else    :    /* NULL */
-    |    ELSE mblock
-            {
-                printer (\@_, qw( else ELSE mblock ));
-                return "else:$_[2]";
-            }
-    |    ELSIF '(' mexpr ')' mblock else
-            {
-                printer (\@_, qw( else ELSIF '(' mexpr ')' mblock else)); 
-                return "elif $_[3]:$_[5]$_[6]";
-            }
-    ;
+else        :   /* NULL */
+            |   ELSE block
+                {
+                    printer (\@_, qw( else ELSE block ));
+                    return "else:$_[2]";
+                }
+            |   ELSIF '(' expr ')' block else
+                {
+                    printer (\@_, qw( else ELSIF '(' expr ')' block else)); 
+                    return "elif $_[3]:$_[5]$_[6]";
+                }
+            ;
 
 /* Real conditional expressions */
-cond    :    IF '(' remember mexpr ')' mblock else
-            {
-                printer (\@_, qw( IF '(' remember mexpr ')' mblock else));
-                return "if $_[4]:$_[6]$_[7]";
-                
-            }
-    ;
+cond        :   IF '(' expr ')' block else
+                {
+                    printer (\@_, qw( IF '(' expr ')' block else));
+                    return "if $_[4]:$_[6]$_[7]";
+                    
+                }
+            ;
 
 /* Loops: while, until, for, and a bare block */
-loop    :     WHILE '(' remember mtexpr ')' mblock /*cont*/
-            {
-                 printer (\@_, qw(WHILE '(' remember mtexpr ')' mblock cont)); 
-                 if ($_[4] =~ /(\w+)\s*=\s*(.*)\s*/){
-                    return "for $1 in $2:$_[6]$_[7]";
-                 }
-                 else{
-                    return "while $_[4]:$_[6]$_[7]";
-                 }
-            }
-    |     FOR MY remember my_scalar '(' mexpr ')' mblock /*cont*/
-            {
-                printer (\@_, qw(loop FOR MY remember my_scalar '(' mexpr ')' mblock cont)); 
-                return "for $_[4] in $_[6]:$_[8]";
-            }
-    |     FOR scalar '(' remember mexpr ')' mblock /*cont*/
-            {
-                printer (\@_, qw(loop FOR scalar '(' mexpr ')' mblock cont)); 
-                return "for $_[2] in $_[5]:$_[7]";
-            }
-    |     FOR '(' remember mexpr ')' mblock /*cont*/
-            {
-                return "for _ in $_[4]:$_[6]";
-            }
-    |     FOR '(' remember mnexpr ';' mtexpr ';' mnexpr ')' mblock
-            {
-                printer (\@_, qw(loop FOR '(' remember mnexpr ';' mtexpr ';' mnexpr ')' mblock)); 
-                return "$_[4]\nwhile $_[6]:$_[10]$_[8]\n";
-            }
-    ;
+loop        :   WHILE '(' texpr ')' block 
+                {
+                     printer (\@_, qw(WHILE '(' texpr ')' block cont)); 
+                     if ($_[4] =~ /(\w+)\s*=\s*(.*)\s*/) {
+                        return "for $1 in $2:$_[6]$_[7]";
+                     }
+                     else {
+                        return "while $_[4]:$_[6]$_[7]";
+                     }
+                }
+            |   FOR MY scalar '(' expr ')' block 
+                {
+                    printer (\@_, qw(loop FOR MY scalar '(' expr ')' block cont)); 
+                    return "for $_[4] in $_[6]:$_[8]";
+                }
+            |   FOR scalar '(' expr ')' block 
+                {
+                    printer (\@_, qw(loop FOR scalar '(' expr ')' block cont)); 
+                    return "for $_[2] in $_[5]:$_[7]";
+                }
+            |   FOR '(' expr ')' block 
+                {
+                    return "for _ in $_[4]:$_[6]";
+                }
+            |   FOR '(' nexpr ';' texpr ';' nexpr ')' block
+                {
+                    printer (\@_, qw(loop FOR '(' nexpr ';' texpr ';' nexpr ')' block)); 
+                    return "$_[4]\nwhile $_[6]:$_[10]$_[8]\n";
+                }
+            ;
 
 /* Normal expression */
-nexpr    :    /* NULL */
-            {}
-    |    sideff
-    ;
+nexpr       :   /* NULL */
+            |   sideff
+            ;
 
 /* Boolean expression */
-texpr    :    /* NULL means true */
-            {}
-    |    expr
-    ;
-
-/* Expression with its own lexical scope */
-mexpr    :    expr
-            {
-                printer (\@_, qw(mexpr expr) ); 
-                return $_[1];
-            }
-    ;
-
-mnexpr    :    nexpr
-    ;
-
-mtexpr    :    texpr
-    ;
+texpr       :   /* NULL means true */ {return "True";}
+            |   expr
+            ;
 
 /* Some kind of declaration - does not take part in the parse tree */
-decl    :   subrout
-            {}
-    ;
+decl        :   subrout
+            ;
 
 /* Subroutine definition */
-subrout    :    SUB startsub subname /*proto subattrlist*/ subbody
-            {
-            }
-    ;
-
-startsub:    /* NULL */    /* start a regular subroutine scope */
-            {}
-;
+subrout     :   SUB subname subbody
+            ;
 
 /* Name of a subroutine - must be a bareword, could be special */
-subname    :    WORD    {}
-    ;
+subname     :   WORD
+            ;
 
 /* Subroutine body - either null or a block */
-subbody    :    block    {}
-    |    ';'    {}
-    ;
-
+subbody     :   block
+            |   ';'
+            ;
 
 /* Ordinary expressions; logical combinations */
-expr    :    expr ANDOP expr
-            {
-                printer (\@_, qw(expr expr ANDOP expr)); 
-                return "$_[1] and $_[3]";
-            }
-    |    expr OROP expr
-            {
-                printer (\@_, qw(expr expr OROP expr)); 
-                return "$_[1] or $_[3]";
-            }
-    |    argexpr %prec PREC_LOW
-            {
-                printer(\@_, qw(expr argexpr));
-                return $_[1];
-            }
-    ;
+expr        :   expr ANDOP expr
+                {
+                    printer (\@_, qw(expr expr ANDOP expr)); 
+                    return "$_[1] and $_[3]";
+                }
+            |   expr OROP expr
+                {
+                    printer (\@_, qw(expr expr OROP expr)); 
+                    return "$_[1] or $_[3]";
+                }
+            |   argexpr %prec PREC_LOW
+                {
+                    printer(\@_, qw(expr argexpr));
+                    return $_[1];
+                }
+            ;
 
 /* Expressions are a list of terms joined by commas */
-argexpr    :    argexpr ','
-            {
-                printer (\@_, "argexpr", "','");
-                return "$_[1], ";
-            }
-    |    argexpr ',' term
-            {
-                printer (\@_, "argexpr", "','", "term");
-                return "$_[1], $_[3]";
-            }
-    |    term %prec PREC_LOW
-            {
-                printer (\@_, "argexpr", "term");
-                return $_[1];
-            }
-    ;
-
-
+argexpr     :   argexpr ','
+                {
+                    printer (\@_, "argexpr", "','");
+                    return "$_[1], ";
+                }
+            |   argexpr ',' term
+                {
+                    printer (\@_, "argexpr", "','", "term");
+                    return "$_[1], $_[3]";
+                }
+            |   term %prec PREC_LOW
+                {
+                    printer (\@_, "argexpr", "term");
+                    return $_[1];
+                }
+            ;
 
 /* Some kind of subscripted expression */
-subscripted: scalar '[' expr ']'          /* $array[$element] */
-            {
-                return "$_[1]$_[2]$_[3]$_[4]"; 
-            }
-    | subscripted '[' expr ']'          /* $array[$element] */
-            {
-                return "$_[1]$_[2]$_[3]$_[4]"; 
-            }
-    | scalar '{' expr ';' '}'
-            {
-                $_[0]->YYData->{"PRELUDE"}{"$_[1] = {}"} = 1; 
-                return "$_[1]\[$_[3]\]"; 
-            }
-    | subscripted '{' expr ';' '}'
-            {
-                return "$_[1]\[$_[3]\]"; 
-            }
-    ;
+subscripted :   scalar '[' expr ']'          /* $array[$element] */
+                {
+                    return "$_[1]$_[2]$_[3]$_[4]"; 
+                }
+            |   subscripted '[' expr ']'          /* $array[$element] */
+                {
+                    return "$_[1]$_[2]$_[3]$_[4]"; 
+                }
+            |   scalar '{' expr ';' '}'
+                {
+                    $_[0]->yydata->{"prelude"}{"$_[1] = {}"} = 1; 
+                    return "$_[1]\[$_[3]\]"; 
+                }
+            |   subscripted '{' expr ';' '}'
+                {
+                    return "$_[1]\[$_[3]\]"; 
+                }
+            ;
 
-/* Binary operators between terms */
+/* binary operators between terms */
 termbinop    :    term ASSIGNOP term             /* $x =, .= $y */
             {
                 printer (\@_, "termbinop", "term", "ASSIGNOP", "term");
@@ -545,7 +475,7 @@ termbinop    :    term ASSIGNOP term             /* $x =, .= $y */
             }
     |    term ANDAND term                       /* $x && $y */
             {
-                printer (\@_, qw(termbinop term ANDAND term)); 
+                printer (\@_, qw(termbinop term andand term)); 
                 return "$_[1] and $_[3]";
             }
     |    term OROR term                         /* $x || $y */
@@ -555,7 +485,7 @@ termbinop    :    term ASSIGNOP term             /* $x =, .= $y */
             }
     |    term MATCHOP term         /*or term?           /* $x =~ s/$y/ */
             {
-                $_[0]->YYData->{"IMPORTS"}{"import re"} = 1; 
+                $_[0]->yydata->{"IMPORTS"}{"import re"} = 1; 
                 if ($_[3] =~ /^s/){
                     $_[3] =~ /s\/((?<!\\)(?:\\\\)*.*)\/((?<!\\)(?:\\\\)*.*?)\/([msixpodualngcer]?)/;
                     my $re = $1;
@@ -563,12 +493,12 @@ termbinop    :    term ASSIGNOP term             /* $x =, .= $y */
                     my $flags = $3;
 
                     my @flags;
-                    if ($flags =~ /i/){push(@flags, "re.I")}
-                    if ($flags =~ /m/){push(@flags, "re.M")}
-                    if ($flags =~ /s/){push(@flags, "re.S")}
+                    if ($flags =~ /i/){push(@flags, "re.i")}
+                    if ($flags =~ /m/){push(@flags, "re.m")}
+                    if ($flags =~ /s/){push(@flags, "re.s")}
                     $flags = join('| ', @flags);
 
-                    $repl =~ s/(?<!\\)(?:\\\\)*\K\\(\d)/\\$1/;
+                    $repl =~ s/(?<!\\)(?:\\\\)*\k\\(\d)/\\$1/;
                     if ($flags){
                         return "$_[1] = re.sub(r'$re', '$repl', $_[1], $flags)";
                     }
@@ -793,8 +723,6 @@ term    :    termbinop
             }
     |    FUNC '(' indirob expr ')'      /* print ($fh @args */
             {
-                
-                printer (\@_, "term", "FUNC", "indirob", "argexpr");
                 #sort goes here
             }
     |    LSTOP listexpr                       /* print @args */
@@ -837,9 +765,9 @@ term    :    termbinop
                     if ($_[2] =~ s/^.*\K(?:,\s*"\\n"$)|(?:(?<!\\)\\n(?=\s*"$))//){
                         $new_line = 1; #"
                     }
+
                     my @printf; 
-                    #foreach my $string ( split(/"(?:\\"|""|\\\\|[^"])*"\K,\s*/, $_[2])){
-                    foreach my $string ( split(', ', $_[2])){
+                    foreach my $string ( split(/"(?:\\"|""|\\\\|[^"])*"\K,\s*/, $_[2])){
                         $string =~ s/(\$\w+){(.*?);?}/$1\[$2\]/g;
                         my $re = qr/(?<!\\)(?:\\\\)*\K\$\w+(\[(?<!\\)(?:\\\\)*\$\w+\])?/;
                         if ($string =~ /${re}/){
@@ -900,10 +828,10 @@ term    :    termbinop
                         $mode = 'r';
                     }
                     elsif ($1 eq '>>'){
-                        $mode = 'r';
+                        $mode = 'w';
                     }
                     elsif ($1 eq '>'){
-                        $mode = 'r';
+                        $mode = 'w';
                     }
                     return "$handle = open(\"$file, \'$mode\')";
                 }
@@ -917,7 +845,6 @@ term    :    termbinop
             }
     |    FUNC '(' listexprcom ')'             /* print (@args) */
             {
-                    printer (\@_, "term", "FUNC", "listexprcom");
                 if ($_[1] eq "printf"){
                     my @list;
                     my ($string, @args) =
@@ -984,104 +911,59 @@ term    :    termbinop
                         return "print($final, end='')";
                     }
                 }
-                elsif ($_[1] eq "join") {
-                    my @list = split(', ', $_[3]);
-                    my $delim = shift @list;
-                    return "'$delim'.join(@list)";
-                }
             }
     ;
 
 /* "my" declarations, with optional attributes */
-myattrterm:    
-        MY myterm
-            {
-                return $_[2];
-            }
-    ;
+myattrterm  :   MY myterm {$_[2]};
 
 /* Things that can be "my"'d */
-myterm    :    '(' expr ')'
-                {
-                    return $_[2];
-                }
-    |    '(' ')'
-    |    scalar    %prec '('
-    |    hsh     %prec '('
-    |    ary     %prec '('
-    ;
+myterm      :   '(' expr ')' {$_[2]}
+            |   '(' ')'
+            |   scalar    %prec '('
+            |   hsh     %prec '('
+            |   ary     %prec '('
+            ;
 
 /* Basic list expressions */
 /* list of terms separated by comma's*/
-listexpr:    /* NULL */ %prec PREC_LOW
-            {print "empty listexpr\n";}
-    |    argexpr    %prec PREC_LOW
-            {
-                printer (\@_, "listexpr", "argexpr");
-                return $_[1];
-            }
-    ;
+listexpr    :   /* NULL */ %prec PREC_LOW
+            |   argexpr    %prec PREC_LOW
+            ;
 
 /*list of expressions separated by commas*/
 listexprcom:    /* NULL */
-    |    expr
-            {
-                printer (\@_, "listexprcom", "expr");
-                return "$_[1]";
-            }
-    |    expr ','
-            {
-                printer (\@_, "listexprcom", "expr", "','");
-                return "$_[1], ";
-            }
-    ;
+            |   expr
+            |   expr ',' {"$_[1], "}
+            ;
 
-/* A little bit of trickery to make "for my $foo (@bar)" actually be
-   lexical */
+/* A little bit of trickery to make "for my $foo (@bar)" actually be lexical */
 
-my_scalar:    scalar
-    ;
+amper       :   '&' indirob {$_[2]}
+            ;
 
-amper    :    '&' indirob
-    ;
+scalar      :   '$' indirob {$_[2]}
+            ;
 
-scalar    :    '$' indirob
-            {
-                printer (\@_, "scalar", "'\$'", "indirob"); 
-                return "$_[2]";
-            }
-    ;
+ary         :   '@' indirob {$_[2]}
+            ;
 
-ary    :    '@' indirob
-            {
-                printer (\@_, "scalar", "'\@'", "indirob"); 
-                return $_[2];
-            }
-    ;
+hsh         :   '%' indirob {$_[2]}
+            ;
 
-hsh :    '%' indirob {
-            return $_[2];
-            } 
-    ;
-
-arylen    :    DOLSHARP indirob {return "len($_[2]) - 1";}
-    ;
+arylen      :   DOLSHARP indirob {return "len($_[2]) - 1";}
+            ;
 
 /* Indirect objects */
-indirob    :    WORD
-            {
-                printer (\@_, "indirob", "WORD");
-                return $_[1];
-            }
-    |    ARGV
-            {
-                $_[0]->YYData->{"IMPORTS"}{"import sys"} = 1; 
-                $_[0]->YYData->{"PRELUDE"}{"sys.argv = sys.argv[1:]"} = 1; 
-                return "sys.argv";
-            }
-    |    scalar %prec PREC_LOW
-    |    block
-            {printer (\@_, qw(indirob indexblock));}
-    ;
+indirob     :   WORD
+            |   ARGV
+                {
+                        $_[0]->YYData->{"IMPORTS"}{"import sys"} = 1; 
+                    $_[0]->YYData->{"PRELUDE"}{"sys.argv = sys.argv[1:]"} = 1; 
+                    return "sys.argv";
+                }
+            |   scalar %prec PREC_LOW
+            |   block
+            ;
 
 %%
