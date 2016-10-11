@@ -7,6 +7,7 @@
 
 %{
 use Term::ANSIColor;
+use Switch;
 
 sub Lexer {
     my ($type, $value) = getToken($_[0]);
@@ -547,23 +548,28 @@ term        :   termbinop
             |   termunop
             |   FHANDLE
                 {
-                    if ($_[1] eq "<STDIN>"){
-                        $_[0]->YYData->{"IMPORTS"}{"import sys"} = 1; 
-                        return "sys.stdin.readline()";
-                    }
-                    elsif ($_[1] eq "<\@STDIN>"){
-                        $_[0]->YYData->{"IMPORTS"}{"import sys"} = 1; 
-                        return "sys.stdin.readlines()";
-
-                    }
-                    elsif ($_[1] eq "<>"){
-                        $_[0]->YYData->{"IMPORTS"}{"import fileinput"} = 1; 
-                        return "fileinput.input()";
-                    }
-                    else {
-                        $_[1] =~ s/<(.*?)>/$1/;
-                        return $_[1];
-                    }
+                    switch ($_[1]) {
+                        case "<STDIN>"
+                            {
+                                $_[0]->YYData->{"IMPORTS"}{"import sys"} = 1; 
+                                return "sys.stdin.readline()";
+                            }
+                        case "<\@STDIN>"
+                            {
+                                $_[0]->YYData->{"IMPORTS"}{"import sys"} = 1; 
+                                return "sys.stdin.readlines()";
+                            }
+                        case "<>"
+                            {
+                                $_[0]->YYData->{"IMPORTS"}{"import fileinput"} = 1; 
+                                return "fileinput.input()";
+                            }
+                        else 
+                            {
+                                $_[1] =~ s/<(.*?)>/$1/;
+                                return $_[1];
+                            }
+                        }
                     
                 }
             |   REMATCH
@@ -620,20 +626,12 @@ function    :   UNIOP                                /* Unary op, $_ implied */
             |   UNIOP term                           /* Unary op */
                 {
                     printer (\@_, qw(term UNIOP term)); 
-                    if ($_[1] eq "chomp"){
-                       return "$_[2] = $_[2].strip()";
-                    }
-                    elsif ($_[1] eq "pop"){
-                        return "$_[2].pop()";
-                    }
-                    elsif ($_[1] eq "shift"){
-                        return "$_[2].pop(0)";
-                    }
-                    elsif ($_[1] eq "close"){
-                        return "$_[2].close()";
-                    }
-                    elsif ($_[1] eq "keys"){
-                        return "$_[2].keys()";
+                    switch ($_[1]) {
+                        case "chomp"    { return "$_[2] = $_[2].strip()" }
+                        case "pop"      { return "$_[2].pop()" }
+                        case "shift"    { return "$_[2].pop(0)" }
+                        case "close"    { return "$_[2].close()" }
+                        case "keys"     { return "$_[2].keys()" }
                     }
                 }
             |   FUNC1 '(' ')'                        /* not () */
@@ -644,23 +642,13 @@ function    :   UNIOP                                /* Unary op, $_ implied */
                 }
             |   FUNC1 '(' expr ')'                   /* not($foo) */
                 {
-                    if ($_[1] eq "exit"){
-                       return "exit($_[3])";
-                    }
-                    elsif ($_[1] eq "chomp"){
-                       return "$_[3] = $_[3].strip()";
-                    }
-                    elsif ($_[1] eq "pop"){
-                        return "$_[3].pop()";
-                    }
-                    elsif ($_[1] eq "shift"){
-                        return "$_[3].pop(0)";
-                    }
-                    elsif ($_[1] eq "close"){
-                        return "$_[3].close()";
-                    }
-                    elsif ($_[1] eq "keys"){
-                        return "$_[3].keys()";
+                    switch ($_[1]) {
+                        case "exit"     { return "exit($_[3])" }
+                        case "chomp"    { return "$_[3] = $_[3].strip()" }
+                        case "pop"      { return "$_[3].pop()" }
+                        case "shift"    { return "$_[3].pop(0)" }
+                        case "close"    { return "$_[3].close()" }
+                        case "keys"     { return "$_[3].keys()" }
                     }
                 }
             |   PMFUNC '(' term ')'                  /* split (/foo/) */
