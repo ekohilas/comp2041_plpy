@@ -211,28 +211,18 @@ sub printer{
 prog        :   lineseq
             ;
 
-/* An ordinary block */
-block       :   '{' lineseq '}'
-                    {
-                        printer(\@_, qw( block '{' lineseq '}' )); 
-                        #adds indentation
-                        $_[3] =~ s/^/    /gm;   #"/
-                        return "\n$_[3]\n";
-                    }
-            ;
-
 /* A collection of "lines" in the program */
-lineseq     :    /* NULL */
-            |    lineseq decl
-                    {
-                        printer(\@_, qw( lineseq lineseq decl )); 
-                        return "$_[1]$_[2]";
-                    }
-            |    lineseq line
-                    {
-                        printer(\@_, "lineseq", "lineseq", "line");
-                        return "$_[1]$_[2]";
-                    }
+lineseq     :   /* NULL */
+            |   lineseq decl
+                {
+                    printer(\@_, qw( lineseq lineseq decl )); 
+                    return "$_[1]$_[2]";
+                }
+            |   lineseq line
+                {
+                    printer(\@_, "lineseq", "lineseq", "line");
+                    return "$_[1]$_[2]";
+                }
             ;
 
 /* A "line" in the program */
@@ -240,9 +230,19 @@ line        :   cond
             |   loop    /* loops add their own labels */
             |   sideff ';'
             |   COMMENT 
-                    {
-                        printer(\@_, "line", "COMMENT")
-                    }
+                {
+                    printer(\@_, "line", "COMMENT")
+                }
+            ;
+
+/* An ordinary block */
+block       :   '{' lineseq '}'
+                {
+                    printer(\@_, qw( block '{' lineseq '}' )); 
+                    # adds indentation
+                    $_[3] =~ s/^/    /gm;   #"/
+                    return "\n$_[3]\n";
+                }
             ;
 
 /* An expression which may have a side-effect */
@@ -392,7 +392,7 @@ subscripted :   scalar '[' expr ']'          /* $array[$element] */
                 }
             |   scalar '{' expr ';' '}'
                 {
-                    $_[0]->yydata->{"prelude"}{"$_[1] = {}"} = 1; 
+                    $_[0]->yydata->{"PRELUDE"}{"$_[1] = {}"} = 1; 
                     return "$_[1]\[$_[3]\]"; 
                 }
             |   subscripted '{' expr ';' '}'
@@ -402,520 +402,468 @@ subscripted :   scalar '[' expr ']'          /* $array[$element] */
             ;
 
 /* binary operators between terms */
-termbinop    :    term ASSIGNOP term             /* $x =, .= $y */
-            {
-                printer (\@_, "termbinop", "term", "ASSIGNOP", "term");
-                if ($_[2] eq '.=') {$_[2] = '+='}
-                return "$_[1] $_[2] $_[3]";
-            }
-    |    term POWOP term                        /* $x ** $y */
-            {
-                printer (\@_, "termbinop", "term", "POWOP", "term");
-                return "eval(str($_[1])) $_[2] eval(str($_[3]))";
-            }
-    |    term MULOP term                        /* $x * $y*/
-            {
-                printer (\@_, "termbinop", "term", "MULOP", "term");
-                return "eval(str($_[1])) $_[2] eval(str($_[3]))";
-            }
-    |    term ADDOP term                        /* $x [+-.] $y */
-            {
-                printer (\@_, "termbinop", "term", "ADDOP", "term");
-                if ($_[2] eq '.'){
-                    return "$_[1] + $_[3]";
+termbinop   :   term ASSIGNOP term             /* $x =, .= $y */
+                {
+                    printer (\@_, "termbinop", "term", "ASSIGNOP", "term");
+                    if ($_[2] eq '.=') {$_[2] = '+='}
+                    return "$_[1] $_[2] $_[3]";
                 }
-                else{
+            |   term POWOP term                        /* $x ** $y */
+                {
+                    printer (\@_, "termbinop", "term", "POWOP", "term");
                     return "eval(str($_[1])) $_[2] eval(str($_[3]))";
                 }
-            }
-    |   term SHIFTOP term                      /* $x >> $y, $x << $y */
-            {
-                printer (\@_, qw(term SHIFTOP term)); 
-                return "$_[1] $_[2] $_[3]";
-            }
-    |    term RELOP term                        /* $x > $y, etc. */
-            {
-                printer (\@_, qw(termbinop term EQOP term)); 
-                my %relop = (
-                    "gt" => ">",
-                    "ge" => ">=",
-                    "le" => "<=",
-                    "lt" => "<"
-                );
-                $_[2] = exists $relop{$_[2]} ? $relop{$_[2]} : $_[2];
-                return "$_[1] $_[2] $_[3]";
-            }
-    |    term EQOP term                         /* $x == $y, $x eq $y */
-            {
-                printer (\@_, qw(termbinop term EQOP term)); 
-                if ($_[2] eq 'eq') {$_[2] = '=='}
-                if ($_[2] eq '<=>') {
-                    return "((a > b) - (a < b))";
+            |   term MULOP term                        /* $x * $y*/
+                {
+                    printer (\@_, "termbinop", "term", "MULOP", "term");
+                    return "eval(str($_[1])) $_[2] eval(str($_[3]))";
                 }
-                return "$_[1] $_[2] $_[3]";
-            }
-    |   term BITANDOP term                     /* $x & $y */
-            {
-                printer (\@_, qw(termbinop term BITANDOP term)); 
-                return "$_[1] & $_[2]";
-            }
-    |   term BITOROP term                      /* $x | $y */
-            {
-                printer (\@_, qw(termbinop term BITOROP term)); 
-                return "$_[1] | $_[2]";
-            }
-    |   term BITXOROP term                      /* $x | $y */
-            {
-                printer (\@_, qw(termbinop term BITXOROP term)); 
-                return "$_[1] ^ $_[2]";
-            }
-    |    term DOTDOT term                       /* $x..$y, $x...$y */
-            {
-                return "list(range($_[1], $_[3] + 1))";
-            }
-    |    term ANDAND term                       /* $x && $y */
-            {
-                printer (\@_, qw(termbinop term andand term)); 
-                return "$_[1] and $_[3]";
-            }
-    |    term OROR term                         /* $x || $y */
-            {
-                printer (\@_, qw(termbinop term OROR term)); 
-                return "$_[1] or $_[3]";
-            }
-    |    term MATCHOP term         /*or term?           /* $x =~ s/$y/ */
-            {
-                $_[0]->yydata->{"IMPORTS"}{"import re"} = 1; 
-                if ($_[3] =~ /^s/){
-                    $_[3] =~ /s\/((?<!\\)(?:\\\\)*.*)\/((?<!\\)(?:\\\\)*.*?)\/([msixpodualngcer]?)/;
-                    my $re = $1;
-                    my $repl = $2;
-                    my $flags = $3;
-
-                    my @flags;
-                    if ($flags =~ /i/){push(@flags, "re.i")}
-                    if ($flags =~ /m/){push(@flags, "re.m")}
-                    if ($flags =~ /s/){push(@flags, "re.s")}
-                    $flags = join('| ', @flags);
-
-                    $repl =~ s/(?<!\\)(?:\\\\)*\k\\(\d)/\\$1/;
-                    if ($flags){
-                        return "$_[1] = re.sub(r'$re', '$repl', $_[1], $flags)";
+            |   term ADDOP term                        /* $x [+-.] $y */
+                {
+                    printer (\@_, "termbinop", "term", "ADDOP", "term");
+                    if ($_[2] eq '.'){
+                        return "str($_[1]) + str($_[3])";
                     }
-                    else{
-                        return "$_[1] = re.sub(r'$re', '$repl', $_[1])";
+                    else {
+                        return "eval(str($_[1])) $_[2] eval(str($_[3]))";
                     }
                 }
-                else{
-                    $_[3] =~ /\/((?<!\\)(?:\\\\)*.*)\/([imnsxadlup]?)/;
-                    my $re = $1;
-                    my $flags = $2;
-
-                    my @flags;
-                    if ($flags =~ /i/){push(@flags, "re.I")}
-                    if ($flags =~ /m/){push(@flags, "re.M")}
-                    if ($flags =~ /s/){push(@flags, "re.S")}
-                    $flags = join('| ', @flags);
-
-                    if ($flags){
-                        return "__MATCH__ = re.search(r'$re', $_[1], $flags)";
+            |   term SHIFTOP term                      /* $x >> $y, $x << $y */
+                {
+                    printer (\@_, qw(term SHIFTOP term)); 
+                    return "$_[1] $_[2] $_[3]";
+                }
+            |   term RELOP term                        /* $x > $y, etc. */
+                {
+                    printer (\@_, qw(termbinop term EQOP term)); 
+                    my %relop = (
+                        "gt" => ">",
+                        "ge" => ">=",
+                        "le" => "<=",
+                        "lt" => "<"
+                    );
+                    $_[2] = exists $relop{$_[2]} ? $relop{$_[2]} : $_[2];
+                    return "$_[1] $_[2] $_[3]";
+                }
+            |   term EQOP term                         /* $x == $y, $x eq $y */
+                {
+                    printer (\@_, qw(termbinop term EQOP term)); 
+                    if ($_[2] eq 'eq') {$_[2] = '=='}
+                    if ($_[2] eq '<=>') {
+                        return "((a > b) - (a < b))";
                     }
-                    else{
-                        return "__MATCH__ = re.search(r'$re', $_[1])";
+                    return "$_[1] $_[2] $_[3]";
+                }
+            |   term BITANDOP term                     /* $x & $y */
+                {
+                    printer (\@_, qw(termbinop term BITANDOP term)); 
+                    return "$_[1] & $_[2]";
+                }
+            |   term BITOROP term                      /* $x | $y */
+                {
+                    printer (\@_, qw(termbinop term BITOROP term)); 
+                    return "$_[1] | $_[2]";
+                }
+            |   term BITXOROP term                      /* $x | $y */
+                {
+                    printer (\@_, qw(termbinop term BITXOROP term)); 
+                    return "$_[1] ^ $_[2]";
+                }
+            |   term DOTDOT term                       /* $x..$y, $x...$y */
+                {
+                    return "list(range($_[1], $_[3] + 1))";
+                }
+            |   term ANDAND term                       /* $x && $y */
+                {
+                    printer (\@_, qw(termbinop term andand term)); 
+                    return "$_[1] and $_[3]";
+                }
+            |   term OROR term                         /* $x || $y */
+                {
+                    printer (\@_, qw(termbinop term OROR term)); 
+                    return "$_[1] or $_[3]";
+                }
+            |   term MATCHOP term         /*or term?           /* $x =~ s/$y/ */
+                {
+                    $_[0]->yydata->{"IMPORTS"}{"import re"} = 1; 
+
+                    if ($_[3] =~ /^s/) {
+                        $_[3] =~ /s\/((?<!\\)(?:\\\\)*.*)\/((?<!\\)(?:\\\\)*.*?)\/([msixpodualngcer]?)/;
+                        my $re = $1;
+                        my $repl = $2;
+                        my $flags = $3;
+
+                        my @flags;
+                        if ($flags =~ /i/){push(@flags, "re.i")}
+                        if ($flags =~ /m/){push(@flags, "re.m")}
+                        if ($flags =~ /s/){push(@flags, "re.s")}
+                        $flags = join('| ', @flags);
+
+                        $repl =~ s/(?<!\\)(?:\\\\)*\k\\(\d)/\\$1/;
+                        my $sub_string;
+                        if ($flags) {
+                            $sub_string = "r'$re', '$repl', $_[1], $flags";
+                        }
+                        else {
+                            $sub_string = "r'$re', '$repl', $_[1]";
+                        }
+                        return "$_[1] = re.sub($sub_string)";
+
+                    }
+                    else {
+                        $_[3] =~ /\/((?<!\\)(?:\\\\)*.*)\/([imnsxadlup]?)/;
+                        my $re = $1;
+                        my $flags = $2;
+
+                        my @flags;
+                        if ($flags =~ /i/){push(@flags, "re.I")}
+                        if ($flags =~ /m/){push(@flags, "re.M")}
+                        if ($flags =~ /s/){push(@flags, "re.S")}
+                        $flags = join('| ', @flags);
+
+                        my $search_string;
+                        if ($flags) {
+                            $search_string = "r'$re', $_[1], $flags";
+                        }
+                        else {
+                            $search_string = "r'$re', $_[1]";
+                        }
+                        return "__MATCH__ = re.search($search_string)";
+                        
+                    }
+                }
+            ;
+
+/* Unary operators and terms */
+termunop    :   '-' term %prec UMINUS   {"-$_[2]"}      /* -$x */
+            |   '+' term %prec UMINUS   {$_[2]}         /* +$x */
+            |   '!' term                {"not $_[2]"}   /* !$x */
+            |   '~' term                {"~$_[2]"}      /* ~$x */
+            |   term POSTINC            {"$_[1] += 1"}  /* $x++ */
+            |   term POSTDEC            {"$_[1] -= 1"}  /* $x-- */
+            ;
+
+term        :   termbinop
+            |   termunop
+            |   FHANDLE
+                {
+                    if ($_[1] eq "<STDIN>"){
+                        $_[0]->YYData->{"IMPORTS"}{"import sys"} = 1; 
+                        return "sys.stdin.readline()";
+                    }
+                    elsif ($_[1] eq "<\@STDIN>"){
+                        $_[0]->YYData->{"IMPORTS"}{"import sys"} = 1; 
+                        return "sys.stdin.readlines()";
+
+                    }
+                    elsif ($_[1] eq "<>"){
+                        $_[0]->YYData->{"IMPORTS"}{"import fileinput"} = 1; 
+                        return "fileinput.input()";
+                    }
+                    else {
+                        $_[1] =~ s/<(.*?)>/$1/;
+                        return $_[1];
                     }
                     
                 }
-            }
-    ;
-
-/* Unary operators and terms */
-termunop : '-' term %prec UMINUS                       /* -$x */
-            {
-                return "-$_[2]"; 
-            }
-    |    '+' term %prec UMINUS                  /* +$x */
-            {
-                return $_[2]; 
-            }
-    |    '!' term                               /* !$x */
-            {
-                printer (\@_, qw(termunop '!' term)); 
-                return "not $_[2]";
-            }
-    |   '~' term                               /* ~$x */
-            {
-                printer (\@_, qw(termunop '~' term)); 
-                return "~$_[2]";
-            }
-    |    term POSTINC                           /* $x++ */
-            {
-                printer (\@_, qw(termunop term POSTINC)); 
-                return "$_[1] += 1";
-            }
-    |    term POSTDEC                           /* $x-- */
-            {
-                printer (\@_, qw(termunop term POSTDEC)); 
-                return "$_[1] -= 1";
-            }
-    ;
-
-term    :    termbinop
-    |    termunop
-    |    FHANDLE
-            {
-                if ($_[1] eq "<STDIN>"){
+            |   REMATCH
+            |   RESUB
+            |   ARGV 
+                {
                     $_[0]->YYData->{"IMPORTS"}{"import sys"} = 1; 
-                    return "sys.stdin.readline()";
+                    $_[0]->YYData->{"PRELUDE"}{"sys.argv = sys.argv[1:]"} = 1; 
+                    return "sys.argv";
                 }
-                elsif ($_[1] eq "<\@STDIN>"){
-                    $_[0]->YYData->{"IMPORTS"}{"import sys"} = 1; 
-                    return "sys.stdin.readlines()";
-
-                }
-                elsif ($_[1] eq "<>"){
-                    $_[0]->YYData->{"IMPORTS"}{"import fileinput"} = 1; 
-                    return "fileinput.input()";
-                }
-                else{
-                    $_[1] =~ s/<(.*?)>/$1/;
+            |   STRING 
+                {
+                    printer (\@_, "term", "STRING");
+                    $_[1] =~ s/^"\$(\w+)"/$1/;
                     return $_[1];
                 }
-                
-            }
-    |    REMATCH
-    |    RESUB
-    |    ARGV 
-            {
-                $_[0]->YYData->{"IMPORTS"}{"import sys"} = 1; 
-                $_[0]->YYData->{"PRELUDE"}{"sys.argv = sys.argv[1:]"} = 1; 
-                return "sys.argv";
-            }
-    |    STRING 
-            {
-                printer (\@_, "term", "STRING");
-                $_[1] =~ s/^"\$(\w+)"/$1/;
-                return $_[1];
-            }
+            |   myattrterm %prec UNIOP
+            |   '(' expr ')'    {$_[2]}
+            |   '(' ')'         {"$_[1]$_[2]"}
+            |   scalar %prec '('
+            |   hsh %prec '('
+            |   ary %prec '('
+            |   arylen %prec '('                    /* $#x, $#{ something } */
+            |   subscripted
+            |   ary '[' expr ']'                     /* array slice */
+                {
+                    return "$_[1]$_[2]$_[3]$_[4]"; 
+                }
+            |   amper                                /* &foo; */
+            |   amper '(' ')'                        /* &foo() */
+            |   amper '(' expr ')'                   /* &foo(@args) */
+            |   NOAMP WORD listexpr                  /* foo(@args) */
+                {
+                    printer (\@_, qw(term NOAMP WORD listexpr)); 
+                }
+            |   LOOPEX  /* loop exiting command (goto, last, dump, etc) */
+                {
+                    if ($_[1] eq "last")    {return "break"}
+                    elsif ($_[1] eq "next") {return "continue"}
+                }
+            |   NOTOP argexpr        {"not $_[2]"}   /* not $foo */
+            |   WORD
+            |   function
+            ;
 
-    |    myattrterm    %prec UNIOP
-            {}
-    |    '(' expr ')'
-            {
-                return $_[2];    
-            }
-    |    '(' ')'
-            {}
-    |    scalar    %prec '('
-            {
-                printer (\@_, "term", "scalar");
-                return $_[1];
-            }
-    |    hsh     %prec '('
-            {}
-    |    ary     %prec '('
-            {
-                printer (\@_, qw(term ary)); 
-                return $_[1];
-            }
-    |    arylen     %prec '('                    /* $#x, $#{ something } */
-    |       subscripted
-    |    ary '[' expr ']'                     /* array slice */
-            {
-                return "$_[1]$_[2]$_[3]$_[4]"; 
-            }
-    |    amper                                /* &foo; */
-            {}
-    |    amper '(' ')'                        /* &foo() */
-            {}
-    |    amper '(' expr ')'                   /* &foo(@args) */
-            {}
-    |    NOAMP WORD listexpr                  /* foo(@args) */
-            {
-                printer (\@_, qw(term NOAMP WORD listexpr)); 
-            }
-    |    LOOPEX  /* loop exiting command (goto, last, dump, etc) */
-            {
-                if ($_[1] eq "last"){
-                    return "break";
-                }
-                elsif ($_[1] eq "next"){
-                    return "continue";
-                }
-
-            }
-    |    NOTOP argexpr                        /* not $foo */
-            {
-                printer (\@_, qw(term NOTOP argexpr)); 
-                return "not $_[2]";
-            }
-    |    UNIOP                                /* Unary op, $_ implied */
-            {
-                printer (\@_, qw(term UNIOP)); 
-                if ($_[1] eq "exit"){
-                   return "exit()";
-                }
-            }
-    |    UNIOP block                          /* eval { foo }, I *think* */
-            {}
-    |    UNIOP term                           /* Unary op */
-            {
-                printer (\@_, qw(term UNIOP term)); 
-                if ($_[1] eq "chomp"){
-                   return "$_[2] = $_[2].strip()";
-                }
-                elsif ($_[1] eq "pop"){
-                    return "$_[2].pop()";
-                }
-                elsif ($_[1] eq "shift"){
-                    return "$_[2].pop(0)";
-                }
-                elsif ($_[1] eq "close"){
-                    return "$_[2].close()";
-                }
-                elsif ($_[1] eq "keys"){
-                    return "$_[2].keys()";
-                }
-                
-            }
-    |    FUNC1 '(' ')'                        /* not () */
-            {
-                if ($_[1] eq "exit"){
-                   return "exit()";
-                }
-            }
-    |    FUNC1 '(' expr ')'                   /* not($foo) */
-            {
-                if ($_[1] eq "exit"){
-                   return "exit($_[3])";
-                }
-                elsif ($_[1] eq "chomp"){
-                   return "$_[3] = $_[3].strip()";
-                }
-                elsif ($_[1] eq "pop"){
-                    return "$_[3].pop()";
-                }
-                elsif ($_[1] eq "shift"){
-                    return "$_[3].pop(0)";
-                }
-                elsif ($_[1] eq "close"){
-                    return "$_[3].close()";
-                }
-                elsif ($_[1] eq "keys"){
-                    return "$_[3].keys()";
-                }
-            }
-    |    PMFUNC '(' term ')'                  /* split (/foo/) */
-            {}
-    |    PMFUNC '(' term ',' term ')'         /* split (/foo/,$bar) */
-            {
-                $_[3] =~ s/\/(.*)\//$1/;
-                #$_[3] =~ s/\\([\{\}\[\]\(\)\^\$\.\|\*\+\?\\])/$1/g;
-                $_[3] =~ s/\\([\Q{}[]()^$.|*+?\\E])/$1/g;
-                return "split($_[3], $_[5])";
-            }
-    |    WORD
-
-    /* list operators */
-    |    LSTOP indirob argexpr /* map {...} @args or print $fh @args */
-            {
-                #sort goes here
-                printer (\@_, "term", "LSTOP", "indirob", "argexpr");
-            }
-    |    FUNC '(' indirob expr ')'      /* print ($fh @args */
-            {
-                #sort goes here
-            }
-    |    LSTOP listexpr                       /* print @args */
-            {
-                printer (\@_, "term", "LSTOP", "listexpr");
-
-                if ($_[1] eq "printf"){
-                    my @list;
-                    my ($string, @args) = split(/"(?:\\"|""|\\\\|[^"])*"\K,\s*/, $_[2]);
-
-                    my $re = qr/(?<!\\)(?:\\\\)*\K\$\w+(?:\[(?<!\\)(?:\\\\)*\$\w+\])?/;
-
-                    $string =~ s/(\$\w+){(.*?);?}/$1\[$2\]/g;
-                    my @matches = $string =~ /${re}|%[csduoxefgXEGi]/g;
-                    foreach my $match (@matches){
-                        if ($match =~ /\$\w+/){
-                            $string =~ s/${re}/%s/;
-                            my $var = $&;
-                            $var =~ s/(?<!\\)(?:\\\\)*\$(\w+)/$1/g;
-                            $var =~ s/^ARGV/sys.argv/;
-                            push(@list, $var);
-                        }
-                        elsif ($match =~ /%[csduoxefgXEGi]/){
-                            push(@list, shift(@args));
-                        }
-                    }
-
-                    # remove final newline
-                    my $list = join(', ', @list);
-                    if ($string =~ s/^.*\K(?:,\s*"\\n"$)|(?:(?<!\\)\\n(?=\s*"$))//){ #"
-                        return "print($string % ($list))";
-                    }
-                    else{
-                        return "print($string % ($list), end='')";
+function    :   UNIOP                                /* Unary op, $_ implied */
+                {
+                    printer (\@_, qw(term UNIOP)); 
+                    if ($_[1] eq "exit"){
+                       return "exit()";
                     }
                 }
-                elsif ($_[1] eq "print"){
-
-                    my $new_line = 0;
-                    if ($_[2] =~ s/^.*\K(?:,\s*"\\n"$)|(?:(?<!\\)\\n(?=\s*"$))//){
-                        $new_line = 1; #"
+            |   UNIOP block                          /* eval { foo }, I *think* */
+            |   UNIOP term                           /* Unary op */
+                {
+                    printer (\@_, qw(term UNIOP term)); 
+                    if ($_[1] eq "chomp"){
+                       return "$_[2] = $_[2].strip()";
                     }
-
-                    my @printf; 
-                    foreach my $string ( split(/"(?:\\"|""|\\\\|[^"])*"\K,\s*/, $_[2])){
-                        $string =~ s/(\$\w+){(.*?);?}/$1\[$2\]/g;
-                        my $re = qr/(?<!\\)(?:\\\\)*\K\$\w+(\[(?<!\\)(?:\\\\)*\$\w+\])?/;
-                        if ($string =~ /${re}/){
-                            my @list;
-                            my @matches = $string =~ /${re}/g;
-                            foreach my $match (@matches){
-                                $string =~ s/${re}/%s/;
-                                my $var = $&;
-                                $var =~ s/(?<!\\)(?:\\\\)*\$(\w+)/$1/g;
-                                $var =~ s/^ARGV/sys.argv/;
-                                push(@list, $var);
-                            }
-                            push(@printf, "$string % (".join(', ', @list).")" );
-                        }
-                        else{
-                            push(@printf, $string);
-                        }
+                    elsif ($_[1] eq "pop"){
+                        return "$_[2].pop()";
                     }
-
-                    my $final = join(', ', @printf);
-                    # remove final newline
-                    if ($new_line){
-                        return "print($final)";
+                    elsif ($_[1] eq "shift"){
+                        return "$_[2].pop(0)";
                     }
-                    else{
-                        return "print($final, end='')";
+                    elsif ($_[1] eq "close"){
+                        return "$_[2].close()";
+                    }
+                    elsif ($_[1] eq "keys"){
+                        return "$_[2].keys()";
                     }
                 }
-                elsif ($_[1] eq "split") {
-                    return "split($_[2])";
+            |   FUNC1 '(' ')'                        /* not () */
+                {
+                    if ($_[1] eq "exit"){
+                       return "exit()";
+                    }
                 }
-                elsif ($_[1] eq "join") {
+            |   FUNC1 '(' expr ')'                   /* not($foo) */
+                {
+                    if ($_[1] eq "exit"){
+                       return "exit($_[3])";
+                    }
+                    elsif ($_[1] eq "chomp"){
+                       return "$_[3] = $_[3].strip()";
+                    }
+                    elsif ($_[1] eq "pop"){
+                        return "$_[3].pop()";
+                    }
+                    elsif ($_[1] eq "shift"){
+                        return "$_[3].pop(0)";
+                    }
+                    elsif ($_[1] eq "close"){
+                        return "$_[3].close()";
+                    }
+                    elsif ($_[1] eq "keys"){
+                        return "$_[3].keys()";
+                    }
+                }
+            |   PMFUNC '(' term ')'                  /* split (/foo/) */
+            |   PMFUNC '(' term ',' term ')'         /* split (/foo/,$bar) */
+                {
+                    $_[3] =~ s/\/(.*)\//$1/;
+                    $_[3] =~ s/([\Q{}[]()^$.|*+?\\E\w\s]*)/$1/g;
+                    return "split($_[3], $_[5])";
+                }
+            |   LSTOP indirob argexpr /* sort func @args */
+            |   FUNC '(' indirob expr ')'      /* sort (func @args */
+            |   LSTOP listexpr                       /* print @args */
+                {
                     printer (\@_, "term", "LSTOP", "listexpr");
-                    my @list = split(', ', $_[2]);
-                    my $delim = shift @list;
-                    return "'$delim'.join(@list)";
-                }
-                elsif ($_[1] eq "push") {
-                    my @list = split(', ', $_[2]);
-                    my $array = shift @list;
-                    return "$array.append(@list)";
-                }
-                elsif ($_[1] eq "unshift") {
-                    my @list = split(', ', $_[2]);
-                    my $array = shift @list;
-                    return "$array.insert(0, @list)";
-                }
-                elsif ($_[1] eq "reverse") {
-                    return "reversed($_[2])";
-                }
-                elsif ($_[1] eq "open") {
-                    my @list = split(', ', $_[2]);
-                    my $handle = shift @list;
-                    my $file = shift @list;
-                    $file =~ s/^"(<|>>|>)//; #"
-                    my $mode;
-                    if ($1 eq '<'){
-                        $mode = 'r';
-                    }
-                    elsif ($1 eq '>>'){
-                        $mode = 'w';
-                    }
-                    elsif ($1 eq '>'){
-                        $mode = 'w';
-                    }
-                    return "$handle = open(\"$file, \'$mode\')";
-                }
-                elsif ($_[1] eq "sort") {
-                    my @list = split(', ', $_[2]);
-                    #TODO
-                    my $handle = shift @list;
-                    my $mode = shift @list;
-                    #return "$handle = open($array.insert(0, @list)";
-                }
-            }
-    |    FUNC '(' listexprcom ')'             /* print (@args) */
-            {
-                if ($_[1] eq "printf"){
-                    my @list;
-                    my ($string, @args) =
-                    split(/"(?:\\"|""|\\\\|[^"])*"\K,\s*/, $_[3]);
 
-                    my $re = qr/(?<!\\)(?:\\\\)*\K\$\w+(\[(?<!\\)(?:\\\\)*\$\w+\])?/;
-                    my @matches = $string =~ /${re}|%[csduoxefgXEGi]/g;
-                    $string =~ s/(\$\w+){(.*?);?}/$1\[$2\]/g;
-                    foreach my $match (@matches){
-                        if ($match =~ /\$\w+/){
-                            $string =~ s/${re}/%s/;
-                            my $var = $&;
-                            $var =~ s/(?<!\\)(?:\\\\)*\$(\w+)/$1/g;
-                            $var =~ s/^ARGV/sys.argv/;
-                            push(@list, $var);
-                        }
-                        elsif ($match =~ /%[csduoxefgXEGi]/){
-                            push(@list, shift(@args));
-                        }
-                    }
+                    if ($_[1] eq "printf"){
+                        my @list;
+                        my ($string, @args) = split(/"(?:\\"|""|\\\\|[^"])*"\K,\s*/, $_[2]);
 
-                    my $list = join(', ', @list);
-                    if ($string =~ s/^.*\K(?:,\s*"\\n"$)|(?:(?<!\\)\\n(?=\s*"$))//){ #"
-                        return "print($string % ($list))";
-                    }
-                    else{
-                        return "print($string % ($list), end='')";
-                    }
-                }
-                elsif ($_[1] eq "print"){
+                        my $re = qr/(?<!\\)(?:\\\\)*\K\$\w+(?:\[(?<!\\)(?:\\\\)*\$\w+\])?/;
 
-                    my $new_line = 0;
-                    if ($_[3] =~ s/^.*\K(?:,\s*"\\n"$)|(?:(?<!\\)\\n(?=\s*"$))//){
-                        $new_line = 1; #"
-                    }
-
-                    my @printf; 
-                    foreach my $string ( split(/"(?:\\"|""|\\\\|[^"])*"\K,\s*/, $_[3])){
                         $string =~ s/(\$\w+){(.*?);?}/$1\[$2\]/g;
-                        my $re = qr/(?<!\\)(?:\\\\)*\K\$\w+(\[(?<!\\)(?:\\\\)*\$\w+\])?/;
-                        if ($string =~ /${re}/){
-                            my @list;
-                            my @matches = $string =~ /${re}/g;
-                            foreach my $match (@matches){
+                        my @matches = $string =~ /${re}|%[csduoxefgXEGi]/g;
+                        foreach my $match (@matches){
+                            if ($match =~ /\$\w+/){
                                 $string =~ s/${re}/%s/;
                                 my $var = $&;
                                 $var =~ s/(?<!\\)(?:\\\\)*\$(\w+)/$1/g;
                                 $var =~ s/^ARGV/sys.argv/;
                                 push(@list, $var);
                             }
-                            push(@printf, "$string % (".join(', ', @list).")" );
+                            elsif ($match =~ /%[csduoxefgXEGi]/){
+                                push(@list, shift(@args));
+                            }
                         }
-                        else{
-                            push(@printf, $string);
-                        }
-                    }
 
-                    my $final = join(', ', @printf);
-                    # remove final newline
-                    if ($new_line){
-                        return "print($final)";
+                        # remove final newline
+                        my $list = join(', ', @list);
+                        if ($string =~ s/^.*\K(?:,\s*"\\n"$)|(?:(?<!\\)\\n(?=\s*"$))//){ #"
+                            return "print($string % ($list))";
+                        }
+                        else {
+                            return "print($string % ($list), end='')";
+                        }
                     }
-                    else{
-                        return "print($final, end='')";
+                    elsif ($_[1] eq "print"){
+
+                        my $new_line = 0;
+                        if ($_[2] =~ s/^.*\K(?:,\s*"\\n"$)|(?:(?<!\\)\\n(?=\s*"$))//){
+                            $new_line = 1; #"
+                        }
+
+                        my @printf; 
+                        foreach my $string ( split(/"(?:\\"|""|\\\\|[^"])*"\K,\s*/, $_[2])){
+                            $string =~ s/(\$\w+){(.*?);?}/$1\[$2\]/g;
+                            my $re = qr/(?<!\\)(?:\\\\)*\K\$\w+(\[(?<!\\)(?:\\\\)*\$\w+\])?/;
+                            if ($string =~ /${re}/){
+                                my @list;
+                                my @matches = $string =~ /${re}/g;
+                                foreach my $match (@matches){
+                                    $string =~ s/${re}/%s/;
+                                    my $var = $&;
+                                    $var =~ s/(?<!\\)(?:\\\\)*\$(\w+)/$1/g;
+                                    $var =~ s/^ARGV/sys.argv/;
+                                    push(@list, $var);
+                                }
+                                push(@printf, "$string % (".join(', ', @list).")" );
+                            }
+                            else {
+                                push(@printf, $string);
+                            }
+                        }
+
+                        my $final = join(', ', @printf);
+                        # remove final newline
+                        if ($new_line) {
+                            return "print($final)";
+                        }
+                        else {
+                            return "print($final, end='')";
+                        }
+                    }
+                    elsif ($_[1] eq "split") {
+                        return "split($_[2])";
+                    }
+                    elsif ($_[1] eq "join") {
+                        printer (\@_, "term", "LSTOP", "listexpr");
+                        my @list = split(', ', $_[2]);
+                        my $delim = shift @list;
+                        return "'$delim'.join(@list)";
+                    }
+                    elsif ($_[1] eq "push") {
+                        my @list = split(', ', $_[2]);
+                        my $array = shift @list;
+                        return "$array.append(@list)";
+                    }
+                    elsif ($_[1] eq "unshift") {
+                        my @list = split(', ', $_[2]);
+                        my $array = shift @list;
+                        return "$array.insert(0, @list)";
+                    }
+                    elsif ($_[1] eq "reverse") {
+                        return "reversed($_[2])";
+                    }
+                    elsif ($_[1] eq "open") {
+                        my @list = split(', ', $_[2]);
+                        my $handle = shift @list;
+                        my $file = shift @list;
+                        $file =~ s/^"(<|>>|>)//; #"
+                        my $mode;
+                        if ($1 eq '<'){
+                            $mode = 'r';
+                        }
+                        elsif ($1 eq '>>'){
+                            $mode = 'w';
+                        }
+                        elsif ($1 eq '>'){
+                            $mode = 'w';
+                        }
+                        return "$handle = open(\"$file, \'$mode\')";
+                    }
+                    elsif ($_[1] eq "sort") {
+                        my @list = split(', ', $_[2]);
+                        #TODO
+                        my $handle = shift @list;
+                        my $mode = shift @list;
+                        #return "$handle = open($array.insert(0, @list)";
                     }
                 }
-            }
-    ;
+            |   FUNC '(' listexprcom ')'             /* print (@args) */
+                {
+                    if ($_[1] eq "printf"){
+                        my @list;
+                        my ($string, @args) =
+                        split(/"(?:\\"|""|\\\\|[^"])*"\K,\s*/, $_[3]);
+
+                        my $re = qr/(?<!\\)(?:\\\\)*\K\$\w+(\[(?<!\\)(?:\\\\)*\$\w+\])?/;
+                        my @matches = $string =~ /${re}|%[csduoxefgXEGi]/g;
+                        $string =~ s/(\$\w+){(.*?);?}/$1\[$2\]/g;
+                        foreach my $match (@matches){
+                            if ($match =~ /\$\w+/){
+                                $string =~ s/${re}/%s/;
+                                my $var = $&;
+                                $var =~ s/(?<!\\)(?:\\\\)*\$(\w+)/$1/g;
+                                $var =~ s/^ARGV/sys.argv/;
+                                push(@list, $var);
+                            }
+                            elsif ($match =~ /%[csduoxefgXEGi]/){
+                                push(@list, shift(@args));
+                            }
+                        }
+
+                        my $list = join(', ', @list);
+                        if ($string =~ s/^.*\K(?:,\s*"\\n"$)|(?:(?<!\\)\\n(?=\s*"$))//){ #"
+                            return "print($string % ($list))";
+                        }
+                        else{
+                            return "print($string % ($list), end='')";
+                        }
+                    }
+                    elsif ($_[1] eq "print"){
+
+                        my $new_line = 0;
+                        if ($_[3] =~ s/^.*\K(?:,\s*"\\n"$)|(?:(?<!\\)\\n(?=\s*"$))//){
+                            $new_line = 1; #"
+                        }
+
+                        my @printf; 
+                        foreach my $string ( split(/"(?:\\"|""|\\\\|[^"])*"\K,\s*/, $_[3])){
+                            $string =~ s/(\$\w+){(.*?);?}/$1\[$2\]/g;
+                            my $re = qr/(?<!\\)(?:\\\\)*\K\$\w+(\[(?<!\\)(?:\\\\)*\$\w+\])?/;
+                            if ($string =~ /${re}/){
+                                my @list;
+                                my @matches = $string =~ /${re}/g;
+                                foreach my $match (@matches){
+                                    $string =~ s/${re}/%s/;
+                                    my $var = $&;
+                                    $var =~ s/(?<!\\)(?:\\\\)*\$(\w+)/$1/g;
+                                    $var =~ s/^ARGV/sys.argv/;
+                                    push(@list, $var);
+                                }
+                                push(@printf, "$string % (".join(', ', @list).")" );
+                            }
+                            else{
+                                push(@printf, $string);
+                            }
+                        }
+
+                        my $final = join(', ', @printf);
+                        # remove final newline
+                        if ($new_line){
+                            return "print($final)";
+                        }
+                        else{
+                            return "print($final, end='')";
+                        }
+                    }
+                }
+            ;
 
 /* "my" declarations, with optional attributes */
-myattrterm  :   MY myterm {$_[2]};
+myattrterm  :   MY myterm {$_[2]}
+            ;
 
 /* Things that can be "my"'d */
 myterm      :   '(' expr ')' {$_[2]}
@@ -958,7 +906,7 @@ arylen      :   DOLSHARP indirob {return "len($_[2]) - 1";}
 indirob     :   WORD
             |   ARGV
                 {
-                        $_[0]->YYData->{"IMPORTS"}{"import sys"} = 1; 
+                    $_[0]->YYData->{"IMPORTS"}{"import sys"} = 1; 
                     $_[0]->YYData->{"PRELUDE"}{"sys.argv = sys.argv[1:]"} = 1; 
                     return "sys.argv";
                 }
