@@ -89,6 +89,7 @@ sub getToken {
     );
 
     $_[0]->YYData->{"DATA"} =~ s/^\s+//;
+    #adds a final ; in blocks if one doens't exist for syntax reasons
     $_[0]->YYData->{"DATA"} =~ s/(?!})^.*?\K;?\s*}/;}/;
 
     if ($_[0]->YYData->{"DEBUG"}){
@@ -111,9 +112,14 @@ sub getToken {
         #print "$token, $re\n";
     }
 
-    if ($found){
-        my $maxpos = 0; 
-        my $maxval = 0;
+    if (!$found && length ($_[0]->YYData->{"DATA"})) {
+        print STDERR "Unable to find token\n";
+        print STDERR $_[0]->YYData->{"DATA"}, "\n";
+        return ('', undef);
+    }
+
+    if (length ($_[0]->YYData->{"DATA"})) {
+        my ($maxpos, $maxval) = 0; 
         for (my $i = 0; $i < scalar @tokens; $i++){
             if ($length[$i] > $maxval){
                 $maxpos = $i;
@@ -127,12 +133,7 @@ sub getToken {
         #print "$token : $&\n";
         return ($token, $&);
     }
-    elsif (!$found && !length($_[0]->YYData->{"DATA"})) {
-        return ('', undef);
-    }
     else {
-        print STDERR "No Match Found\n";
-        print STDERR $_[0]->YYData->{"DATA"}, "\n";
         return ('', undef);
     }
 }
@@ -249,15 +250,15 @@ sub func_open {
     my @list = split(', ', $_[2]);
     my $handle = shift @list;
     my $file = shift @list;
-    $file =~ s/^"(<|>>|>)//; #"
+    $file =~ s/^"(<|>>|>)/"/; #"
 
     my $mode;
     given ($1) {
-        when ('<')  { $mode = 'r' }
-        when ('>>') { $mode = 'a' }
-        when ('>' ) { $mode = 'w' }
+        when ('<')  { $mode = "'r'" }
+        when ('>>') { $mode = "'a'" }
+        when ('>')  { $mode = "'w'" }
     }
-    return "$handle = open(\"$file, \'$mode\')";
+    return "$handle = open($file, $mode)";
 }
 
 sub compile_flags {
@@ -320,15 +321,15 @@ prog        :   lineseq
 
 /* A collection of "lines" in the program */
 lineseq     :   /* NULL */
-            |   lineseq decl
+            |   lineseq subrout
                 {
                     printer(\@_, qw( lineseq lineseq decl )); 
-                    return "$_[1]$_[2]";
+                    return "$_[1]$_[2]\n";
                 }
             |   lineseq line
                 {
                     printer(\@_, "lineseq", "lineseq", "line");
-                    return "$_[1]$_[2]";
+                    return "$_[1]$_[2]\n";
                 }
             ;
 
@@ -348,8 +349,8 @@ block       :   '{' lineseq '}'
                 {
                     printer(\@_, qw( block '{' lineseq '}' )); 
                     # adds indentation
-                    $_[3] =~ s/^/    /gm;   #"/
-                    return "\n$_[3]\n";
+                    $_[2] =~ s/^/    /gm;   #"/
+                    return "\n$_[2]\n";
                 }
             ;
 
@@ -389,7 +390,7 @@ else        :   /* NULL */
 cond        :   IF '(' expr ')' block else
                 {
                     printer (\@_, qw( IF '(' expr ')' block else));
-                    return "if $_[4]:$_[6]$_[7]";
+                    return "if $_[3]:$_[5]$_[6]";
                     
                 }
             ;
@@ -398,31 +399,31 @@ cond        :   IF '(' expr ')' block else
 loop        :   WHILE '(' texpr ')' block 
                 {
                      printer (\@_, qw(WHILE '(' texpr ')' block cont)); 
-                     if ($_[4] =~ /(\w+)\s*=\s*(.*)\s*/) {
-                        return "for $1 in $2:$_[6]$_[7]";
+                     if ($_[3] =~ /(\w+)\s*=\s*(.*)\s*/) {
+                        return "for $1 in $2:$_[5]";
                      }
                      else {
-                        return "while $_[4]:$_[6]$_[7]";
+                        return "while $_[3]:$_[5]";
                      }
                 }
             |   FOR MY scalar '(' expr ')' block 
                 {
                     printer (\@_, qw(loop FOR MY scalar '(' expr ')' block cont)); 
-                    return "for $_[4] in $_[6]:$_[8]";
+                    return "for $_[3] in $_[5]:$_[7]";
                 }
             |   FOR scalar '(' expr ')' block 
                 {
                     printer (\@_, qw(loop FOR scalar '(' expr ')' block cont)); 
-                    return "for $_[2] in $_[5]:$_[7]";
+                    return "for $_[2] in $_[4]:$_[6]";
                 }
             |   FOR '(' expr ')' block 
                 {
-                    return "for _ in $_[4]:$_[6]";
+                    return "for _ in $_[3]:$_[5]";
                 }
             |   FOR '(' nexpr ';' texpr ';' nexpr ')' block
                 {
                     printer (\@_, qw(loop FOR '(' nexpr ';' texpr ';' nexpr ')' block)); 
-                    return "$_[4]\nwhile $_[6]:$_[10]$_[8]\n";
+                    return "$_[3]\nwhile $_[5]:$_[9]$_[7]\n";
                 }
             ;
 
@@ -432,16 +433,12 @@ nexpr       :   /* NULL */
             ;
 
 /* Boolean expression */
-texpr       :   /* NULL means true */ {return "True";}
+texpr       :   /* NULL means true */ {"True"}
             |   expr
             ;
 
-/* Some kind of declaration - does not take part in the parse tree */
-decl        :   subrout
-            ;
-
 /* Subroutine definition */
-subrout     :   SUB subname subbody
+subrout     :   SUB subname subbody {"def $_[2]():$_[3]"}
             ;
 
 /* Name of a subroutine - must be a bareword, could be special */
@@ -490,23 +487,14 @@ argexpr     :   argexpr ','
             ;
 
 /* Some kind of subscripted expression */
-subscripted :   scalar '[' expr ']'          /* $array[$element] */
-                {
-                    return "$_[1]$_[2]$_[3]$_[4]"; 
-                }
-            |   subscripted '[' expr ']'          /* $array[$element] */
-                {
-                    return "$_[1]$_[2]$_[3]$_[4]"; 
-                }
+subscripted :   scalar '[' expr ']'             {"$_[1]$_[2]$_[3]$_[4]"} /* $array[$element] */
+            |   subscripted '[' expr ']'        {"$_[1]$_[2]$_[3]$_[4]"} /* $array[$element] */
             |   scalar '{' expr ';' '}'
                 {
                     $_[0]->YYData->{"PRELUDE"}{"$_[1] = {}"} = 1; 
                     return "$_[1]\[$_[3]\]"; 
                 }
-            |   subscripted '{' expr ';' '}'
-                {
-                    return "$_[1]\[$_[3]\]"; 
-                }
+            |   subscripted '{' expr ';' '}'    {"$_[1]\[$_[3]\]"}
             ;
 
 /* binary operators between terms */
@@ -773,7 +761,6 @@ function    :   UNIOP                                /* Unary op, $_ implied */
             |   FUNC '(' listexprcom ')'             /* print (@args) */
                 {
                     $_[2] = $_[3];
-
                     given ($_[1]) {
                         when ("print")  { &func_print }
                         when ("printf") { &func_printf }
@@ -784,72 +771,6 @@ function    :   UNIOP                                /* Unary op, $_ implied */
                         when ("reverse"){ "reversed($_[2])" }
                         when ("open")   { &func_open }
                         when ("sort")   { "sorted($_[2])" }
-                    }
-                    if ($_[1] eq "printf"){
-                        my @list;
-                        my ($string, @args) =
-                        split(/"(?:\\"|""|\\\\|[^"])*"\K,\s*/, $_[3]);
-
-                        my $re = qr/(?<!\\)(?:\\\\)*\K\$\w+(\[(?<!\\)(?:\\\\)*\$\w+\])?/;
-                        my @matches = $string =~ /${re}|%[csduoxefgXEGi]/g;
-                        $string =~ s/(\$\w+){(.*?);?}/$1\[$2\]/g;
-                        foreach my $match (@matches){
-                            if ($match =~ /\$\w+/){
-                                $string =~ s/${re}/%s/;
-                                my $var = $&;
-                                $var =~ s/(?<!\\)(?:\\\\)*\$(\w+)/$1/g;
-                                $var =~ s/^ARGV/sys.argv/;
-                                push(@list, $var);
-                            }
-                            elsif ($match =~ /%[csduoxefgXEGi]/){
-                                push(@list, shift(@args));
-                            }
-                        }
-
-                        my $list = join(', ', @list);
-                        if ($string =~ s/^.*\K(?:,\s*"\\n"$)|(?:(?<!\\)\\n(?=\s*"$))//){ #"
-                            return "print($string % ($list))";
-                        }
-                        else{
-                            return "print($string % ($list), end='')";
-                        }
-                    }
-                    elsif ($_[1] eq "print"){
-
-                        my $new_line = 0;
-                        if ($_[3] =~ s/^.*\K(?:,\s*"\\n"$)|(?:(?<!\\)\\n(?=\s*"$))//){
-                            $new_line = 1; #"
-                        }
-
-                        my @printf; 
-                        foreach my $string ( split(/"(?:\\"|""|\\\\|[^"])*"\K,\s*/, $_[3])){
-                            $string =~ s/(\$\w+){(.*?);?}/$1\[$2\]/g;
-                            my $re = qr/(?<!\\)(?:\\\\)*\K\$\w+(\[(?<!\\)(?:\\\\)*\$\w+\])?/;
-                            if ($string =~ /${re}/){
-                                my @list;
-                                my @matches = $string =~ /${re}/g;
-                                foreach my $match (@matches){
-                                    $string =~ s/${re}/%s/;
-                                    my $var = $&;
-                                    $var =~ s/(?<!\\)(?:\\\\)*\$(\w+)/$1/g;
-                                    $var =~ s/^ARGV/sys.argv/;
-                                    push(@list, $var);
-                                }
-                                push(@printf, "$string % (".join(', ', @list).")" );
-                            }
-                            else{
-                                push(@printf, $string);
-                            }
-                        }
-
-                        my $final = join(', ', @printf);
-                        # remove final newline
-                        if ($new_line){
-                            return "print($final)";
-                        }
-                        else{
-                            return "print($final, end='')";
-                        }
                     }
                 }
             ;
@@ -875,7 +796,7 @@ listexpr    :   /* NULL */ %prec PREC_LOW
 /*list of expressions separated by commas*/
 listexprcom:    /* NULL */
             |   expr
-            |   expr ',' {"$_[1], "}
+            |   expr ','    {"$_[1], "}
             ;
 
 /* A little bit of trickery to make "for my $foo (@bar)" actually be lexical */
@@ -892,7 +813,7 @@ ary         :   '@' indirob {$_[2]}
 hsh         :   '%' indirob {$_[2]}
             ;
 
-arylen      :   DOLSHARP indirob {return "len($_[2]) - 1";}
+arylen      :   DOLSHARP indirob {"len($_[2]) - 1"}
             ;
 
 /* Indirect objects */
