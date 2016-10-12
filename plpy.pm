@@ -17,7 +17,7 @@ use Parse::Yapp::Driver;
 #line 8 "plpy.yp"
 
 use Term::ANSIColor;
-use Switch;
+use feature "switch";
 
 sub Lexer {
     my ($type, $value) = getToken($_[0]);
@@ -147,7 +147,7 @@ sub getToken {
     }
 }
 
-sub printer{
+sub printer {
     my @tokens = @{shift(@_)};
     my @words = @_;
     my $parser = shift(@tokens);
@@ -166,6 +166,108 @@ sub printer{
         #print STDERR "YYExpect:\n", join("\n", $parser->YYExpect), "\n";
         print STDERR color('reset');
     }
+}
+
+sub func_printf {
+    my @list;
+    my ($string, @args) = split(/"(?:\\"|""|\\\\|[^"])*"\K,\s*/, $_[2]);
+
+    my $re = qr/(?<!\\)(?:\\\\)*\K\$\w+(?:\[(?<!\\)(?:\\\\)*\$\w+\])?/;
+
+    $string =~ s/(\$\w+){(.*?);?}/$1\[$2\]/g;
+    my @matches = $string =~ /${re}|%[csduoxefgXEGi]/g;
+    foreach my $match (@matches){
+        if ($match =~ /\$\w+/){
+            $string =~ s/${re}/%s/;
+            my $var = $&;
+            $var =~ s/(?<!\\)(?:\\\\)*\$(\w+)/$1/g;
+            $var =~ s/^ARGV/sys.argv/;
+            push(@list, $var);
+        }
+        elsif ($match =~ /%[csduoxefgXEGi]/){
+            push(@list, shift(@args));
+        }
+    }
+
+    # remove final newline
+    my $list = join(', ', @list);
+    if ($string =~ s/^.*\K(?:,\s*"\\n"$)|(?:(?<!\\)\\n(?=\s*"$))//) { #"
+        return "print($string % ($list))";
+    }
+    else {
+        return "print($string % ($list), end='')";
+    }
+}
+
+sub func_print {
+
+    my $new_line = 0;
+    if ($_[2] =~ s/^.*\K(?:,\s*"\\n"$)|(?:(?<!\\)\\n(?=\s*"$))//){
+        $new_line = 1; #"
+    }
+
+    my @printf; 
+    foreach my $string ( split(/"(?:\\"|""|\\\\|[^"])*"\K,\s*/, $_[2])){
+        $string =~ s/(\$\w+){(.*?);?}/$1\[$2\]/g;
+        my $re = qr/(?<!\\)(?:\\\\)*\K\$\w+(\[(?<!\\)(?:\\\\)*\$\w+\])?/;
+        if ($string =~ /${re}/){
+            my @list;
+            my @matches = $string =~ /${re}/g;
+            foreach my $match (@matches){
+                $string =~ s/${re}/%s/;
+                my $var = $&;
+                $var =~ s/(?<!\\)(?:\\\\)*\$(\w+)/$1/g;
+                $var =~ s/^ARGV/sys.argv/;
+                push(@list, $var);
+            }
+            push(@printf, "$string % (".join(', ', @list).")" );
+        }
+        else {
+            push(@printf, $string);
+        }
+    }
+
+    my $final = join(', ', @printf);
+    # remove final newline
+    if ($new_line) {
+        return "print($final)";
+    }
+    else {
+        return "print($final, end='')";
+    }
+}
+
+sub func_join {
+    my @list = split(', ', $_[2]);
+    my $delim = shift @list;
+    return "'$delim'.join(@list)";
+}
+
+sub func_push {
+    my @list = split(', ', $_[2]);
+    my $array = shift @list;
+    return "$array.append(@list)";
+}
+
+sub func_unshift {
+    my @list = split(', ', $_[2]);
+    my $array = shift @list;
+    return "$array.insert(0, @list)";
+}
+
+sub func_open {
+    my @list = split(', ', $_[2]);
+    my $handle = shift @list;
+    my $file = shift @list;
+    $file =~ s/^"(<|>>|>)//; #"
+
+    my $mode;
+    given ($1) {
+        when ('<')  { $mode = 'r' }
+        when ('>>') { $mode = 'a' }
+        when ('>' ) { $mode = 'w' }
+    }
+    return "$handle = open(\"$file, \'$mode\')";
 }
 
 
@@ -3573,7 +3675,7 @@ sub new {
 	[#Rule 3
 		 'lineseq', 2,
 sub
-#line 218 "plpy.yp"
+#line 316 "plpy.yp"
 {
                     printer(\@_, qw( lineseq lineseq decl )); 
                     return "$_[1]$_[2]";
@@ -3582,7 +3684,7 @@ sub
 	[#Rule 4
 		 'lineseq', 2,
 sub
-#line 223 "plpy.yp"
+#line 321 "plpy.yp"
 {
                     printer(\@_, "lineseq", "lineseq", "line");
                     return "$_[1]$_[2]";
@@ -3600,15 +3702,16 @@ sub
 	[#Rule 8
 		 'line', 1,
 sub
-#line 234 "plpy.yp"
+#line 332 "plpy.yp"
 {
-                    printer(\@_, "line", "COMMENT")
+                    printer(\@_, "line", "COMMENT");
+                    return "$_[1]\n";
                 }
 	],
 	[#Rule 9
 		 'block', 3,
 sub
-#line 241 "plpy.yp"
+#line 340 "plpy.yp"
 {
                     printer(\@_, qw( block '{' lineseq '}' )); 
                     # adds indentation
@@ -3619,7 +3722,7 @@ sub
 	[#Rule 10
 		 'sideff', 1,
 sub
-#line 251 "plpy.yp"
+#line 350 "plpy.yp"
 {
                     printer(\@_, "sideff", "expr");
                     return $_[1];
@@ -3628,7 +3731,7 @@ sub
 	[#Rule 11
 		 'sideff', 3,
 sub
-#line 256 "plpy.yp"
+#line 355 "plpy.yp"
 {
                     printer(\@_, qw( sideff expr WHILE expr ));
                     return "while $_[3]: $_[1]";
@@ -3637,7 +3740,7 @@ sub
 	[#Rule 12
 		 'sideff', 3,
 sub
-#line 261 "plpy.yp"
+#line 360 "plpy.yp"
 {
                     printer (\@_, qw(sideff expr FOR expr));
                     return "for $_[3]: $_[1]";
@@ -3649,7 +3752,7 @@ sub
 	[#Rule 14
 		 'else', 2,
 sub
-#line 270 "plpy.yp"
+#line 369 "plpy.yp"
 {
                     printer (\@_, qw( else ELSE block ));
                     return "else:$_[2]";
@@ -3658,7 +3761,7 @@ sub
 	[#Rule 15
 		 'else', 6,
 sub
-#line 275 "plpy.yp"
+#line 374 "plpy.yp"
 {
                     printer (\@_, qw( else ELSIF '(' expr ')' block else)); 
                     return "elif $_[3]:$_[5]$_[6]";
@@ -3667,7 +3770,7 @@ sub
 	[#Rule 16
 		 'cond', 6,
 sub
-#line 283 "plpy.yp"
+#line 382 "plpy.yp"
 {
                     printer (\@_, qw( IF '(' expr ')' block else));
                     return "if $_[4]:$_[6]$_[7]";
@@ -3677,7 +3780,7 @@ sub
 	[#Rule 17
 		 'loop', 5,
 sub
-#line 292 "plpy.yp"
+#line 391 "plpy.yp"
 {
                      printer (\@_, qw(WHILE '(' texpr ')' block cont)); 
                      if ($_[4] =~ /(\w+)\s*=\s*(.*)\s*/) {
@@ -3691,7 +3794,7 @@ sub
 	[#Rule 18
 		 'loop', 7,
 sub
-#line 302 "plpy.yp"
+#line 401 "plpy.yp"
 {
                     printer (\@_, qw(loop FOR MY scalar '(' expr ')' block cont)); 
                     return "for $_[4] in $_[6]:$_[8]";
@@ -3700,7 +3803,7 @@ sub
 	[#Rule 19
 		 'loop', 6,
 sub
-#line 307 "plpy.yp"
+#line 406 "plpy.yp"
 {
                     printer (\@_, qw(loop FOR scalar '(' expr ')' block cont)); 
                     return "for $_[2] in $_[5]:$_[7]";
@@ -3709,7 +3812,7 @@ sub
 	[#Rule 20
 		 'loop', 5,
 sub
-#line 312 "plpy.yp"
+#line 411 "plpy.yp"
 {
                     return "for _ in $_[4]:$_[6]";
                 }
@@ -3717,7 +3820,7 @@ sub
 	[#Rule 21
 		 'loop', 9,
 sub
-#line 316 "plpy.yp"
+#line 415 "plpy.yp"
 {
                     printer (\@_, qw(loop FOR '(' nexpr ';' texpr ';' nexpr ')' block)); 
                     return "$_[4]\nwhile $_[6]:$_[10]$_[8]\n";
@@ -3732,7 +3835,7 @@ sub
 	[#Rule 24
 		 'texpr', 0,
 sub
-#line 328 "plpy.yp"
+#line 427 "plpy.yp"
 {return "True";}
 	],
 	[#Rule 25
@@ -3756,7 +3859,7 @@ sub
 	[#Rule 31
 		 'expr', 3,
 sub
-#line 351 "plpy.yp"
+#line 450 "plpy.yp"
 {
                     printer (\@_, qw(expr expr ANDOP expr)); 
                     return "$_[1] and $_[3]";
@@ -3765,7 +3868,7 @@ sub
 	[#Rule 32
 		 'expr', 3,
 sub
-#line 356 "plpy.yp"
+#line 455 "plpy.yp"
 {
                     printer (\@_, qw(expr expr OROP expr)); 
                     return "$_[1] or $_[3]";
@@ -3774,7 +3877,7 @@ sub
 	[#Rule 33
 		 'expr', 1,
 sub
-#line 361 "plpy.yp"
+#line 460 "plpy.yp"
 {
                     printer(\@_, qw(expr argexpr));
                     return $_[1];
@@ -3783,7 +3886,7 @@ sub
 	[#Rule 34
 		 'argexpr', 2,
 sub
-#line 369 "plpy.yp"
+#line 468 "plpy.yp"
 {
                     printer (\@_, "argexpr", "','");
                     return "$_[1], ";
@@ -3792,7 +3895,7 @@ sub
 	[#Rule 35
 		 'argexpr', 3,
 sub
-#line 374 "plpy.yp"
+#line 473 "plpy.yp"
 {
                     printer (\@_, "argexpr", "','", "term");
                     return "$_[1], $_[3]";
@@ -3801,7 +3904,7 @@ sub
 	[#Rule 36
 		 'argexpr', 1,
 sub
-#line 379 "plpy.yp"
+#line 478 "plpy.yp"
 {
                     printer (\@_, "argexpr", "term");
                     return $_[1];
@@ -3810,7 +3913,7 @@ sub
 	[#Rule 37
 		 'subscripted', 4,
 sub
-#line 387 "plpy.yp"
+#line 486 "plpy.yp"
 {
                     return "$_[1]$_[2]$_[3]$_[4]"; 
                 }
@@ -3818,7 +3921,7 @@ sub
 	[#Rule 38
 		 'subscripted', 4,
 sub
-#line 391 "plpy.yp"
+#line 490 "plpy.yp"
 {
                     return "$_[1]$_[2]$_[3]$_[4]"; 
                 }
@@ -3826,16 +3929,16 @@ sub
 	[#Rule 39
 		 'subscripted', 5,
 sub
-#line 395 "plpy.yp"
+#line 494 "plpy.yp"
 {
-                    $_[0]->yydata->{"PRELUDE"}{"$_[1] = {}"} = 1; 
+                    $_[0]->YYData->{"PRELUDE"}{"$_[1] = {}"} = 1; 
                     return "$_[1]\[$_[3]\]"; 
                 }
 	],
 	[#Rule 40
 		 'subscripted', 5,
 sub
-#line 400 "plpy.yp"
+#line 499 "plpy.yp"
 {
                     return "$_[1]\[$_[3]\]"; 
                 }
@@ -3843,7 +3946,7 @@ sub
 	[#Rule 41
 		 'termbinop', 3,
 sub
-#line 407 "plpy.yp"
+#line 506 "plpy.yp"
 {
                     printer (\@_, "termbinop", "term", "ASSIGNOP", "term");
                     if ($_[2] eq '.=') {$_[2] = '+='}
@@ -3853,7 +3956,7 @@ sub
 	[#Rule 42
 		 'termbinop', 3,
 sub
-#line 413 "plpy.yp"
+#line 512 "plpy.yp"
 {
                     printer (\@_, "termbinop", "term", "POWOP", "term");
                     return "eval(str($_[1])) $_[2] eval(str($_[3]))";
@@ -3862,7 +3965,7 @@ sub
 	[#Rule 43
 		 'termbinop', 3,
 sub
-#line 418 "plpy.yp"
+#line 517 "plpy.yp"
 {
                     printer (\@_, "termbinop", "term", "MULOP", "term");
                     return "eval(str($_[1])) $_[2] eval(str($_[3]))";
@@ -3871,7 +3974,7 @@ sub
 	[#Rule 44
 		 'termbinop', 3,
 sub
-#line 423 "plpy.yp"
+#line 522 "plpy.yp"
 {
                     printer (\@_, "termbinop", "term", "ADDOP", "term");
                     if ($_[2] eq '.'){
@@ -3885,7 +3988,7 @@ sub
 	[#Rule 45
 		 'termbinop', 3,
 sub
-#line 433 "plpy.yp"
+#line 532 "plpy.yp"
 {
                     printer (\@_, qw(term SHIFTOP term)); 
                     return "$_[1] $_[2] $_[3]";
@@ -3894,7 +3997,7 @@ sub
 	[#Rule 46
 		 'termbinop', 3,
 sub
-#line 438 "plpy.yp"
+#line 537 "plpy.yp"
 {
                     printer (\@_, qw(termbinop term EQOP term)); 
                     my %relop = (
@@ -3910,7 +4013,7 @@ sub
 	[#Rule 47
 		 'termbinop', 3,
 sub
-#line 450 "plpy.yp"
+#line 549 "plpy.yp"
 {
                     printer (\@_, qw(termbinop term EQOP term)); 
                     if ($_[2] eq 'eq') {$_[2] = '=='}
@@ -3923,7 +4026,7 @@ sub
 	[#Rule 48
 		 'termbinop', 3,
 sub
-#line 459 "plpy.yp"
+#line 558 "plpy.yp"
 {
                     printer (\@_, qw(termbinop term BITANDOP term)); 
                     return "$_[1] & $_[2]";
@@ -3932,7 +4035,7 @@ sub
 	[#Rule 49
 		 'termbinop', 3,
 sub
-#line 464 "plpy.yp"
+#line 563 "plpy.yp"
 {
                     printer (\@_, qw(termbinop term BITOROP term)); 
                     return "$_[1] | $_[2]";
@@ -3941,7 +4044,7 @@ sub
 	[#Rule 50
 		 'termbinop', 3,
 sub
-#line 469 "plpy.yp"
+#line 568 "plpy.yp"
 {
                     printer (\@_, qw(termbinop term BITXOROP term)); 
                     return "$_[1] ^ $_[2]";
@@ -3950,7 +4053,7 @@ sub
 	[#Rule 51
 		 'termbinop', 3,
 sub
-#line 474 "plpy.yp"
+#line 573 "plpy.yp"
 {
                     return "list(range($_[1], $_[3] + 1))";
                 }
@@ -3958,7 +4061,7 @@ sub
 	[#Rule 52
 		 'termbinop', 3,
 sub
-#line 478 "plpy.yp"
+#line 577 "plpy.yp"
 {
                     printer (\@_, qw(termbinop term andand term)); 
                     return "$_[1] and $_[3]";
@@ -3967,7 +4070,7 @@ sub
 	[#Rule 53
 		 'termbinop', 3,
 sub
-#line 483 "plpy.yp"
+#line 582 "plpy.yp"
 {
                     printer (\@_, qw(termbinop term OROR term)); 
                     return "$_[1] or $_[3]";
@@ -3976,10 +4079,11 @@ sub
 	[#Rule 54
 		 'termbinop', 3,
 sub
-#line 488 "plpy.yp"
+#line 587 "plpy.yp"
 {
                     $_[0]->yydata->{"IMPORTS"}{"import re"} = 1; 
 
+                    # needs g flag
                     if ($_[3] =~ /^s/) {
                         $_[3] =~ /s\/((?<!\\)(?:\\\\)*.*)\/((?<!\\)(?:\\\\)*.*?)\/([msixpodualngcer]?)/;
                         my $re = $1;
@@ -3987,12 +4091,12 @@ sub
                         my $flags = $3;
 
                         my @flags;
-                        if ($flags =~ /i/){push(@flags, "re.i")}
-                        if ($flags =~ /m/){push(@flags, "re.m")}
-                        if ($flags =~ /s/){push(@flags, "re.s")}
+                        if ($flags =~ /i/){push(@flags, "re.I")}
+                        if ($flags =~ /m/){push(@flags, "re.M")}
+                        if ($flags =~ /s/){push(@flags, "re.S")}
                         $flags = join('| ', @flags);
 
-                        $repl =~ s/(?<!\\)(?:\\\\)*\k\\(\d)/\\$1/;
+                        $repl =~ s/(?<!\\)(?:\\\\)*\K\\(\d)/\\$1/;
                         my $sub_string;
                         if ($flags) {
                             $sub_string = "r'$re', '$repl', $_[1], $flags";
@@ -4029,37 +4133,37 @@ sub
 	[#Rule 55
 		 'termunop', 2,
 sub
-#line 539 "plpy.yp"
+#line 639 "plpy.yp"
 {"-$_[2]"}
 	],
 	[#Rule 56
 		 'termunop', 2,
 sub
-#line 540 "plpy.yp"
+#line 640 "plpy.yp"
 {$_[2]}
 	],
 	[#Rule 57
 		 'termunop', 2,
 sub
-#line 541 "plpy.yp"
+#line 641 "plpy.yp"
 {"not $_[2]"}
 	],
 	[#Rule 58
 		 'termunop', 2,
 sub
-#line 542 "plpy.yp"
+#line 642 "plpy.yp"
 {"~$_[2]"}
 	],
 	[#Rule 59
 		 'termunop', 2,
 sub
-#line 543 "plpy.yp"
+#line 643 "plpy.yp"
 {"$_[1] += 1"}
 	],
 	[#Rule 60
 		 'termunop', 2,
 sub
-#line 544 "plpy.yp"
+#line 644 "plpy.yp"
 {"$_[1] -= 1"}
 	],
 	[#Rule 61
@@ -4071,30 +4175,26 @@ sub
 	[#Rule 63
 		 'term', 1,
 sub
-#line 550 "plpy.yp"
+#line 650 "plpy.yp"
 {
-                    switch ($_[1]) {
-                        case "<STDIN>"
-                            {
+                    given ($_[1]) {
+                        when ("<STDIN>") {
                                 $_[0]->YYData->{"IMPORTS"}{"import sys"} = 1; 
                                 return "sys.stdin.readline()";
-                            }
-                        case "<\@STDIN>"
-                            {
+                        }
+                        when ("<\@STDIN>") {
                                 $_[0]->YYData->{"IMPORTS"}{"import sys"} = 1; 
                                 return "sys.stdin.readlines()";
-                            }
-                        case "<>"
-                            {
+                        }
+                        when ("<>") {
                                 $_[0]->YYData->{"IMPORTS"}{"import fileinput"} = 1; 
                                 return "fileinput.input()";
-                            }
-                        else 
-                            {
+                        }
+                        default {
                                 $_[1] =~ s/<(.*?)>/$1/;
                                 return $_[1];
-                            }
                         }
+                    }
                     
                 }
 	],
@@ -4107,7 +4207,7 @@ sub
 	[#Rule 66
 		 'term', 1,
 sub
-#line 578 "plpy.yp"
+#line 674 "plpy.yp"
 {
                     $_[0]->YYData->{"IMPORTS"}{"import sys"} = 1; 
                     $_[0]->YYData->{"PRELUDE"}{"sys.argv = sys.argv[1:]"} = 1; 
@@ -4117,7 +4217,7 @@ sub
 	[#Rule 67
 		 'term', 1,
 sub
-#line 584 "plpy.yp"
+#line 680 "plpy.yp"
 {
                     printer (\@_, "term", "STRING");
                     $_[1] =~ s/^"\$(\w+)"/$1/;
@@ -4130,13 +4230,13 @@ sub
 	[#Rule 69
 		 'term', 3,
 sub
-#line 590 "plpy.yp"
+#line 686 "plpy.yp"
 {$_[2]}
 	],
 	[#Rule 70
 		 'term', 2,
 sub
-#line 591 "plpy.yp"
+#line 687 "plpy.yp"
 {"$_[1]$_[2]"}
 	],
 	[#Rule 71
@@ -4157,7 +4257,7 @@ sub
 	[#Rule 76
 		 'term', 4,
 sub
-#line 598 "plpy.yp"
+#line 694 "plpy.yp"
 {
                     return "$_[1]$_[2]$_[3]$_[4]"; 
                 }
@@ -4174,7 +4274,7 @@ sub
 	[#Rule 80
 		 'term', 3,
 sub
-#line 605 "plpy.yp"
+#line 701 "plpy.yp"
 {
                     printer (\@_, qw(term NOAMP WORD listexpr)); 
                 }
@@ -4182,7 +4282,7 @@ sub
 	[#Rule 81
 		 'term', 1,
 sub
-#line 609 "plpy.yp"
+#line 705 "plpy.yp"
 {
                     if ($_[1] eq "last")    {return "break"}
                     elsif ($_[1] eq "next") {return "continue"}
@@ -4191,7 +4291,7 @@ sub
 	[#Rule 82
 		 'term', 2,
 sub
-#line 613 "plpy.yp"
+#line 709 "plpy.yp"
 {"not $_[2]"}
 	],
 	[#Rule 83
@@ -4203,7 +4303,7 @@ sub
 	[#Rule 85
 		 'function', 1,
 sub
-#line 619 "plpy.yp"
+#line 715 "plpy.yp"
 {
                     printer (\@_, qw(term UNIOP)); 
                     if ($_[1] eq "exit"){
@@ -4217,22 +4317,22 @@ sub
 	[#Rule 87
 		 'function', 2,
 sub
-#line 627 "plpy.yp"
+#line 723 "plpy.yp"
 {
                     printer (\@_, qw(term UNIOP term)); 
-                    switch ($_[1]) {
-                        case "chomp"    { return "$_[2] = $_[2].strip()" }
-                        case "pop"      { return "$_[2].pop()" }
-                        case "shift"    { return "$_[2].pop(0)" }
-                        case "close"    { return "$_[2].close()" }
-                        case "keys"     { return "$_[2].keys()" }
+                    given ($_[1]) {
+                        when ("chomp")  { "$_[2] = $_[2].strip()" }
+                        when ("pop")    { "$_[2].pop()" }
+                        when ("shift")  { "$_[2].pop(0)" }
+                        when ("close")  { "$_[2].close()" }
+                        when ("keys")   { "$_[2].keys()" }
                     }
                 }
 	],
 	[#Rule 88
 		 'function', 3,
 sub
-#line 638 "plpy.yp"
+#line 734 "plpy.yp"
 {
                     if ($_[1] eq "exit"){
                        return "exit()";
@@ -4242,15 +4342,15 @@ sub
 	[#Rule 89
 		 'function', 4,
 sub
-#line 644 "plpy.yp"
+#line 740 "plpy.yp"
 {
-                    switch ($_[1]) {
-                        case "exit"     { return "exit($_[3])" }
-                        case "chomp"    { return "$_[3] = $_[3].strip()" }
-                        case "pop"      { return "$_[3].pop()" }
-                        case "shift"    { return "$_[3].pop(0)" }
-                        case "close"    { return "$_[3].close()" }
-                        case "keys"     { return "$_[3].keys()" }
+                    given ($_[1]) {
+                        when ("exit")   { "exit($_[3])" }
+                        when ("chomp")  { "$_[3] = $_[3].strip()" }
+                        when ("pop")    { "$_[3].pop()" }
+                        when ("shift")  { "$_[3].pop(0)" }
+                        when ("close")  { "$_[3].close()" }
+                        when ("keys")   { "$_[3].keys()" }
                     }
                 }
 	],
@@ -4260,7 +4360,7 @@ sub
 	[#Rule 91
 		 'function', 6,
 sub
-#line 656 "plpy.yp"
+#line 752 "plpy.yp"
 {
                     $_[3] =~ s/\/(.*)\//$1/;
                     $_[3] =~ s/([\Q{}[]()^$.|*+?\\E\w\s]*)/$1/g;
@@ -4276,129 +4376,27 @@ sub
 	[#Rule 94
 		 'function', 2,
 sub
-#line 664 "plpy.yp"
+#line 760 "plpy.yp"
 {
                     printer (\@_, "term", "LSTOP", "listexpr");
 
-                    if ($_[1] eq "printf"){
-                        my @list;
-                        my ($string, @args) = split(/"(?:\\"|""|\\\\|[^"])*"\K,\s*/, $_[2]);
-
-                        my $re = qr/(?<!\\)(?:\\\\)*\K\$\w+(?:\[(?<!\\)(?:\\\\)*\$\w+\])?/;
-
-                        $string =~ s/(\$\w+){(.*?);?}/$1\[$2\]/g;
-                        my @matches = $string =~ /${re}|%[csduoxefgXEGi]/g;
-                        foreach my $match (@matches){
-                            if ($match =~ /\$\w+/){
-                                $string =~ s/${re}/%s/;
-                                my $var = $&;
-                                $var =~ s/(?<!\\)(?:\\\\)*\$(\w+)/$1/g;
-                                $var =~ s/^ARGV/sys.argv/;
-                                push(@list, $var);
-                            }
-                            elsif ($match =~ /%[csduoxefgXEGi]/){
-                                push(@list, shift(@args));
-                            }
-                        }
-
-                        # remove final newline
-                        my $list = join(', ', @list);
-                        if ($string =~ s/^.*\K(?:,\s*"\\n"$)|(?:(?<!\\)\\n(?=\s*"$))//){ #"
-                            return "print($string % ($list))";
-                        }
-                        else {
-                            return "print($string % ($list), end='')";
-                        }
-                    }
-                    elsif ($_[1] eq "print"){
-
-                        my $new_line = 0;
-                        if ($_[2] =~ s/^.*\K(?:,\s*"\\n"$)|(?:(?<!\\)\\n(?=\s*"$))//){
-                            $new_line = 1; #"
-                        }
-
-                        my @printf; 
-                        foreach my $string ( split(/"(?:\\"|""|\\\\|[^"])*"\K,\s*/, $_[2])){
-                            $string =~ s/(\$\w+){(.*?);?}/$1\[$2\]/g;
-                            my $re = qr/(?<!\\)(?:\\\\)*\K\$\w+(\[(?<!\\)(?:\\\\)*\$\w+\])?/;
-                            if ($string =~ /${re}/){
-                                my @list;
-                                my @matches = $string =~ /${re}/g;
-                                foreach my $match (@matches){
-                                    $string =~ s/${re}/%s/;
-                                    my $var = $&;
-                                    $var =~ s/(?<!\\)(?:\\\\)*\$(\w+)/$1/g;
-                                    $var =~ s/^ARGV/sys.argv/;
-                                    push(@list, $var);
-                                }
-                                push(@printf, "$string % (".join(', ', @list).")" );
-                            }
-                            else {
-                                push(@printf, $string);
-                            }
-                        }
-
-                        my $final = join(', ', @printf);
-                        # remove final newline
-                        if ($new_line) {
-                            return "print($final)";
-                        }
-                        else {
-                            return "print($final, end='')";
-                        }
-                    }
-                    elsif ($_[1] eq "split") {
-                        return "split($_[2])";
-                    }
-                    elsif ($_[1] eq "join") {
-                        printer (\@_, "term", "LSTOP", "listexpr");
-                        my @list = split(', ', $_[2]);
-                        my $delim = shift @list;
-                        return "'$delim'.join(@list)";
-                    }
-                    elsif ($_[1] eq "push") {
-                        my @list = split(', ', $_[2]);
-                        my $array = shift @list;
-                        return "$array.append(@list)";
-                    }
-                    elsif ($_[1] eq "unshift") {
-                        my @list = split(', ', $_[2]);
-                        my $array = shift @list;
-                        return "$array.insert(0, @list)";
-                    }
-                    elsif ($_[1] eq "reverse") {
-                        return "reversed($_[2])";
-                    }
-                    elsif ($_[1] eq "open") {
-                        my @list = split(', ', $_[2]);
-                        my $handle = shift @list;
-                        my $file = shift @list;
-                        $file =~ s/^"(<|>>|>)//; #"
-                        my $mode;
-                        if ($1 eq '<'){
-                            $mode = 'r';
-                        }
-                        elsif ($1 eq '>>'){
-                            $mode = 'w';
-                        }
-                        elsif ($1 eq '>'){
-                            $mode = 'w';
-                        }
-                        return "$handle = open(\"$file, \'$mode\')";
-                    }
-                    elsif ($_[1] eq "sort") {
-                        my @list = split(', ', $_[2]);
-                        #TODO
-                        my $handle = shift @list;
-                        my $mode = shift @list;
-                        #return "$handle = open($array.insert(0, @list)";
+                    given ($_[1]) {
+                        when ("print")  { }
+                        when ("printf") { &func_printf }
+                        when ("split")  { "split($_[2])" }
+                        when ("join")   { func_join (@_) }
+                        when ("push")   { func_push (@_) }
+                        when ("unshift"){ func_unshift (@_) }
+                        when ("reverse"){ "reversed($_[2])" }
+                        when ("open")   { func_open (@_) }
+                        when ("sort")   { "sorted($_[2])" }
                     }
                 }
 	],
 	[#Rule 95
 		 'function', 4,
 sub
-#line 782 "plpy.yp"
+#line 776 "plpy.yp"
 {
                     if ($_[1] eq "printf"){
                         my @list;
@@ -4471,13 +4469,13 @@ sub
 	[#Rule 96
 		 'myattrterm', 2,
 sub
-#line 853 "plpy.yp"
+#line 847 "plpy.yp"
 {$_[2]}
 	],
 	[#Rule 97
 		 'myterm', 3,
 sub
-#line 857 "plpy.yp"
+#line 851 "plpy.yp"
 {$_[2]}
 	],
 	[#Rule 98
@@ -4507,37 +4505,37 @@ sub
 	[#Rule 106
 		 'listexprcom', 2,
 sub
-#line 873 "plpy.yp"
+#line 867 "plpy.yp"
 {"$_[1], "}
 	],
 	[#Rule 107
 		 'amper', 2,
 sub
-#line 878 "plpy.yp"
+#line 872 "plpy.yp"
 {$_[2]}
 	],
 	[#Rule 108
 		 'scalar', 2,
 sub
-#line 881 "plpy.yp"
+#line 875 "plpy.yp"
 {$_[2]}
 	],
 	[#Rule 109
 		 'ary', 2,
 sub
-#line 884 "plpy.yp"
+#line 878 "plpy.yp"
 {$_[2]}
 	],
 	[#Rule 110
 		 'hsh', 2,
 sub
-#line 887 "plpy.yp"
+#line 881 "plpy.yp"
 {$_[2]}
 	],
 	[#Rule 111
 		 'arylen', 2,
 sub
-#line 890 "plpy.yp"
+#line 884 "plpy.yp"
 {return "len($_[2]) - 1";}
 	],
 	[#Rule 112
@@ -4546,7 +4544,7 @@ sub
 	[#Rule 113
 		 'indirob', 1,
 sub
-#line 896 "plpy.yp"
+#line 890 "plpy.yp"
 {
                     $_[0]->YYData->{"IMPORTS"}{"import sys"} = 1; 
                     $_[0]->YYData->{"PRELUDE"}{"sys.argv = sys.argv[1:]"} = 1; 
@@ -4564,7 +4562,7 @@ sub
     bless($self,$class);
 }
 
-#line 905 "plpy.yp"
+#line 899 "plpy.yp"
 
 
 1;

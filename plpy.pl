@@ -37,7 +37,7 @@ my $output = $parser->YYParse(YYlex => \&plpy::Lexer) || "NULL\n";
 # POST PARSE
 #replace the hashbang
 my $hashbang = "#!/usr/local/bin/python3.5 -u";
-$output =~ s/^#!.*//;
+$output =~ s/^#!.*\n//;
 
 # replace temp back references with matches 
 $output =~ s/(?<!\\)(?:\\\\)*\K__([0-9])__/__MATCH__.group($1)/g;

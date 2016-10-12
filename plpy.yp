@@ -7,7 +7,7 @@
 
 %{
 use Term::ANSIColor;
-use Switch;
+use feature "switch";
 
 sub Lexer {
     my ($type, $value) = getToken($_[0]);
@@ -137,7 +137,7 @@ sub getToken {
     }
 }
 
-sub printer{
+sub printer {
     my @tokens = @{shift(@_)};
     my @words = @_;
     my $parser = shift(@tokens);
@@ -157,23 +157,130 @@ sub printer{
         print STDERR color('reset');
     }
 }
+
+sub func_printf {
+    my @list;
+    my ($string, @args) = split(/"(?:\\"|""|\\\\|[^"])*"\K,\s*/, $_[2]);
+
+    my $re = qr/(?<!\\)(?:\\\\)*\K\$\w+(?:\[(?<!\\)(?:\\\\)*\$\w+\])?/;
+
+    $string =~ s/(\$\w+){(.*?);?}/$1\[$2\]/g;
+    my @matches = $string =~ /${re}|%[csduoxefgXEGi]/g;
+    foreach my $match (@matches){
+        if ($match =~ /\$\w+/){
+            $string =~ s/${re}/%s/;
+            my $var = $&;
+            $var =~ s/(?<!\\)(?:\\\\)*\$(\w+)/$1/g;
+            $var =~ s/^ARGV/sys.argv/;
+            push(@list, $var);
+        }
+        elsif ($match =~ /%[csduoxefgXEGi]/){
+            push(@list, shift(@args));
+        }
+    }
+
+    # remove final newline
+    my $list = join(', ', @list);
+    if ($string =~ s/^.*\K(?:,\s*"\\n"$)|(?:(?<!\\)\\n(?=\s*"$))//) { #"
+        return "print($string % ($list))";
+    }
+    else {
+        return "print($string % ($list), end='')";
+    }
+}
+
+sub func_print {
+
+    my $new_line = 0;
+    if ($_[2] =~ s/^.*\K(?:,\s*"\\n"$)|(?:(?<!\\)\\n(?=\s*"$))//){
+        $new_line = 1; #"
+    }
+
+    my @printf; 
+    foreach my $string ( split(/"(?:\\"|""|\\\\|[^"])*"\K,\s*/, $_[2])){
+        $string =~ s/(\$\w+){(.*?);?}/$1\[$2\]/g;
+        my $re = qr/(?<!\\)(?:\\\\)*\K\$\w+(\[(?<!\\)(?:\\\\)*\$\w+\])?/;
+        if ($string =~ /${re}/){
+            my @list;
+            my @matches = $string =~ /${re}/g;
+            foreach my $match (@matches){
+                $string =~ s/${re}/%s/;
+                my $var = $&;
+                $var =~ s/(?<!\\)(?:\\\\)*\$(\w+)/$1/g;
+                $var =~ s/^ARGV/sys.argv/;
+                push(@list, $var);
+            }
+            push(@printf, "$string % (".join(', ', @list).")" );
+        }
+        else {
+            push(@printf, $string);
+        }
+    }
+
+    my $final = join(', ', @printf);
+    # remove final newline
+    if ($new_line) {
+        return "print($final)";
+    }
+    else {
+        return "print($final, end='')";
+    }
+}
+
+sub func_join {
+    my @list = split(', ', $_[2]);
+    my $delim = shift @list;
+    return "'$delim'.join(@list)";
+}
+
+sub func_push {
+    my @list = split(', ', $_[2]);
+    my $array = shift @list;
+    return "$array.append(@list)";
+}
+
+sub func_unshift {
+    my @list = split(', ', $_[2]);
+    my $array = shift @list;
+    return "$array.insert(0, @list)";
+}
+
+sub func_open {
+    my @list = split(', ', $_[2]);
+    my $handle = shift @list;
+    my $file = shift @list;
+    $file =~ s/^"(<|>>|>)//; #"
+
+    my $mode;
+    given ($1) {
+        when ('<')  { $mode = 'r' }
+        when ('>>') { $mode = 'a' }
+        when ('>' ) { $mode = 'w' }
+    }
+    return "$handle = open(\"$file, \'$mode\')";
+}
+
+sub compile_flags {
+    my @flags;
+    if ($_[0] =~ /i/)   {push (@flags, "re.I")}
+    if ($_[0] =~ /m/)   {push (@flags, "re.M")}
+    if ($_[0] =~ /s/)   {push (@flags, "re.S")}
+    return join('| ', @flags);
+}
 %}
 
 %token '{'
 
-%token WORD PMFUNC STRING /*METHOD FUNCMETH THING PRIVATEREF*/
-/*%token FUNC0SUB UNIOPSUB LSTOPSUB*/
-/*%token LABEL*/
-%token /*FORMAT ANONSUB PACKAGE USE*/ SUB 
-%token WHILE IF /*UNTIL UNLESS*/ ELSE ELSIF FOR
+%token WORD PMFUNC STRING 
+%token SUB 
+%token WHILE IF ELSE ELSIF FOR /*UNTIL UNLESS*/
 %token LOOPEX DOTDOT
 %token FUNC1 FUNC UNIOP LSTOP /*FUNC0*/
 %token RELOP EQOP MULOP ADDOP BITANDOP BITOROP SHIFTOP BITXOROP
-%token DOLSHARP /*DO HASHBRACK*/ NOAMP
-%token MY /*LOCAL MYSUB*/
+%token DOLSHARP NOAMP
+%token MY 
 %token REMATCH RESUB 
 %token FHANDLE ARGV 
-/*%token COLONATTR*/
 
 %nonassoc PREC_LOW
 %nonassoc LOOPEX
@@ -181,7 +288,7 @@ sub printer{
 %left OROP
 %left ANDOP
 %right NOTOP
-%nonassoc LSTOP /*LSTOPSUB*/
+%nonassoc LSTOP 
 %left ','
 %right ASSIGNOP
 /*%right '?' ':'*/
@@ -192,15 +299,14 @@ sub printer{
 %left BITANDOP
 %nonassoc EQOP
 %nonassoc RELOP
-%nonassoc UNIOP /*UNIOPSUB*/
+%nonassoc UNIOP 
 %left SHIFTOP 
 %left ADDOP
 %left MULOP
 %left MATCHOP
-%right '!' '~' UMINUS /*REFGEN*/
+%right '!' '~' UMINUS 
 %right POWOP
-%nonassoc /*PREINC PREDEC*/ POSTINC POSTDEC
-/*%left ARROW*/
+%nonassoc POSTINC POSTDEC
 %nonassoc ')'
 %left '('
 %left '[' '{'
@@ -232,7 +338,8 @@ line        :   cond
             |   sideff ';'
             |   COMMENT 
                 {
-                    printer(\@_, "line", "COMMENT")
+                    printer(\@_, "line", "COMMENT");
+                    return "$_[1]\n";
                 }
             ;
 
@@ -393,7 +500,7 @@ subscripted :   scalar '[' expr ']'          /* $array[$element] */
                 }
             |   scalar '{' expr ';' '}'
                 {
-                    $_[0]->yydata->{"PRELUDE"}{"$_[1] = {}"} = 1; 
+                    $_[0]->YYData->{"PRELUDE"}{"$_[1] = {}"} = 1; 
                     return "$_[1]\[$_[3]\]"; 
                 }
             |   subscripted '{' expr ';' '}'
@@ -488,19 +595,14 @@ termbinop   :   term ASSIGNOP term             /* $x =, .= $y */
                 {
                     $_[0]->yydata->{"IMPORTS"}{"import re"} = 1; 
 
+                    # TODO g flag
                     if ($_[3] =~ /^s/) {
-                        $_[3] =~ /s\/((?<!\\)(?:\\\\)*.*)\/((?<!\\)(?:\\\\)*.*?)\/([msixpodualngcer]?)/;
+                        $_[3] =~ /s\/((?<!\\)(?:\\\\)*.*)\/((?<!\\)(?:\\\\)*.*?)\/([msixpodualngcer]*)/;
                         my $re = $1;
                         my $repl = $2;
-                        my $flags = $3;
+                        my $flags = compile_flags ($3);
 
-                        my @flags;
-                        if ($flags =~ /i/){push(@flags, "re.i")}
-                        if ($flags =~ /m/){push(@flags, "re.m")}
-                        if ($flags =~ /s/){push(@flags, "re.s")}
-                        $flags = join('| ', @flags);
-
-                        $repl =~ s/(?<!\\)(?:\\\\)*\k\\(\d)/\\$1/;
+                        $repl =~ s/(?<!\\)(?:\\\\)*\K\\(\d)/\\$1/;
                         my $sub_string;
                         if ($flags) {
                             $sub_string = "r'$re', '$repl', $_[1], $flags";
@@ -512,15 +614,9 @@ termbinop   :   term ASSIGNOP term             /* $x =, .= $y */
 
                     }
                     else {
-                        $_[3] =~ /\/((?<!\\)(?:\\\\)*.*)\/([imnsxadlup]?)/;
+                        $_[3] =~ /\/((?<!\\)(?:\\\\)*.*)\/([imnsxadlup]*)/;
                         my $re = $1;
-                        my $flags = $2;
-
-                        my @flags;
-                        if ($flags =~ /i/){push(@flags, "re.I")}
-                        if ($flags =~ /m/){push(@flags, "re.M")}
-                        if ($flags =~ /s/){push(@flags, "re.S")}
-                        $flags = join('| ', @flags);
+                        my $flags = compile_flags ($2);
 
                         my $search_string;
                         if ($flags) {
@@ -548,28 +644,24 @@ term        :   termbinop
             |   termunop
             |   FHANDLE
                 {
-                    switch ($_[1]) {
-                        case "<STDIN>"
-                            {
+                    given ($_[1]) {
+                        when ("<STDIN>") {
                                 $_[0]->YYData->{"IMPORTS"}{"import sys"} = 1; 
                                 return "sys.stdin.readline()";
-                            }
-                        case "<\@STDIN>"
-                            {
+                        }
+                        when ("<\@STDIN>") {
                                 $_[0]->YYData->{"IMPORTS"}{"import sys"} = 1; 
                                 return "sys.stdin.readlines()";
-                            }
-                        case "<>"
-                            {
+                        }
+                        when ("<>") {
                                 $_[0]->YYData->{"IMPORTS"}{"import fileinput"} = 1; 
                                 return "fileinput.input()";
-                            }
-                        else 
-                            {
+                        }
+                        default {
                                 $_[1] =~ s/<(.*?)>/$1/;
                                 return $_[1];
-                            }
                         }
+                    }
                     
                 }
             |   REMATCH
@@ -607,8 +699,10 @@ term        :   termbinop
                 }
             |   LOOPEX  /* loop exiting command (goto, last, dump, etc) */
                 {
-                    if ($_[1] eq "last")    {return "break"}
-                    elsif ($_[1] eq "next") {return "continue"}
+                    given ($_[1]) {
+                        when ("last")   {"break"}
+                        when ("next")   {"continue"}
+                    }
                 }
             |   NOTOP argexpr        {"not $_[2]"}   /* not $foo */
             |   WORD
@@ -626,12 +720,12 @@ function    :   UNIOP                                /* Unary op, $_ implied */
             |   UNIOP term                           /* Unary op */
                 {
                     printer (\@_, qw(term UNIOP term)); 
-                    switch ($_[1]) {
-                        case "chomp"    { return "$_[2] = $_[2].strip()" }
-                        case "pop"      { return "$_[2].pop()" }
-                        case "shift"    { return "$_[2].pop(0)" }
-                        case "close"    { return "$_[2].close()" }
-                        case "keys"     { return "$_[2].keys()" }
+                    given ($_[1]) {
+                        when ("chomp")  { "$_[2] = $_[2].strip()" }
+                        when ("pop")    { "$_[2].pop()" }
+                        when ("shift")  { "$_[2].pop(0)" }
+                        when ("close")  { "$_[2].close()" }
+                        when ("keys")   { "$_[2].keys()" }
                     }
                 }
             |   FUNC1 '(' ')'                        /* not () */
@@ -642,13 +736,13 @@ function    :   UNIOP                                /* Unary op, $_ implied */
                 }
             |   FUNC1 '(' expr ')'                   /* not($foo) */
                 {
-                    switch ($_[1]) {
-                        case "exit"     { return "exit($_[3])" }
-                        case "chomp"    { return "$_[3] = $_[3].strip()" }
-                        case "pop"      { return "$_[3].pop()" }
-                        case "shift"    { return "$_[3].pop(0)" }
-                        case "close"    { return "$_[3].close()" }
-                        case "keys"     { return "$_[3].keys()" }
+                    given ($_[1]) {
+                        when ("exit")   { "exit($_[3])" }
+                        when ("chomp")  { "$_[3] = $_[3].strip()" }
+                        when ("pop")    { "$_[3].pop()" }
+                        when ("shift")  { "$_[3].pop(0)" }
+                        when ("close")  { "$_[3].close()" }
+                        when ("keys")   { "$_[3].keys()" }
                     }
                 }
             |   PMFUNC '(' term ')'                  /* split (/foo/) */
@@ -664,122 +758,33 @@ function    :   UNIOP                                /* Unary op, $_ implied */
                 {
                     printer (\@_, "term", "LSTOP", "listexpr");
 
-                    if ($_[1] eq "printf"){
-                        my @list;
-                        my ($string, @args) = split(/"(?:\\"|""|\\\\|[^"])*"\K,\s*/, $_[2]);
-
-                        my $re = qr/(?<!\\)(?:\\\\)*\K\$\w+(?:\[(?<!\\)(?:\\\\)*\$\w+\])?/;
-
-                        $string =~ s/(\$\w+){(.*?);?}/$1\[$2\]/g;
-                        my @matches = $string =~ /${re}|%[csduoxefgXEGi]/g;
-                        foreach my $match (@matches){
-                            if ($match =~ /\$\w+/){
-                                $string =~ s/${re}/%s/;
-                                my $var = $&;
-                                $var =~ s/(?<!\\)(?:\\\\)*\$(\w+)/$1/g;
-                                $var =~ s/^ARGV/sys.argv/;
-                                push(@list, $var);
-                            }
-                            elsif ($match =~ /%[csduoxefgXEGi]/){
-                                push(@list, shift(@args));
-                            }
-                        }
-
-                        # remove final newline
-                        my $list = join(', ', @list);
-                        if ($string =~ s/^.*\K(?:,\s*"\\n"$)|(?:(?<!\\)\\n(?=\s*"$))//){ #"
-                            return "print($string % ($list))";
-                        }
-                        else {
-                            return "print($string % ($list), end='')";
-                        }
-                    }
-                    elsif ($_[1] eq "print"){
-
-                        my $new_line = 0;
-                        if ($_[2] =~ s/^.*\K(?:,\s*"\\n"$)|(?:(?<!\\)\\n(?=\s*"$))//){
-                            $new_line = 1; #"
-                        }
-
-                        my @printf; 
-                        foreach my $string ( split(/"(?:\\"|""|\\\\|[^"])*"\K,\s*/, $_[2])){
-                            $string =~ s/(\$\w+){(.*?);?}/$1\[$2\]/g;
-                            my $re = qr/(?<!\\)(?:\\\\)*\K\$\w+(\[(?<!\\)(?:\\\\)*\$\w+\])?/;
-                            if ($string =~ /${re}/){
-                                my @list;
-                                my @matches = $string =~ /${re}/g;
-                                foreach my $match (@matches){
-                                    $string =~ s/${re}/%s/;
-                                    my $var = $&;
-                                    $var =~ s/(?<!\\)(?:\\\\)*\$(\w+)/$1/g;
-                                    $var =~ s/^ARGV/sys.argv/;
-                                    push(@list, $var);
-                                }
-                                push(@printf, "$string % (".join(', ', @list).")" );
-                            }
-                            else {
-                                push(@printf, $string);
-                            }
-                        }
-
-                        my $final = join(', ', @printf);
-                        # remove final newline
-                        if ($new_line) {
-                            return "print($final)";
-                        }
-                        else {
-                            return "print($final, end='')";
-                        }
-                    }
-                    elsif ($_[1] eq "split") {
-                        return "split($_[2])";
-                    }
-                    elsif ($_[1] eq "join") {
-                        printer (\@_, "term", "LSTOP", "listexpr");
-                        my @list = split(', ', $_[2]);
-                        my $delim = shift @list;
-                        return "'$delim'.join(@list)";
-                    }
-                    elsif ($_[1] eq "push") {
-                        my @list = split(', ', $_[2]);
-                        my $array = shift @list;
-                        return "$array.append(@list)";
-                    }
-                    elsif ($_[1] eq "unshift") {
-                        my @list = split(', ', $_[2]);
-                        my $array = shift @list;
-                        return "$array.insert(0, @list)";
-                    }
-                    elsif ($_[1] eq "reverse") {
-                        return "reversed($_[2])";
-                    }
-                    elsif ($_[1] eq "open") {
-                        my @list = split(', ', $_[2]);
-                        my $handle = shift @list;
-                        my $file = shift @list;
-                        $file =~ s/^"(<|>>|>)//; #"
-                        my $mode;
-                        if ($1 eq '<'){
-                            $mode = 'r';
-                        }
-                        elsif ($1 eq '>>'){
-                            $mode = 'w';
-                        }
-                        elsif ($1 eq '>'){
-                            $mode = 'w';
-                        }
-                        return "$handle = open(\"$file, \'$mode\')";
-                    }
-                    elsif ($_[1] eq "sort") {
-                        my @list = split(', ', $_[2]);
-                        #TODO
-                        my $handle = shift @list;
-                        my $mode = shift @list;
-                        #return "$handle = open($array.insert(0, @list)";
+                    given ($_[1]) {
+                        when ("print")  { &func_print }
+                        when ("printf") { &func_printf }
+                        when ("split")  { "split($_[2])" }
+                        when ("join")   { &func_join }
+                        when ("push")   { &func_push }
+                        when ("unshift"){ &func_unshift }
+                        when ("reverse"){ "reversed($_[2])" }
+                        when ("open")   { &func_open }
+                        when ("sort")   { "sorted($_[2])" }
                     }
                 }
             |   FUNC '(' listexprcom ')'             /* print (@args) */
                 {
+                    $_[2] = $_[3];
+
+                    given ($_[1]) {
+                        when ("print")  { &func_print }
+                        when ("printf") { &func_printf }
+                        when ("split")  { "split($_[2])" }
+                        when ("join")   { &func_join }
+                        when ("push")   { &func_push }
+                        when ("unshift"){ &func_unshift }
+                        when ("reverse"){ "reversed($_[2])" }
+                        when ("open")   { &func_open }
+                        when ("sort")   { "sorted($_[2])" }
+                    }
                     if ($_[1] eq "printf"){
                         my @list;
                         my ($string, @args) =
