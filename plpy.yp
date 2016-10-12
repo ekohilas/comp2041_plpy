@@ -352,8 +352,8 @@ block       :   '{' lineseq '}'
 
 /* An expression which may have a side-effect */
 sideff      :   expr
-            |   expr WHILE expr {"while $_[3]: $_[1]"}
-            |   expr FOR expr   {"for $_[3]: $_[1]"}
+            |   expr WHILE expr                 {"while $_[3]: $_[1]"}
+            |   expr FOR expr                   {"for $_[3]: $_[1]"}
             ;
 
 /* else and elsif blocks */
@@ -435,8 +435,8 @@ argexpr     :   argexpr ','                     {"$_[1], "}
             ;
 
 /* Some kind of subscripted expression */
-subscripted :   scalar '[' expr ']'             {"$_[1]$_[2]$_[3]$_[4]"} /* $array[$element] */
-            |   subscripted '[' expr ']'        {"$_[1]$_[2]$_[3]$_[4]"} /* $array[$element] */
+subscripted :   scalar '[' expr ']'             {"$_[1]\[$_[3]\]"} /* $array[$element] */
+            |   subscripted '[' expr ']'        {"$_[1]\[$_[3]\]"} /* $array[$element] */
             |   scalar '{' expr ';' '}'
                 {
                     $_[0]->YYData->{"PRELUDE"}{"$_[1] = {}"} = 1; 
