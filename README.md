@@ -26,7 +26,7 @@ Written in 2016 for UNSW COMP2041
 * arrays and hashes
 * push, pop, shift, unshift, reverse
 * simple use of regexes (// and s///)
-* open function
+* opening files
 
 ## Work in progress
 * anonymous variable ($_)
