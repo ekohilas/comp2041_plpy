@@ -4,3 +4,5 @@ vgcore.*
 *.swp
 *.pyc
 __pycache__
+diary.txt
+marking.txt
