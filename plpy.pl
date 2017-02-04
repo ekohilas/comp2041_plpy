@@ -32,7 +32,7 @@ $parser->YYData->{"DEBUG"} = 1;
 $parser->YYData->{"IMPORTS"} = ();
 $parser->YYData->{"PRELUDE"} = ();
 
-my $output = $parser->YYParse(YYlex => \&plpy::Lexer) || "NULL\n";
+my $output = $parser->YYParse(YYlex => \&plpy::Lexer) || "print('NULL')\n";
 
 # POST PARSE
 #replace the hashbang

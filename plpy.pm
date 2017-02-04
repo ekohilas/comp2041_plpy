@@ -3867,13 +3867,13 @@ sub
 		 'subscripted', 4,
 sub
 #line 438 "plpy.yp"
-{"$_[1]$_[2]$_[3]$_[4]"}
+{"$_[1]\[$_[3]\]"}
 	],
 	[#Rule 37
 		 'subscripted', 4,
 sub
 #line 439 "plpy.yp"
-{"$_[1]$_[2]$_[3]$_[4]"}
+{"$_[1]\[$_[3]\]"}
 	],
 	[#Rule 38
 		 'subscripted', 5,
