@@ -1,7 +1,7 @@
 # Perl to Python Transpiler
 
 Transpiler for converting Perl to Python
-Written in 2016 for UNSW COMP2041
+Written in 2016 for UNSW COMP2041 using [YAPP](http://search.cpan.org/~fdesar/Parse-Yapp-1.05/lib/Parse/Yapp.pm)
 
 ##Capabilities
 * simple print statements (with explicit new lines)
